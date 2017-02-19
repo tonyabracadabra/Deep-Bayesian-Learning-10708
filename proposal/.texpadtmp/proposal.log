@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.16)  19 FEB 2017 10:40
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.16)  19 FEB 2017 10:44
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -341,10 +341,7 @@ Overfull \hbox (3.08298pt too wide) detected at line 135
 \OML/cmm/m/it/10 ELBO[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^U\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10 E[]\OT1/cmr/m/n/10 [[] \OML/cmm/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 x[]\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 z\OT1/cmr/m/n/10 )] \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 KL\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 q^^U\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 z\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 x[]\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 jj\OML/cmm/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 z\OT1/cmr/m/n/10 ))
  []
 
-
-Underfull \vbox (badness 4492) has occurred while \output is active []
-
- [1{/usr/local/texlive/2016basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
+[1{/usr/local/texlive/2016basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
 
@@ -353,10 +350,10 @@ Underfull \hbox (badness 2334) in paragraph at lines 178--179
 \OT1/ptm/m/n/10 Generic Ad-ver-sar-ial Net-work (GAN) as pro-posed in
  []
 
-(/Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.bbl
+
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-
+ (/Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.bbl
 Underfull \hbox (badness 3803) in paragraph at lines 9--13
 []\OT1/ptm/m/n/10 Bahdanau, Dzmitry, Cho, Kyunghyun, and Ben-gio,
  []
@@ -391,7 +388,7 @@ Here is how much of TeX's memory you used:
  319 hyphenation exceptions out of 8191
  29i,11n,45p,542b,407s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2016basic/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on /Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.pdf (2 pages, 136526 bytes).
+Output written on /Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.pdf (2 pages, 136752 bytes).
 PDF statistics:
  128 PDF objects out of 1000 (max. 8388607)
  109 compressed objects within 2 object streams
