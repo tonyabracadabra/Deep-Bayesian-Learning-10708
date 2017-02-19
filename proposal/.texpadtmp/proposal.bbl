@@ -1,15 +1,70 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
-\bibitem[Langley(2000)]{langley00}
-Langley, P.
-\newblock Crafting papers on machine learning.
-\newblock In Langley, Pat (ed.), \emph{Proceedings of the 17th International
-  Conference on Machine Learning (ICML 2000)}, pp.\  1207--1216, Stanford, CA,
-  2000. Morgan Kaufmann.
+\bibitem[Bahdanau et~al.(2014)Bahdanau, Cho, and Bengio]{attention}
+Bahdanau, Dzmitry, Cho, Kyunghyun, and Bengio, Yoshua.
+\newblock Neural machine translation by jointly learning to align and
+  translate.
+\newblock \emph{arXiv preprint arXiv:1409.0473}, 2014.
+
+\bibitem[Cho et~al.(2014)Cho, Van~Merri{\"e}nboer, Gulcehre, Bahdanau,
+  Bougares, Schwenk, and Bengio]{seq2seq}
+Cho, Kyunghyun, Van~Merri{\"e}nboer, Bart, Gulcehre, Caglar, Bahdanau, Dzmitry,
+  Bougares, Fethi, Schwenk, Holger, and Bengio, Yoshua.
+\newblock Learning phrase representations using rnn encoder-decoder for
+  statistical machine translation.
+\newblock \emph{arXiv preprint arXiv:1406.1078}, 2014.
+
+\bibitem[Chung et~al.(2015)Chung, Kastner, Dinh, Goel, Courville, and
+  Bengio]{vrnn}
+Chung, Junyoung, Kastner, Kyle, Dinh, Laurent, Goel, Kratarth, Courville,
+  Aaron~C, and Bengio, Yoshua.
+\newblock A recurrent latent variable model for sequential data.
+\newblock In \emph{Advances in neural information processing systems}, pp.\
+  2980--2988, 2015.
+
+\bibitem[Fabius \& van Amersfoort(2014)Fabius and van Amersfoort]{vrae}
+Fabius, Otto and van Amersfoort, Joost~R.
+\newblock Variational recurrent auto-encoders.
+\newblock \emph{arXiv preprint arXiv:1412.6581}, 2014.
+
+\bibitem[Goodfellow et~al.(2014)Goodfellow, Pouget-Abadie, Mirza, Xu,
+  Warde-Farley, Ozair, Courville, and Bengio]{gan}
+Goodfellow, Ian, Pouget-Abadie, Jean, Mirza, Mehdi, Xu, Bing, Warde-Farley,
+  David, Ozair, Sherjil, Courville, Aaron, and Bengio, Yoshua.
+\newblock Generative adversarial nets.
+\newblock In \emph{Advances in neural information processing systems}, pp.\
+  2672--2680, 2014.
+
+\bibitem[Kingma \& Welling(2013)Kingma and Welling]{vae}
+Kingma, Diederik~P and Welling, Max.
+\newblock Auto-encoding variational bayes.
+\newblock \emph{arXiv preprint arXiv:1312.6114}, 2013.
+
+\bibitem[Li et~al.(2017)Li, Monroe, Shi, Ritter, and Jurafsky]{ganncm}
+Li, Jiwei, Monroe, Will, Shi, Tianlin, Ritter, Alan, and Jurafsky, Dan.
+\newblock Adversarial learning for neural dialogue generation.
+\newblock \emph{arXiv preprint arXiv:1701.06547}, 2017.
+
+\bibitem[Tiedemann(2009)]{opensubtitle}
+Tiedemann, J{\"o}rg.
+\newblock News from opus-a collection of multilingual parallel corpora with
+  tools and interfaces.
+\newblock In \emph{Recent advances in natural language processing}, volume~5,
+  pp.\  237--248, 2009.
+
+\bibitem[Vinyals \& Le(2015)Vinyals and Le]{ncm}
+Vinyals, Oriol and Le, Quoc.
+\newblock A neural conversational model.
+\newblock \emph{arXiv preprint arXiv:1506.05869}, 2015.
+
+\bibitem[Zhang et~al.(2016)Zhang, Xiong, Su, Duan, and Zhang]{vnmt}
+Zhang, Biao, Xiong, Deyi, Su, Jinsong, Duan, Hong, and Zhang, Min.
+\newblock Variational neural machine translation.
+\newblock \emph{arXiv preprint arXiv:1605.07869}, 2016.
 
 \end{thebibliography}

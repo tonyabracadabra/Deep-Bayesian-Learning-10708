@@ -34,7 +34,7 @@
 % Employ the following version of the ``usepackage'' statement for
 % submitting the draft version of the paper for review.  This will set
 % the note in the first column to ``Under review.  Do not distribute.''
-\usepackage{icml2017} 
+\usepackage[accepted]{icml2017}
 
 % Employ this version of the ``usepackage'' statement after the paper has
 % been accepted, when creating the final version.  This will set the
@@ -49,7 +49,7 @@
 \begin{document} 
 
 \twocolumn[
-\icmltitle{Bayesian Deep Learning with Convolutional Neural Network}
+\icmltitle{Variational Neural Conversational Model}
 
 % It is OKAY to include author information, even for blind
 % submissions: the style file will automatically remove it for you
@@ -67,26 +67,14 @@
 \icmlsetsymbol{equal}{*}
 
 \begin{icmlauthorlist}
-\icmlauthor{Aeiau Zzzz}{equal,to}
-\icmlauthor{Bauiu C.~Yyyy}{equal,to,goo}
-\icmlauthor{Cieua Vvvvv}{goo}
-\icmlauthor{Iaesut Saoeu}{ed}
-\icmlauthor{Fiuea Rrrr}{to}
-\icmlauthor{Tateu H.~Yasehe}{ed,to,goo} 
-\icmlauthor{Aaoeu Iasoh}{goo}
-\icmlauthor{Buiui Eueu}{ed}
-\icmlauthor{Aeuia Zzzz}{ed}
-\icmlauthor{Bieea C.~Yyyy}{to,goo}
-\icmlauthor{Teoau Xxxx}{ed}
-\icmlauthor{Eee Pppp}{ed}
+\icmlauthor{Chaoming Yen}{equal,to}
+\icmlauthor{Yikang Li}{equal,to}
+\icmlauthor{Xupeng Tong}{equal,to}
 \end{icmlauthorlist}
 
-\icmlaffiliation{to}{University of Torontoland, Torontoland, Canada}
-\icmlaffiliation{goo}{Googol ShallowMind, New London, Michigan, USA}
-\icmlaffiliation{ed}{University of Edenborrow, Edenborrow, United Kingdom}
+\icmlaffiliation{to}{Carnegie Mellon University, USA}
 
-\icmlcorrespondingauthor{Cieua Vvvvv}{c.vvvvv@googol.com}
-\icmlcorrespondingauthor{Eee Pppp}{ep@eden.co.uk}
+\icmlcorrespondingauthor{Xupeng Tong}{xtong@andrew.cmu.edu}
 
 % You may provide any keywords that you 
 % find helpful for describing your paper; these are used to populate 
@@ -109,43 +97,83 @@
 %\footnotetext{hi}
 
 \begin{abstract} 
-The purpose of this document is to provide both the basic paper template and
-submission guidelines. Abstracts should be a single paragraph, between 4--6 sentences long, ideally.  Gross violations will trigger corrections at the camera-ready phase.
+Among all natural language understanding and machine intelligence tasks, conversational modeling is an important .
+
+In this proposal, we describe a way to integrate variational inference to the attention matrix that might improve the performance of this task. 
 \end{abstract} 
 
-\section{Electronic Submission}
-\label{submission}
+\section{Introduction}
+Conversation modeling is a famous task that allows machine to generate reasonable responses according to the sentence it is shown. Previously, fair amount of works have done.
+
+In this project, we plan to improve the model performance based on previous works .
 
 
-The guidelines below will be enforced for initial submissions and
-camera-ready copies.  Here is a brief summary:
 
 
-\medskip
+\section{Related Works}
 
-\subsection{Reacting to Reviews}
+\subsection{Neural Conversational Model}
 
-We will continue the ICML tradition in which the authors are given the
-option of providing a short reaction to the initial reviews. These
-reactions will be taken into account in the discussion among the
-reviewers and area chairs.
+Sequence To Sequence model is first introduced in \cite{seq2seq}, and since then, has become the standard model for dialogue systems and machine translation. It consists of two RNNs (Recurrent Neural Network) : An Encoder and a Decoder. The encoder takes a words sequence as input and processes one word at each time step. The objective is to convert symbol sequence into a fixed size feature vector that encodes the important information in the sequence while losing the redundant or unneccesary information.
 
-\subsection{Submitting Final Camera-Ready Copy}
 
-The final versions of papers accepted for publication should follow the
-same format and naming convention as initial submissions, except of
-course that the normal author information (names and affiliations)
-should be given.  See Section~\ref{final author} for details of how to
-format this.
 
-The footnote, ``Preliminary work.  Under review by the International
-Conference on Machine Learning (ICML).  Do not distribute.'' must be
-modified to ``\textit{Proceedings of the
-$\mathit{34}^{th}$ International Conference on Machine Learning},
-Sydney, Australia, 2017.  JMLR: W\&CP. 
-Copyright 2017 by the author(s).''
+\cite{ncm}
+\cite{seq2seq}
 
-\nocite{langley00}
+\subsection{Auto-Encoding Variational Bayes}
+\cite{vae}
+
+Given an observed variable $x$, VAE introduces a continuous latent variable z, and assumes that $x$ is generated from $z$
+$$p(x,z) = p(x|z)p(z)$$
+The prior over the latent random variables, $p(z)$, is always chosen to be a simple Gaussian distribution and the conditional $p(x|z)$ is an arbitrary observation model whose parameters are computed by a parametric function of z. 
+In VAE, $p(x|z)$ is typically parameterized function approximator such as a neural network. While latent random variable models of the form given in Eq. (3) are not uncommon, endowing the conditional $p(x|z)$ as a potentially highly non-linear mapping from z to x is a rather unique feature of the VAE.
+
+The generative model $p(x|z)$ and inference model $q(z|x)$ are trained jointly by maximizing the variational lower bound with respect to their parameters, where the integral with respect to $q(z|x)$ is approximated stochastically. The gradient of this estimate can have a low variance estimate, by reparametrizing $z = \mu+\sigma\odot\epsilon$
+
+$$ELBO_i (\lambda) = E_{q\lambda (z|x_i)}[\log p(x_i|z)]-KL(q\lambda (z|x_i)||p(z))$$ 
+
+
+
+\subsection{Variational Recurrent Neural Network}
+\cite{vrnn} 
+
+\subsection{Generative Adversarial Network} 
+\cite{gan} 
+ 
+\cite{ganncm} 
+
+
+\section{Datasets}
+
+We will tested our model on the OpenSubtitles
+dataset \cite{opensubtitle}. This is a dataset that incorporated movie subtitles with sentences uttered by characters.
+The model will be trained to predict the next sentence given the previous one, for every consecutive sentences, and each sentence will be used both for context and as target.
+
+ 
+
+\section{Plan}
+
+\subsection{Incorporating latent variables in the training of Seq2Seq model}
+There are various ways that allow us to improve our model with seq2seq 
+
+Following the work in \cite{vnmt}, which introduces a variational model for neural machine translation that incorporates a continuous latent variable $z$ to model the underlying semantics of sentence pairs, we can also apply it to our neural conversation model that uses the same seq2seq model. 
+
+We can also apply the method proposed by \cite{vrnn}, that explicitly models the dependencies between latent random variables across subsequent timesteps.
+
+\subsection{Incorporating latent information unsupervisely as the input to Seq2Seq model}
+Since sometimes, incorporating the latent variable into the training process directly may be hard. We consider an alternative approach that, instead of learn the latent variable through an end to end one way pass method. We can train a Variational Recurrent Auto-Encoder \cite{vrae} for each sentences first. VRAE is a variational autoencoder that can be used for the unsupervised learning on time series data, mapping the time series data to a latent vector representation. 
+
+By appending the latent vector representation of each sentences along with the vector encoded by the seq2seq encoder, we naturally incorporate latent information of the sentence and that could serve as the input to be fed into the decoder phase.
+
+\subsection{Improving the attention alignment model by variational inference }
+
+One potential issue with this seq2seq model is that a neural network needs to be able to compress all the necessary information of a source sentence into a fixed-length vector. To allow the decoder access to the input more directly, an attention mechanism was introduced in \cite{attention}.
+
+The affect of the alignment model has become one of the most important feature of state-of-art sequence to sequence models. By incorporating latent variables in this particular part may gives us a boost in the model performance.
+
+\subsection{GAN}
+
 
 \bibliography{refs}
 \bibliographystyle{icml2017}

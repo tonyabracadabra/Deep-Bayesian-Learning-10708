@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.16)  17 FEB 2017 15:13
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.16)  19 FEB 2017 10:30
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -234,7 +234,6 @@ Package: eso-pic 2015/07/21 v2.0g eso-pic (RN)
 Package: forloop 2006/09/18 v3.0 For Loops for LaTeX
 )
 Package hyperref Info: Option `colorlinks' set `true' on input line 101.
-Package hyperref Info: Option `colorlinks' set `true' on input line 116.
 \titrun=\box28
 \c@@affiliationcounter=\count110
 \c@@affilnum=\count111
@@ -311,68 +310,89 @@ LaTeX Info: Redefining \nameref on input line 49.
 \openout3 = `proposal.out'.
 
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <9> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 97.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 85.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <14.4> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 97.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 85.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <10> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 97.
-\c@@affil@anon=\count124
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 85.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 97.
+(Font)              <7> on input line 85.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 97.
+(Font)              <5> on input line 85.
+\c@@affilto=\count124
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 108.
+(Font)              <9> on input line 96.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 108.
+(Font)              <6> on input line 96.
 
 
-Package hyperref Warning: Ignoring empty anchor on input line 108.
+Package hyperref Warning: Ignoring empty anchor on input line 96.
 
-LaTeX Font Info:    Try loading font information for OML+ptm on input line 108.
+LaTeX Font Info:    Try loading font information for OML+ptm on input line 96.
 (/usr/local/texlive/2016basic/texmf-dist/tex/latex/psnfss/omlptm.fd
 File: omlptm.fd 
 )
 LaTeX Font Info:    Font shape `OML/ptm/m/n' in size <9> not available
-(Font)              Font shape `OML/cmm/m/it' tried instead on input line 108.
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 96.
 LaTeX Font Info:    Font shape `OT1/ptm/bx/n' in size <12> not available
-(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 111.
+(Font)              Font shape `OT1/ptm/b/n' tried instead on input line 99.
+
+Underfull \vbox (badness 1675) has occurred while \output is active []
 
 
-LaTeX Warning: Reference `final author' on page 1 undefined on input line 138.
+Overfull \hbox (3.08298pt too wide) detected at line 134
+\OML/cmm/m/it/10 ELBO[]\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 ^^U\OT1/cmr/m/n/10 ) = \OML/cmm/m/it/10 E[]\OT1/cmr/m/n/10 [[] \OML/cmm/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 x[]\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 z\OT1/cmr/m/n/10 )] \OMS/cmsy/m/n/10 ^^@ \OML/cmm/m/it/10 KL\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 q^^U\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 z\OMS/cmsy/m/n/10 j\OML/cmm/m/it/10 x[]\OT1/cmr/m/n/10 )\OMS/cmsy/m/n/10 jj\OML/cmm/m/it/10 p\OT1/cmr/m/n/10 (\OML/cmm/m/it/10 z\OT1/cmr/m/n/10 ))
+ []
 
-(/Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.bbl)
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 153.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
  [1{/usr/local/texlive/2016basic/texmf-var/fonts/map/pdftex/updmap/pdftex.map}
 
 
 
-]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 153.
+] (/Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.bbl
+Underfull \hbox (badness 3803) in paragraph at lines 9--13
+[]\OT1/ptm/m/n/10 Bahdanau, Dzmitry, Cho, Kyunghyun, and Ben-gio,
+ []
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+
+Underfull \hbox (badness 2781) in paragraph at lines 16--21
+[]\OT1/ptm/m/n/10 Cho, Kyunghyun, Van Merri[]enboer, Bart, Gul-cehre,
+ []
+
+
+Underfull \hbox (badness 1117) in paragraph at lines 44--47
+\OT1/ptm/m/n/10 vari-a-tional bayes.  \OT1/ptm/m/it/10 arXiv preprint arXiv:1312.6114\OT1/ptm/m/n/10 ,
+ []
+
+)
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 181.
+ [2]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 181.
  (/Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 153.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 153.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 181.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 181.
 Package rerunfilecheck Info: File `proposal.out' has not changed.
 (rerunfilecheck)             Checksum: <no file>.
-
-
-LaTeX Warning: There were undefined references.
-
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 153.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 181.
  ) 
 Here is how much of TeX's memory you used:
- 6264 strings out of 494447
- 92338 string characters out of 6166766
- 186592 words of memory out of 5000000
- 9514 multiletter control sequences out of 15000+600000
- 20942 words of font info for 42 fonts, out of 8000000 for 9000
+ 6316 strings out of 494447
+ 92935 string characters out of 6166766
+ 182149 words of memory out of 5000000
+ 9544 multiletter control sequences out of 15000+600000
+ 24427 words of font info for 47 fonts, out of 8000000 for 9000
  319 hyphenation exceptions out of 8191
- 31i,11n,45p,244b,404s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2016basic/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on /Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.pdf (1 page, 65621 bytes).
+ 29i,11n,45p,542b,407s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2016basic/texmf-dist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/public/amsfonts/cm/cmti9.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2016basic/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on /Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.pdf (2 pages, 136185 bytes).
 PDF statistics:
- 45 PDF objects out of 1000 (max. 8388607)
- 35 compressed objects within 1 object stream
- 7 named destinations out of 1000 (max. 500000)
+ 125 PDF objects out of 1000 (max. 8388607)
+ 106 compressed objects within 2 object streams
+ 26 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
