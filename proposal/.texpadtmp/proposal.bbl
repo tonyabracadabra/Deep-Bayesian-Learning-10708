@@ -1,4 +1,4 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{11}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -49,6 +49,12 @@ Kingma, Diederik~P and Welling, Max.
 Li, Jiwei, Monroe, Will, Shi, Tianlin, Ritter, Alan, and Jurafsky, Dan.
 \newblock Adversarial learning for neural dialogue generation.
 \newblock \emph{arXiv preprint arXiv:1701.06547}, 2017.
+
+\bibitem[Mescheder et~al.(2017)Mescheder, Nowozin, and Geiger]{avb}
+Mescheder, Lars, Nowozin, Sebastian, and Geiger, Andreas.
+\newblock Adversarial variational bayes: Unifying variational autoencoders and
+  generative adversarial networks.
+\newblock \emph{arXiv preprint arXiv:1701.04722}, 2017.
 
 \bibitem[Tiedemann(2009)]{opensubtitle}
 Tiedemann, J{\"o}rg.

@@ -3,44 +3,44 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: /Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.aux
 The style file: ../icml2017.bst
 Database file #1: ../refs.bib
-You've used 10 entries,
+You've used 11 entries,
             2773 wiz_defined-function locations,
-            642 strings with 6625 characters,
-and the built_in function-call counts, 5412 in all, are:
-= -- 457
-> -- 397
+            646 strings with 6817 characters,
+and the built_in function-call counts, 5825 in all, are:
+= -- 491
+> -- 427
 < -- 8
-+ -- 133
-- -- 123
-* -- 432
-:= -- 834
-add.period$ -- 30
-call.type$ -- 10
-change.case$ -- 71
-chr.to.int$ -- 10
-cite$ -- 20
-duplicate$ -- 239
-empty$ -- 382
-format.name$ -- 139
-if$ -- 1132
++ -- 143
+- -- 132
+* -- 466
+:= -- 901
+add.period$ -- 33
+call.type$ -- 11
+change.case$ -- 77
+chr.to.int$ -- 11
+cite$ -- 22
+duplicate$ -- 259
+empty$ -- 413
+format.name$ -- 149
+if$ -- 1216
 int.to.chr$ -- 1
 int.to.str$ -- 1
-missing$ -- 10
-newline$ -- 58
-num.names$ -- 40
-pop$ -- 148
+missing$ -- 11
+newline$ -- 63
+num.names$ -- 44
+pop$ -- 160
 preamble$ -- 1
-purify$ -- 61
+purify$ -- 66
 quote$ -- 0
-skip$ -- 214
+skip$ -- 229
 stack$ -- 0
-substring$ -- 132
-swap$ -- 45
+substring$ -- 134
+swap$ -- 46
 text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 110
+type$ -- 121
 warning$ -- 0
-while$ -- 39
+while$ -- 42
 width$ -- 0
-write$ -- 131
+write$ -- 143
