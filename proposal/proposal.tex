@@ -108,7 +108,11 @@ Conversation modeling is a famous task that allows machine to generate reasonabl
 
 In this project, we plan to improve the model performance based on previous works by incorporating latent information in the model by discovering several existing in variational methods. Especially, we are interested in RNN based variational autoencoder (VAE), that can seamlessly concatenate the seq2seq model with fine tuned regularizations.
 
-In this proposal, we will first introduce some related works in the recent years from sequence to sequence model to the well known variational autoencoder. How do people bridge them, and what is the existing methods we can do that? Beyond that, we've also covered the review in generative adversarial network (GAN) and its application in improving the performance of variational autoencoder from the recent progress. Finally in the plan part, we proposed four potential approaches through four different perspectives that might improve the task in dialogue generation.
+In this proposal, we will first introduce some related works in the recent years from sequence to sequence model to the well known variational autoencoder. How do people bridge them, and what is the existing methods we can do that? Beyond that, we've also covered the review in generative adversarial network (GAN) and its application in improving the performance of variational autoencoder from the recent progress. 
+
+In the plan part, we propose four potential approaches through four different perspectives that might potentially improve the task in dialogue generation.
+
+ Firstly, can we use use the existing recurrent variational method \cite{vrnn} in training of our seq2seq model? Or can we borrow the ideas from the works done in machine translation \cite{vnmt} and see how they deal with the variational seq2seq? Secondly, can we unsupervisely learn a dense vector with sequence input \cite{vrae} and use that encoded vector, along with the vector encoded by seq2seq model, to the decoder of seq2seq model simultaneously? Thirdly, can we further improve the attention mechanism with variational inference? Lastly, can we use adversarial training of our variational model with the recent progress on that? Our project will basically around answering these four questions and explore the best potential of variational method in neural conversation model.
 
 \section{Related Works}
 
