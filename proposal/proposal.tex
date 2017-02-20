@@ -70,7 +70,7 @@
 \icmlsetsymbol{equal}{*}
 
 \begin{icmlauthorlist}
-\icmlauthor{Chaoming Yen}{equal,to}
+\icmlauthor{Chao-Ming Yen}{equal,to}
 \icmlauthor{Yikang Li}{equal,to}
 \icmlauthor{Xupeng Tong}{equal,to}
 \end{icmlauthorlist}
@@ -138,8 +138,17 @@ To be added and elaborated......
 
 
 \subsection{Variational Recurrent Neural Network}
-\cite{vrnn} 
-To be added......
+Earlier works in \cite{vrnn} introduced high-level random latent variables to recurrent neural network (RNN), empowering the model to be able to capture even higher variabilities sequential dataset such as natural speech. Differed from variational auto-encoders (VAE) used for the cases of non-sequential dataset, where latent random variables were designed to capture the variations in the observed variables. In VRNN, the recurrent network has a VAE for each time step, and these VAEs are conditioned on hidden state variable, such that
+
+\begin{align*}
+\bf x_t \bf | z_t \sim \mathcal{N}(\bf \mu _{x,t}, diag(\sigma _{x,t}^2)), where [\bf \mu _{x,t}, \sigma _{x,t}^2] = \varphi^{dec}_{\tau}(\varphi^{\bf z}_{\tau}(\bf z_t),\bf h_{t-1})
+\end{align*}
+
+extract sequential features, and hidden states of RNN can be updated using recurrence equation
+
+\begin{align*}
+\bf h_t = f_\theta(\varphi^{\bf x}_\tau (\bf x _t), \varphi^{\bf z}_\tau (\bf z_t), \bf h_{t-1})
+\end{align*}
 
 \subsection{Generative Adversarial Network} 
 \cite{gan} 
