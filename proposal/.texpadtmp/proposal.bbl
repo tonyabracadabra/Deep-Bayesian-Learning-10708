@@ -1,4 +1,4 @@
-\begin{thebibliography}{11}
+\begin{thebibliography}{10}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -44,11 +44,6 @@ Goodfellow, Ian, Pouget-Abadie, Jean, Mirza, Mehdi, Xu, Bing, Warde-Farley,
 Kingma, Diederik~P and Welling, Max.
 \newblock Auto-encoding variational bayes.
 \newblock \emph{arXiv preprint arXiv:1312.6114}, 2013.
-
-\bibitem[Li et~al.(2017)Li, Monroe, Shi, Ritter, and Jurafsky]{ganncm}
-Li, Jiwei, Monroe, Will, Shi, Tianlin, Ritter, Alan, and Jurafsky, Dan.
-\newblock Adversarial learning for neural dialogue generation.
-\newblock \emph{arXiv preprint arXiv:1701.06547}, 2017.
 
 \bibitem[Mescheder et~al.(2017)Mescheder, Nowozin, and Geiger]{aae}
 Mescheder, Lars, Nowozin, Sebastian, and Geiger, Andreas.
