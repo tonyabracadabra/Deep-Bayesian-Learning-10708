@@ -191,9 +191,9 @@ Following the work in \cite{vnmt}, which introduces a variational model for neur
 Besides the work mentioned above, variational recurrent neural network (VRNN) is probabily the first approach in capturing the latent temporal dependencies of RNN using variational inference \cite{vrnn}. The model explicitly models the dependencies between latent random variables across subsequent timesteps. To the best of our knowledge, VRNN have not been applied to the seq2seq model.
 
 \subsection{Incorporating latent information unsupervisely as the input to Seq2Seq model}
-Since sometimes, incorporating the latent variable into the training process directly may be hard. We consider an alternative approach that, instead of learn the latent variable through an end to end one way pass method. We can train a Variational Recurrent Auto-Encoder \cite{vrae} for each sentences first. VRAE is a variational autoencoder that can be used for the unsupervised learning on time series data, mapping the time series data to a latent vector representation. 
+Since sometimes, incorporating the latent variable into the training process directly may be hard. We consider and alternative approach such that, instead of learning the latent variable end to end through with pass method, we can learn the latent variable for the corpus of sentences by training a Variational Recurrent Auto-Encoder \cite{vrae}. VRAE is a variational autoencoder that can be used for the unsupervised learning on time series data, mapping the time series data to its latent vector representation.
 
-By appending the latent vector representation of each sentences along with the vector encoded by the seq2seq encoder, we naturally incorporate latent information of the sentence and that could serve as the input to be fed into the decoder phase.
+By appending the latent vector representation of each sentences along with the vector encoded by the seq2seq encode r, we naturally incorporate latent information of the sentence and that could serve as the input to be fed into the decoder phase.
 
 \subsection{Improving the attention alignment model by variational inference }
 
@@ -202,7 +202,7 @@ One potential issue with this seq2seq model is that a neural network needs to be
 The affect of the alignment model has become one of the most important features of state-of-art sequence to sequence models. By incorporating latent variables in this particular part through variational method may gives us a boost in the model performance. Incorporating variational inference with a well defined end-to-end model is generally hard, coordinate descent that bridges the end to end training and the variational inference might be one possible approach that we will try giving the attention more probabilistic sensing.
 
 \subsection{Adversarial Variational Inference}
-Improving the above mentioned variational method with GAN is generally a very interesting approach as proposed in \cite{aae}. After all the experiment if we have succeeded as mention above, we will make a bold step in the adversarial training of our model.
+Improving the above mentioned variational autoencoder with GAN is generally a very interesting topic as proposed in \cite{aae}. After all the experiments as mention above, we will make a bold step toward the adversarial training of our recurrent variational seq2seq model.
 
 \bibliography{refs}
 \bibliographystyle{icml2017}
