@@ -21,6 +21,9 @@
 \usepackage{algorithm}
 \usepackage{algorithmic}
 
+% For math equations
+\usepackage{amsmath}
+
 % As of 2011, we use the hyperref package to produce hyperlinks in the
 % resulting PDF.  If this breaks your system, please commend out the
 % following usepackage line and replace \usepackage{icml2017} with
@@ -141,8 +144,18 @@ To be added......
 \subsection{Generative Adversarial Network} 
 \cite{gan} 
  
-\cite{ganncm} 
-To be added...... 
+\cite{ganncm}
+
+Generative adversarial network is a framework containing a generative network and a discriminative network. The idea of GAN comes from zero-sum game in game theory, where two players (networks) compete against each other. The generative network is taught to map from a latent space to a particular data distribution of interest, and the discriminative network is simultaneously taught to discriminate between samples from the true data distribution and synthesized samples produced by the generator.
+
+In order to learn generator's distribution $p_g$ over data $x$, GAN introduces a prior noise on input noise variables $p_z(z)$, then represent a mapping to data space as $G(z;\theta_g)$ and denote the probability that samples come from real data instead of generator as $D(x)$. The discriminator is trained to maximize the probability of assigning the correct label to both real samples and generated samples. i.e. $\log D(x)$. The generator is trained simultaneously to maximize discriminator's error, or equally minimize $\log (1-D(G(z)))$. Overall, we are optimizing the adversarial loss:
+\begin{align*}
+& \min_G \max_D V(D,G) \\
+= & E_{x\sim p_{data}(x)}[\log D(x)] + E_{z\sim p_z(z)}[\log (1-D(G(z)))]
+\end{align*}
+Further, the author shows that with purely back-propagation, the algorithm can achieve global optimality, which means $p_g$ converges to $p_{data}$.
+
+The idea of GAN has enjoyed great success in computer vision in terms of generating images that look authentic to human observers. What's more, recent researcher also apply GAN to the field of dialogue generation. They first pre-train the generative model by predicting target sequences given the conversation history using a SEQ2SEQ model with attention mechanism. They also pre-train the discriminator and conduct data processing to improve response quality. In addition to adversarial training, they also proposed a model for adversarial evaluation that uses success in fooling an adversary as a dialogue evaluation metric.
 
 \section{Datasets}
 
