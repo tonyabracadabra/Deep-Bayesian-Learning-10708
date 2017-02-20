@@ -100,7 +100,7 @@
 %\footnotetext{hi}
 
 \begin{abstract} 
-Dialogue generation or conversation model has been offered with great promise in the recent year thanks to the development of sequence to sequence model proposed in 2014. Sequence to sequence model can be seen as a special member of the encoder-decoders family that utilizes RNN (recurrent neural network) to learn the conditional distribution of a target sentence given a source sentence with end to end optimization. Variational autoencoder (VAE) is a very promising model that neatly combines the strength of deep learning and variational Bayesian methods with reparameterization and well crafted objective function for optimization. In this project, we want to explore the strength of both the seq2seq model and variational methods including variational autoencoder  in the application of dialogue generation task. We are also interested in incorporating the generic adversarial network (GAN) to our model enlightened by the recent research in combining VAE with GAN. Finally, we will discuss the attention mechanism associate with seq2seq model and ways we can improve it.
+Dialogue generation or conversation model has been offered with great promise in the recent year thanks to the development of sequence to sequence model proposed in 2014. Sequence to sequence model can be seen as a special member of the encoder-decoders family that utilizes RNN (recurrent neural network) to learn the conditional distribution of a target sentence given a source sentence with end to end optimization. Variational autoencoder (VAE) is a very promising model that neatly combines the strength of deep learning and variational Bayesian methods with re-parameterization and well crafted objective function for optimization. In this project, we want to explore the strength of both the seq2seq model and variational methods including variational autoencoder  in the application of dialogue generation task. We are also interested in incorporating the generic adversarial network (GAN) to our model enlightened by the recent research in combining VAE with GAN. Finally, we will discuss the attention mechanism associate with seq2seq model and ways we can improve it.
 \end{abstract} 
 
 \section{Introduction}
@@ -112,7 +112,7 @@ In this proposal, we will first introduce some related works in the recent years
 
 In the plan part, we propose four potential approaches through four different perspectives that might potentially improve the task in dialogue generation.
 
- Firstly, can we use use the existing recurrent variational method \cite{vrnn} in training of our seq2seq model? Or can we borrow the ideas from the works done in machine translation \cite{vnmt} and see how they deal with the variational seq2seq? Secondly, can we unsupervisely learn a dense vector with sequence input \cite{vrae} and use that encoded vector, along with the vector encoded by seq2seq model, to the decoder of seq2seq model simultaneously? Thirdly, can we further improve the attention mechanism with variational inference? Lastly, can we use adversarial training of our variational model with the recent progress on that? Our project will basically around answering these four questions and explore the best potential of variational method in neural conversation model.
+ Firstly, can we use use the existing recurrent variational method \cite{vrnn} in training of our seq2seq model? Or can we borrow the ideas from the works done in machine translation \cite{vnmt} and see how they deal with the variational seq2seq? Secondly, can we learn a dense vector in an unsupervised way with sequence input \cite{vrae} and use that encoded vector, along with the vector encoded by seq2seq model, to the decoder of seq2seq model simultaneously? Thirdly, can we further improve the attention mechanism with variational inference? Lastly, can we use adversarial training of our variational model with the recent progress on that? Our project will basically around answering these four questions and explore the best potential of variational method in neural conversation model.
 
 \section{Related Works}
 
@@ -120,13 +120,13 @@ In the plan part, we propose four potential approaches through four different pe
 
 Sequence To Sequence model is first introduced in \cite{seq2seq}, and since then, has become the standard model for dialogue systems \cite{ncm} and machine translation. It consists of two RNNs (Recurrent Neural Network) : An Encoder and a Decoder. The encoder takes a words sequence as input and processes one word at each time step. 
 
-The objective is to convert symbol sequence into a fixed size feature vector that encodes the important information in the sequence while losing the redundant or unneccesary information.
+The objective is to convert symbol sequence into a fixed size feature vector that encodes the important information in the sequence while losing the redundant or unnneccesary information.
 
 Neural Conversational Model has been greatly improved a lot recently along with the development of seq2seq model, thanks to the attention mechanism \cite{attention}. Instead of generating each word in the target sequence all depending on a single vector encoded by the encoder, attention mechanism introduces an alignment model so each word in the target sequence can be produced by the linear combination of all the intermediate output in the encoding phase. 
 
 \subsection{Auto-Encoding Variational Bayes}
 
-Variational autoencoder (VAE) \cite{vae} has successfully injected the probabilistic flavor in the basic autoencoder by reparameterization and reconstruction of the outputs as probabilistic random variables within a model and approximate objective function that can conducted end to end training.
+Variational autoencoder (VAE) \cite{vae} has successfully injected the probabilistic flavor in the basic autoencoder by re-parameterization and reconstruction of the outputs as probabilistic random variables within a model and approximate objective function that can conducted end to end training.
 
 Given an observed variable $x$, VAE introduces a continuous latent variable z, and assumes that $x$ is generated from $z$
 
@@ -134,13 +134,13 @@ $$p(x,z) = p(x|z)p(z)$$
 
 The prior over the latent random variables, $p(z)$, is always chosen to be a simple Gaussian distribution and the conditional $p(x|z)$ is an arbitrary observation model whose parameters are computed by a parametric function of $z$. 
 
-In VAE, $p(x|z)$ plays a role as parameterized function approximator (neural network). The generative model $p(x|z)$ and inference model $q(z|x)$ are trained jointly by maximizing the variational lower bound with respect to their parameters, where the integral with respect to $q(z|x)$ is approximated stochastically. The gradient of this estimate can have a low variance estimate, by reparametrizing $z = \mu+\sigma\odot\epsilon$
+In VAE, $p(x|z)$ plays a role as parameterized function approximator (neural network). The generative model $p(x|z)$ and inference model $q(z|x)$ are trained jointly by maximizing the variational lower bound with respect to their parameters, where the integral with respect to $q(z|x)$ is approximated stochastically. The gradient of this estimate can have a low variance estimate, by re-parametrizing $z = \mu+\sigma\odot\epsilon$
 
 We can formulate the above problem as minimizing the KL divergence of these two distributions, however it is generally hard to actually compute it. Alternatively, VAE chooses to optimize some thing that is equivalent to the KL up to an added constant,
 
 $$\text{ELBO}_i (\lambda) = E_{q\lambda (z|x_i)}[\log p(x_i|z)]-KL(q\lambda (z|x_i)||p(z))$$ 
 
-called Evidence Lower BOund (ELBO).
+called Evidence Lower Bound (ELBO).
 
 With the perspective from bayesian statistics, the encoder becomes a variational inference network, mapping observed inputs to its approximate posterior distributions over the latent space, while the decoder works as a generative network that maps arbitrary latent coordinates back to distributions over the original space.
 
@@ -205,9 +205,9 @@ Since variational inference can model complex multimodal distributions, and the 
 
 Following the work in \cite{vnmt}, which introduces a variational model for neural machine translation that incorporates a continuous latent variable $z$ to model the underlying semantics of sentence pairs, we can also apply it to our neural conversation model that uses the same seq2seq model. 
 
-Besides the work mentioned above, variational recurrent neural network (VRNN) is probabily the first approach in capturing the latent temporal dependencies of RNN using variational inference \cite{vrnn}. The model explicitly models the dependencies between latent random variables across subsequent timesteps. To the best of our knowledge, VRNN have not been applied to the seq2seq model.
+Besides the work mentioned above, variational recurrent neural network (VRNN) is probably the first approach in capturing the latent temporal dependencies of RNN using variational inference \cite{vrnn}. The model explicitly models the dependencies between latent random variables across subsequent timesteps. To the best of our knowledge, VRNN have not been applied to the seq2seq model.
 
-\subsection{Incorporating latent information unsupervisely as the input to Seq2Seq model}
+\subsection{Incorporating latent information unsupervisedly as the input to Seq2Seq model}
 Since sometimes, incorporating the latent variable into the training process directly may be hard. We consider an alternative approach that, instead of learn the latent variable through an end to end one way pass method. We can train a Variational Recurrent Auto-Encoder \cite{vrae} for each sentences first. VRAE is a variational autoencoder that can be used for the unsupervised learning on time series data, mapping the time series data to a latent vector representation. 
 
 By appending the latent vector representation of each sentences along with the vector encoded by the seq2seq encoder, we naturally incorporate latent information of the sentence and that could serve as the input to be fed into the decoder phase.
