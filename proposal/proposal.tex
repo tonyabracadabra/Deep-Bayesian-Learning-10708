@@ -122,6 +122,8 @@ Sequence To Sequence model is first introduced in \cite{seq2seq}, and since then
 
 The objective is to convert symbol sequence into a fixed size feature vector that encodes the important information in the sequence while losing the redundant or unneccesary information.
 
+Neural Conversational Model has been greatly improved a lot recently along with the development of seq2seq model, thanks to the attention mechanism \cite{attention}. Instead of generating each word in the target sequence all depending on a single vector encoded by the encoder, attention mechanism introduces an alignment model so each word in the target sequence can be produced by the linear combination of all the intermediate output in the encoding phase. 
+
 \subsection{Auto-Encoding Variational Bayes}
 
 Variational autoencoder (VAE) \cite{vae} has successfully injected the probabilistic flavor in the basic autoencoder by reparameterization and reconstruction of the outputs as probabilistic random variables within a model and approximate objective function that can conducted end to end training.
@@ -174,7 +176,7 @@ Recently, works like adversarial autoencoders (AAE) \cite{aae} integrates the po
 
 \section{Datasets}
 
-We will test our model on the OpenSubtitles dataset \cite{opensubtitle}. This dataset has included movie subtitles with sentences uttered by characters, since the taking of the characters in the dataset is not so clear, every two consecutive sentences will be treated as training data we have. Our model will be trained to predict the next sentence given the  previous one, for every sentence pairs in the training data, so each sentence will be used both for context and as target.
+We will test our model on the OpenSubtitles dataset \cite{opensubtitle}. This dataset has included movie subtitles with sentences uttered by characters, since the taking of the characters in the dataset is not so clear, every two consecutive sentences will be treated as training data we have. Our model will be trained to predict the next sentence given the  previous one, for every sentence pairs in the training data, so each sentence  will be used both for context and as target.
 
 The performance of dialogue generation will be scored by BLEU by the sentences generated on the testing data. 
  
@@ -182,11 +184,11 @@ The performance of dialogue generation will be scored by BLEU by the sentences g
 \section{Plan}
 
 \subsection{Incorporating latent variables in the training of Seq2Seq model}
-There are various ways that allow us to improve our model by combining seq2seq and variational inference.
+Since variational inference can model complex multimodal distributions, and the underlying true data distribution of natural language itself might consists of multimodal conditional distributions, it is natural to extend models in RNN with variational inference.
 
 Following the work in \cite{vnmt}, which introduces a variational model for neural machine translation that incorporates a continuous latent variable $z$ to model the underlying semantics of sentence pairs, we can also apply it to our neural conversation model that uses the same seq2seq model. 
 
-We can also apply the method proposed by \cite{vrnn}, that explicitly models the dependencies between latent random variables across subsequent timesteps.
+Besides the work mentioned above, variational recurrent neural network (VRNN) is probabily the first approach in capturing the latent temporal dependencies of RNN using variational inference \cite{vrnn}. The model explicitly models the dependencies between latent random variables across subsequent timesteps. To the best of our knowledge, VRNN have not been applied to the seq2seq model.
 
 \subsection{Incorporating latent information unsupervisely as the input to Seq2Seq model}
 Since sometimes, incorporating the latent variable into the training process directly may be hard. We consider an alternative approach that, instead of learn the latent variable through an end to end one way pass method. We can train a Variational Recurrent Auto-Encoder \cite{vrae} for each sentences first. VRAE is a variational autoencoder that can be used for the unsupervised learning on time series data, mapping the time series data to a latent vector representation. 
