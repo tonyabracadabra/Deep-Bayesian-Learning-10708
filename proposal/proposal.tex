@@ -100,16 +100,15 @@
 %\footnotetext{hi}
 
 \begin{abstract} 
-Dialogue generation or conversation model has been offered with great promise in the recent year thanks to the development of sequence to sequence model proposed in 2014. Sequence to sequence model can be seen as a special member of the encoder-decoders family that utilizes RNN (recurrent neural network) to learn the conditional distribution of a target sentence given a source sentence with end to end optimization. Variational autoencoder (VAE) is a very promising model that neatly combines the strength of deep learning and variational Bayesian methods with reparameterization and well crafted objective function for optimization. In this project, we want to explore the strength of both the seq2seq model and variational methods including variational autoencoder in the application of dialogue generation task. We are also interested in incorporating the generic adversarial network (GAN) to our model enlightened by the recent research in combining VAE with GAN. Finally, we will discuss the attention mechanism associate with seq2seq model and ways we can improve it.
+Dialogue generation or conversation model has been offered with great promise in the recent year thanks to the development of sequence to sequence model proposed in 2014. Sequence to sequence model can be seen as a special member of the encoder-decoders family that utilizes RNN (recurrent neural network) to learn the conditional distribution of a target sentence given a source sentence with end to end optimization. Variational autoencoder (VAE) is a very promising model that neatly combines the strength of deep learning and variational Bayesian methods with reparameterization and well crafted objective function for optimization. In this project, we want to explore the strength of both the seq2seq model and variational methods including variational autoencoder  in the application of dialogue generation task. We are also interested in incorporating the generic adversarial network (GAN) to our model enlightened by the recent research in combining VAE with GAN. Finally, we will discuss the attention mechanism associate with seq2seq model and ways we can improve it.
 \end{abstract} 
 
 \section{Introduction}
 Conversation modeling is a famous task that allows machine to generate reasonable responses according to the sentence it is shown. Previously, fair amount of works have done.
 
-In this project, we plan to improve the model performance based on previous works by incorporating latent information in the model by discovering several existing in variational methods. Especially, we are interested in RNN based variational autoencoder, that can seamlessly concatenate the seq2seq model with fine tuned regularizations.
+In this project, we plan to improve the model performance based on previous works by incorporating latent information in the model by discovering several existing in variational methods. Especially, we are interested in RNN based variational autoencoder (VAE), that can seamlessly concatenate the seq2seq model with fine tuned regularizations.
 
-To be added......
-
+In this proposal, we will first introduce some related works in the recent years from sequence to sequence model to the well known variational autoencoder. How do people bridge them, and what is the existing methods we can do that? Beyond that, we've also covered the review in generative adversarial network (GAN) and its application in improving the performance of variational autoencoder from the recent progress. Finally in the plan part, we proposed four potential approaches through four different perspectives that might improve the task in dialogue generation.
 
 \section{Related Works}
 
