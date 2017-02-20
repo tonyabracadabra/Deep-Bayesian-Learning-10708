@@ -140,9 +140,9 @@ To be added and elaborated......
 \subsection{Variational Recurrent Neural Network}
 Earlier works in \cite{vrnn} introduced high-level random latent variables to recurrent neural network (RNN), empowering the model to be able to capture even higher variabilities sequential dataset such as natural speech. Differed from variational auto-encoders (VAE) used for the cases of non-sequential dataset, where latent random variables were designed to capture the variations in the observed variables. In VRNN, the recurrent network has a VAE for each time step, and these VAEs are conditioned on hidden state variable, such that
 
-\begin{align*}
-\bf x_t \bf | z_t \sim \mathcal{N}(\bf \mu _{x,t}, diag(\sigma _{x,t}^2)), where [\bf \mu _{x,t}, \sigma _{x,t}^2] = \varphi^{dec}_{\tau}(\varphi^{\bf z}_{\tau}(\bf z_t),\bf h_{t-1})
-\end{align*}
+$$\bf x_t \bf | z_t \sim \mathcal{N}(\bf \mu _{x,t}, diag(\sigma _{x,t}^2)$$
+where,
+$$[\bf \mu _{x,t}, \sigma _{x,t}^2] = \varphi^{dec}_{\tau}(\varphi^{\bf z}_{\tau}(\bf z_t),\bf h_{t-1})$$
 
 extract sequential features, and hidden states of RNN can be updated using recurrence equation
 
@@ -151,11 +151,10 @@ extract sequential features, and hidden states of RNN can be updated using recur
 \end{align*}
 
 \subsection{Generative Adversarial Network} 
-\cite{gan} 
- 
+
 \cite{ganncm}
 
-Generative adversarial network is a framework containing a generative network and a discriminative network. The idea of GAN comes from zero-sum game in game theory, where two players (networks) compete against each other. The generative network is taught to map from a latent space to a particular data distribution of interest, and the discriminative network is simultaneously taught to discriminate between samples from the true data distribution and synthesized samples produced by the generator.
+Generative adversarial network \cite{gan} is a framework containing a generative network and a discriminative network. The idea of GAN comes from zero-sum game in game theory, where two players (networks) compete against each other. The generative network is taught to map from a latent space to a particular data distribution of interest, and the discriminative network is simultaneously taught to discriminate between samples from the true data distribution and synthesized samples produced by the generator.
 
 In order to learn generator's distribution $p_g$ over data $x$, GAN introduces a prior noise on input noise variables $p_z(z)$, then represent a mapping to data space as $G(z;\theta_g)$ and denote the probability that samples come from real data instead of generator as $D(x)$. The discriminator is trained to maximize the probability of assigning the correct label to both real samples and generated samples. i.e. $\log D(x)$. The generator is trained simultaneously to maximize discriminator's error, or equally minimize $\log (1-D(G(z)))$. Overall, we are optimizing the adversarial loss:
 
@@ -167,6 +166,8 @@ In order to learn generator's distribution $p_g$ over data $x$, GAN introduces a
 Further, the author shows that with purely back-propagation, the algorithm can achieve global optimality, which means $p_g$ converges to $p_{data}$.
 
 The idea of GAN has enjoyed great success in computer vision in terms of generating images that look authentic to human observers. What's more, recent researcher also apply GAN to the field of dialogue generation. They first pre-train the generative model by predicting target sequences given the conversation history using a SEQ2SEQ model with attention mechanism. They also pre-train the discriminator and conduct data processing to improve response quality. In addition to adversarial training, they also proposed a model for adversarial evaluation that uses success in fooling an adversary as a dialogue evaluation metric.
+
+Recently, works like adversarial autoencoders (AAE) \cite{ganncm} integrates the power of GAN with another famous generative model variational autoencoder (VAE) to perform variational inference by matching the aggregated posterior of the hidden code vector of the autoencoder with an arbitrary prior distribution, have shown a very interesting and promising aspect in this model in its application to the variational inference .
 
 \section{Datasets}
 
