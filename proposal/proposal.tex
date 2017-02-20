@@ -116,15 +116,11 @@ To be added......
 
 \subsection{Neural Conversational Model}
 
-Sequence To Sequence model is first introduced in \cite{seq2seq}, and since then, has become the standard model for dialogue systems and machine translation. It consists of two RNNs (Recurrent Neural Network) : An Encoder and a Decoder. The encoder takes a words sequence as input and processes one word at each time step. The objective is to convert symbol sequence into a fixed size feature vector that encodes the important information in the sequence while losing the redundant or unneccesary information.
+Sequence To Sequence model is first introduced in \cite{seq2seq}, and since then, has become the standard model for dialogue systems \cite{ncm} and machine translation. It consists of two RNNs (Recurrent Neural Network) : An Encoder and a Decoder. The encoder takes a words sequence as input and processes one word at each time step. 
 
-
-
-\cite{ncm}
-\cite{seq2seq}
+The objective is to convert symbol sequence into a fixed size feature vector that encodes the important information in the sequence while losing the redundant or unneccesary information.
 
 \subsection{Auto-Encoding Variational Bayes}
-\cite{vae}
 
 Variational autoencoder (VAE) \cite{vae} has successfully injected the probabilistic flavor in the basic autoencoder by reparameterization and reconstruction of the outputs as probabilistic random variables within a model and approximate objective function that can conducted end to end training.
 
