@@ -179,7 +179,7 @@ The performance of dialogue generation will be scored by BLEU by the sentences g
 \section{Plan}
 
 \subsection{Incorporating latent variables in the training of Seq2Seq model}
-There are various ways that allow us to improve our model with seq2seq 
+There are various ways that allow us to improve our model by combining seq2seq and variational inference.
 
 Following the work in \cite{vnmt}, which introduces a variational model for neural machine translation that incorporates a continuous latent variable $z$ to model the underlying semantics of sentence pairs, we can also apply it to our neural conversation model that uses the same seq2seq model. 
 
