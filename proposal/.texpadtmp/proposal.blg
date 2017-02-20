@@ -1,6 +1,10 @@
 This is BibTeX, Version 0.99d (TeX Live 2016)
 Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: /Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.aux
+White space in argument---line 27 of file /Users/xupengtong/Courses/10708/project/proposal/.texpadtmp/proposal.aux
+ : \citation{aae
+ :               }
+I'm skipping whatever remains of this command
 The style file: ../icml2017.bst
 Database file #1: ../refs.bib
 You've used 11 entries,
@@ -44,3 +48,4 @@ warning$ -- 0
 while$ -- 42
 width$ -- 0
 write$ -- 143
+(There was 1 error message)

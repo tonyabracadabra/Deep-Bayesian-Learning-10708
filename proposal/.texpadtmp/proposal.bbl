@@ -50,7 +50,7 @@ Li, Jiwei, Monroe, Will, Shi, Tianlin, Ritter, Alan, and Jurafsky, Dan.
 \newblock Adversarial learning for neural dialogue generation.
 \newblock \emph{arXiv preprint arXiv:1701.06547}, 2017.
 
-\bibitem[Mescheder et~al.(2017)Mescheder, Nowozin, and Geiger]{avb}
+\bibitem[Mescheder et~al.(2017)Mescheder, Nowozin, and Geiger]{aae}
 Mescheder, Lars, Nowozin, Sebastian, and Geiger, Andreas.
 \newblock Adversarial variational bayes: Unifying variational autoencoders and
   generative adversarial networks.

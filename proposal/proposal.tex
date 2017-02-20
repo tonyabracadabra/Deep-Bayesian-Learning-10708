@@ -126,15 +126,23 @@ Sequence To Sequence model is first introduced in \cite{seq2seq}, and since then
 \subsection{Auto-Encoding Variational Bayes}
 \cite{vae}
 
+Variational autoencoder (VAE) \cite{vae} has successfully injected the probabilistic flavor in the basic autoencoder by reparameterization and reconstruction of the outputs as probabilistic random variables within a model and approximate objective function that can conducted end to end training.
+
 Given an observed variable $x$, VAE introduces a continuous latent variable z, and assumes that $x$ is generated from $z$
+
 $$p(x,z) = p(x|z)p(z)$$
-The prior over the latent random variables, $p(z)$, is always chosen to be a simple Gaussian distribution and the conditional $p(x|z)$ is an arbitrary observation model whose parameters are computed by a parametric function of z. 
-In VAE, $p(x|z)$ is typically parameterized function approximator such as a neural network. While latent random variable models of the form given in Eq. (3) are not uncommon, endowing the conditional $p(x|z)$ as a potentially highly non-linear mapping from z to x is a rather unique feature of the VAE.
 
-The generative model $p(x|z)$ and inference model $q(z|x)$ are trained jointly by maximizing the variational lower bound with respect to their parameters, where the integral with respect to $q(z|x)$ is approximated stochastically. The gradient of this estimate can have a low variance estimate, by reparametrizing $z = \mu+\sigma\odot\epsilon$
+The prior over the latent random variables, $p(z)$, is always chosen to be a simple Gaussian distribution and the conditional $p(x|z)$ is an arbitrary observation model whose parameters are computed by a parametric function of $z$. 
 
-$$ELBO_i (\lambda) = E_{q\lambda (z|x_i)}[\log p(x_i|z)]-KL(q\lambda (z|x_i)||p(z))$$ 
-To be added and elaborated......
+In VAE, $p(x|z)$ plays a role as parameterized function approximator (neural network). The generative model $p(x|z)$ and inference model $q(z|x)$ are trained jointly by maximizing the variational lower bound with respect to their parameters, where the integral with respect to $q(z|x)$ is approximated stochastically. The gradient of this estimate can have a low variance estimate, by reparametrizing $z = \mu+\sigma\odot\epsilon$
+
+We can formulate the above problem as minimizing the KL divergence of these two distributions, however it is generally hard to actually compute it. Alternatively, VAE chooses to optimize some thing that is equivalent to the KL up to an added constant,
+
+$$\text{ELBO}_i (\lambda) = E_{q\lambda (z|x_i)}[\log p(x_i|z)]-KL(q\lambda (z|x_i)||p(z))$$ 
+
+called Evidence Lower BOund (ELBO).
+
+With the perspective from bayesian statistics, the encoder becomes a variational inference network, mapping observed inputs to its approximate posterior distributions over the latent space, while the decoder works as a generative network that maps arbitrary latent coordinates back to distributions over the original space.
 
 
 \subsection{Variational Recurrent Neural Network}
@@ -167,7 +175,7 @@ Further, the author shows that with purely back-propagation, the algorithm can a
 
 The idea of GAN has enjoyed great success in computer vision in terms of generating images that look authentic to human observers. What's more, recent researcher also apply GAN to the field of dialogue generation. They first pre-train the generative model by predicting target sequences given the conversation history using a SEQ2SEQ model with attention mechanism. They also pre-train the discriminator and conduct data processing to improve response quality. In addition to adversarial training, they also proposed a model for adversarial evaluation that uses success in fooling an adversary as a dialogue evaluation metric.
 
-Recently, works like adversarial autoencoders (AAE) \cite{ganncm} integrates the power of GAN with another famous generative model variational autoencoder (VAE) to perform variational inference by matching the aggregated posterior of the hidden code vector of the autoencoder with an arbitrary prior distribution, have shown a very interesting and promising aspect in this model in its application to the variational inference .
+Recently, works like adversarial autoencoders (AAE) \cite{aae } integrates the power of GAN with another famous generative model variational autoencoder (VAE) to perform variational inference by matching the aggregated posterior of the hidden code vector of the autoencoder with an arbitrary prior distribution, have shown a very interesting and promising aspect in this model in its application to the variational inference .
 
 \section{Datasets}
 
@@ -175,6 +183,7 @@ We will tested our model on the OpenSubtitles
 dataset \cite{opensubtitle}. This is a dataset that incorporated movie subtitles with sentences uttered by characters.
 The model will be trained to predict the next sentence given the previous one, for every consecutive sentences, and each sentence will be used both for context and as target.
 
+The performance of our model will be scored by BLEU by the sentences generated on the testing data. 
  
 
 \section{Plan}
@@ -195,10 +204,10 @@ By appending the latent vector representation of each sentences along with the v
 
 One potential issue with this seq2seq model is that a neural network needs to be able to compress all the necessary information of a source sentence into a fixed-length vector. To allow the decoder access to the input more directly, an attention mechanism was introduced in \cite{attention}.
 
-The affect of the alignment model has become one of the most important feature of state-of-art sequence to sequence models. By incorporating latent variables in this particular part through variational method may gives us a boost in the model performance.
+The affect of the alignment model has become one of the most important features of state-of-art sequence to sequence models. By incorporating latent variables in this particular part through variational method may gives us a boost in the model performance. Incorporating variational inference with a well defined end-to-end model is generally hard, coordinate descent that bridges the end to end training and the variational inference might be one possible approach that we will try giving the attention more probabilistic sensing.
 
 \subsection{Adversarial Variational Inference}
-Improving the above mentioned variational method with Generic Adversarial Network (GAN) as proposed in \cite{avb}
+Improving the above mentioned variational method with GAN is generally a very interesting approach as proposed in \cite{aae}. After all the experiment if we have succeeded as mention above, we will make a bold step in the adversarial training of our model.
 
 \bibliography{refs}
 \bibliographystyle{icml2017}
