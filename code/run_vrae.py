@@ -17,7 +17,7 @@ import pickle
 
 path = 'data/'
 
-with open(path+'word_index_conversion.p','rb') as f:
+with open(path+"word_index_conversion.p",'rb') as f:
     word_index_conversion = pickle.load(f)
     
 word2index = word_index_conversion['word2index']
@@ -25,7 +25,7 @@ index2word = word_index_conversion['index2word']
 
 lookup_matrix = np.load(path+'word2vec.npy')
 
-lookup_matrix = np.zeros((100,20))
+# lookup_matrix = np.zeros((100,20))
 
 sentences = np.load(path+'sentences_as_list.npy')
 
@@ -36,23 +36,22 @@ filtered_sentences = filter(lambda x:len(x) > 2, filtered_sentences)
 idxes = [[word2index[w] for w in s] for s in filtered_sentences]
 
 # Constants
-batch_size = 32
+batch_size = 5
 time_steps = 10
 embedding_size = lookup_matrix.shape[1]
 latent_dim = 2
 hidden_dim = 256
 epochs = 50
 epsilon_std = 1.0
-# Length of the sentence
-time_steps = 5
+time_steps = 10
 epsilon_std = 1
-print_freq = 5
-max_epochs = 30
 
 padded_idxes = pad_sequences(idxes, maxlen=time_steps, dtype='int32', \
                                  padding='pre', truncating='pre', value=0.)
 
 x_train, x_test = train_test_split(padded_idxes, test_size=0.2, random_state=42)
+
+# x_train, x_test = np.zeros((50,time_steps)), np.zeros((10,time_steps))
 
 optimizer, loss, x, y = SimpleSeq2Seq(output_dim=embedding_size, output_length=time_steps, latent_dim=latent_dim, \
                                       batch_size=batch_size, epsilon_std=epsilon_std, lookup_matrix=lookup_matrix, \
@@ -62,7 +61,8 @@ with tf.Session() as sess:
     init = tf.global_variables_initializer()
     sess.run(init)
     epochs = 0
-    while epochs < max_epochs:
+    print_freq = 15
+    while epochs < 30:
         print "Epochs:" + str(epochs)
         i = 0
         while i < len(x_train):
@@ -70,5 +70,5 @@ with tf.Session() as sess:
             i += batch_size
             _, loss_val = sess.run([optimizer, loss], feed_dict={x:samples, y:samples})
             if i % print_freq == 0:
-                print "Loss :" + loss_val
+                print loss_val
         epochs += 1
