@@ -1,0 +1,10 @@
+Metadata-Version: 1.0
+Name: seq2seq
+Version: 0.1.0
+Summary: Sequence to Sequence Learning with Keras
+Home-page: https://github.com/farizrahman4u/seq2seq
+Author: Fariz Rahman
+Author-email: farizrahman4u@gmail.com
+License: GNU GPL v2
+Description: UNKNOWN
+Platform: UNKNOWN
