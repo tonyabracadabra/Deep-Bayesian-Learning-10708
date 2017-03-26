@@ -54,8 +54,6 @@ padded_idxes = pad_sequences(idxes, maxlen=time_steps, dtype='int32', \
 
 x_train, x_test = train_test_split(padded_idxes, test_size=0.2, random_state=42)
 
-x_train, x_test = np.zeros((30,time_steps)), np.zeros((10,time_steps))
-
 optimizer, loss, x, y = SimpleSeq2Seq(output_dim=embedding_size, output_length=time_steps, latent_dim=latent_dim, \
                                       batch_size=batch_size, epsilon_std=epsilon_std, lookup_matrix=lookup_matrix, \
                                       input_shape=(time_steps, embedding_size))
