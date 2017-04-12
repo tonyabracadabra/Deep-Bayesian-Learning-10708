@@ -8,7 +8,6 @@ import sys
 import json
 import re
 import pprint
-import numpy as np
 
 from gzip import GzipFile
 from tqdm import tqdm
@@ -51,9 +50,10 @@ class OpensubsData:
                     doc = self.getXML(filepath)
                     conversations.extend(self.genList(doc))
                 except ValueError:
-                    tqdm.write("Skipping file %s with errors." % filepath)                    
-                    # pprint("Unexpected error:", sys.exc_info()[0])
-                    # raise
+                    tqdm.write("Skipping file %s with errors." % filepath)
+                except:
+                    pprint("Unexpected error:", sys.exc_info()[0])
+                    raise
 
         return conversations
 
@@ -90,15 +90,24 @@ class OpensubsData:
         for idx in range(0, len(sentList) - 1):
             cur = sentList[idx]
             nxt = sentList[idx + 1]
-            if nxt[1] - cur[2] <= maxDelta and cur and nxt:
-                tmp = {}
-                tmp["lines"] = []
-                tmp["lines"].append(self.getLine(cur[0]))
-                tmp["lines"].append(self.getLine(nxt[0]))
+            if cur and nxt:
+                tmp = []
+                tmp.append(self.getLine(cur[0]))
+                tmp.append((nxt[1] - cur[2]).seconds)
                 if self.filter(tmp):
                     conversations.append(tmp)
-        
-        return conversations
+
+        gaps = [c[1] for c in conversations]
+        sentences = [c[0] for c in conversations]
+
+        start = 0
+        contexts = []
+        for end, gap in enumerate(gaps):
+            if gap > 2:
+                contexts.append(sentences[start:end+1])
+                start = end + 1
+
+        return contexts
 
     def getLine(self, sentence):
         line = {}
@@ -115,7 +124,6 @@ class OpensubsData:
         # if not question.split(' ')[0] in startwords:
         #     return False
         #
-        
         return True
 
     def getXML(self, filepath):
