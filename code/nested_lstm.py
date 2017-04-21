@@ -1,15 +1,18 @@
-from keras.layers import Dense, Dropout, Embedding, LSTM, Bidirectional
+from keras.layers import Dense, Dropout, LSTM, Bidirectional
 from keras.models import Sequential
+from keras.models.core import Lambda
 import tensorflow as tf
 import numpy as np
 import tensorflow.contrib.seq2seq as seq2seq
+from functools import partial
 
 
 # This defines the inner LSTM
-n_all_words = 100
-embedding_size = 30
-h_units_words = 40
-h_units_sentences = 50
+self.vocab_size = 100
+self.embedding_size = 30
+self.h_units_words = 40
+self.h_units_sentences = 50
+self.latent_size = 20
 
 
 batch_size = 32
@@ -23,15 +26,60 @@ PAD = 0
 # This defines the embedding matrix
 lookup_matrix = np.zeros((n_all_words, embedding_size))
 
+
+
+def _init_placeholders(self):
+    """ Everything is time-major """
+    self.encoder_inputs = tf.placeholder(
+        shape=(None, None),
+        dtype=tf.int32,
+        name='encoder_inputs',
+    )
+
+    # required for training, not required for testing
+    self.decoder_targets = tf.placeholder(
+        shape=(None, None),
+        dtype=tf.int32,
+        name='decoder_targets'
+    )
+
+# Uniform(-sqrt(3), sqrt(3)) has variance=1.
+with tf.variable_scope("embedding") as scope:
+    sqrt3 = math.sqrt(3)
+    initializer = tf.random_uniform_initializer(-sqrt3, sqrt3)
+
+    self.embedding_matrix = tf.constant(
+        lookup_matrix,
+        name="embedding_matrix")
+
+
+def embedding_func(self, embedding_input):
+    embedded = tf.nn.embedding_lookup(
+        self.embedding_matrix, embedding_input)
+
+    return embedded
+
+self.encoder_inner_cell = LSTMCell(h_units_words)
+self.encoder_outer_cell = LSTMCell(h_units_sentences)
+
+Embedding = Lambda(lambda x : self.embedding_func(x))
+
+dynamic_bilstm_inner = partial(dynamic_bilstm, self.encoder_inner_cell)
+dynamic_bilstm_outer = partial(dynamic_bilstm, self.encoder_outer_cell)
+
+DynamicInnerBiLSTM = Lambda(lambda x : dynamic_bilstm_inner(x))
+DynamicOuterBiLSTM = Lambda(lambda x : dynamic_bilstm_outer(x))
+
 inner_lstm = Sequential()
-inner_lstm.add(Embedding(input_dim=lookup_matrix.shape[0], \
-    output_dim=lookup_matrix.shape[1], input_length=output_length, weights=[lookup_matrix]))
-inner_lstm.add(LSTM(h_units_words, return_sequences=True, input_shape=(None, h_units_words)))
+inner_lstm.add(Embedding)
+inner_lstm.add(DynamicInnerBiLSTM)
+
 
 # This defines the outer LSTM
 outer_lstm = Sequential()
 # The embedding size here is the n_units_words from the inner LSTM
-outer_lstm.add(LSTM(h_units_sentences, return_sequences=False, input_shape=(None, h_units_words)))
+outer_lstm.add(DynamicOuterBiLSTM)
+
 
 '''
 Below is the nested LSTM
@@ -44,12 +92,16 @@ Encoder phase
 # (batch_size, n_words) is for inner lstm,
 # after embedding (batch_size, n_words, embedding_size)
 # after lstm, if use return_sequences=True, the output should has shape (batch_size, n_words, h_units_words)
-convs_placeholder = tf.placeholder(tf.float32, [None, 5, n_words])
 
+
+# shape = (batch_size, n_sentences, n_words)
+convs_placeholder = tf.placeholder(tf.float32, [None, None, None])
+# shape = (n_sentences, batch_size, n_words)
 convs_placeholder_trans = tf.transpose(convs_placeholder, [1,0,2])
 
 # (n_sentence, batch_size, n_words, h_units_words)
 inner_outputs = tf.map_fn(lambda x:inner_lstm(x), convs_placeholder_trans)
+
 # (batch_size, n_sentence, n_words, h_units_words)
 inner_outputs_trans = tf.transpose(inner_outputs, [1,0,2,3])
 # sum out the third dimension for the input of outer lstm
@@ -57,6 +109,21 @@ outer_lstm_input = tf.reduce_sum(inner_outputs_trans, axis=2)
 
 #  The encoded state to initialize the dynamic_rnn_decoder
 encoder_state = outer_lstm(outer_lstm_input)
+
+def reparameterizing_z(mu, logsigma):
+    sigma_std = tf.exp(0.5 * logsigma)
+    epsilon = tf.random_normal(tf.shape(sigma_std))
+    z = tf.add(mu, tf.multiply(sigma_std, epsilon))
+    return z
+
+def variational_encoder(encoder_state):
+    # get mu and sigma from encoder state
+    encoder_state_mu = tf.contrib.layers.fully_connected(encoder_state.h, self.latent_size)
+    encoder_state_logsigma = tf.contrib.layers.fully_connected(encoder_state.h, self.latent_size)
+    # reparameter to get z
+    sample_z = reparameterizing_z(encoder_state_mu, encoder_state_logsigma)
+
+
 
 # attention state for the use of apply attention to the decoder [batch_size, n_words, h_units_words]
 attention_states = inner_outputs_trans[:,-1,:,:]
