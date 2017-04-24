@@ -22,6 +22,11 @@ Model to predict the next sentence given an input sequence
 import tensorflow as tf
 from utils import *
 from tensorflow.contrib.rnn import LSTMCell, LSTMStateTuple
+import math
+from keras.layers.core import Lambda
+from keras.models import Sequential
+from functools import partial
+import tensorflow.contrib.seq2seq as seq2seq
 
 from chatbot.textdata import Batch
 
@@ -94,17 +99,19 @@ class Model:
         self.encoder_inner_cell = LSTMCell(self.args.h_units_words)
         self.encoder_outer_cell = LSTMCell(self.args.h_units_sentences)
         self.decoder_cell = LSTMCell(self.args.h_units_sentences)
+        self.lookup_matrix = lookup_matrix
 
         # (batch_size, n_words) is for inner lstm,
         # after embedding (batch_size, n_words, embedding_size)
         # after lstm, if use return_sequences=True, the output should has shape (batch_size, n_words, h_units_words)
 
+        self._define_placeholders()
         self._init_embedding(lookup_matrix)
         self._define_layers()
         # Construct the graphs
         self._buildNetwork()
 
-    def _define_placeholders():
+    def _define_placeholders(self):
         # shape = (batch_size, n_sentences, n_words)
         # This is the conversation
         self.encoder_inputs = tf.placeholder(tf.float32, [None, None, None])
@@ -112,9 +119,21 @@ class Model:
         # This is the target sequence to be predicted
         self.decoder_targets = tf.placeholder(tf.float32, [None, None, None])
 
+        # shape = (batch_size, n_sentences)
+        # number of words in sentences for inner encoder input
+        self.encoder_inner_length = tf.placeholder(tf.float32, [None, None])
+
+        # shape = (batch_size)
+        # number of sentences for outer encoder input
+        self.encoder_outer_length = tf.placeholder(tf.float32, [None])
+
+        # shape = (batch_size)
+        # number of words for decoder output
+        self.decoder_targets_length = tf.placeholder(tf.float32, [None])
+
         # (batch_size, n_words_max)
         self.decoder_weights = tf.ones([
-            batch_size,
+            self.batch_size,
             tf.reduce_max(self.decoder_train_length)
         ], dtype=tf.float32, name="loss_weights")
 
@@ -123,12 +142,10 @@ class Model:
     def _init_embedding(self, lookup_matrix):
         # Uniform(-sqrt(3), sqrt(3)) has variance=1.
         with tf.variable_scope("embedding") as scope:
-            sqrt3 = math.sqrt(3)
-            initializer = tf.random_uniform_initializer(-sqrt3, sqrt3)
-
             self.embedding_matrix = tf.constant(
                 lookup_matrix,
                 name="embedding_matrix")
+
 
     def _define_layers(self):
         self.Embedding = Lambda(lambda x : self.embedding_func(x))
@@ -139,12 +156,10 @@ class Model:
         self.DynamicInnerBiLSTM = Lambda(lambda x : dynamic_bilstm_inner(x))
         self.DynamicOuterBiLSTM = Lambda(lambda x : dynamic_bilstm_outer(x))
 
+
     def _buildNetwork(self):
         """ Create the computational graph
         """
-
-        # TODO: Create name_scopes (for better graph visualisation)
-        # TODO: Use buckets (better perfs)
 
         # Parameters of sampled softmax (needed for attention mechanism and a large vocabulary size)
         output_projection = None
@@ -209,18 +224,18 @@ class Model:
         self.encoder_state = variational_encoder(encoder_end_state, self.args.h_units_decoder)
 
         # attention state for the use of apply attention to the decoder [batch_size, n_words, h_units_words]
-        self.attention_states = inner_outputs_trans[:, -1, :, :]
+        self.attention_states = inner_lstm_outputs_trans[:, -1, :, :]
 
 
     def _init_decoder(self):
-         '''
+        '''
         Decoder phase
         '''
 
         (attention_keys,
-            attention_values,
-            attention_score_fn,
-            attention_construct_fn) = seq2seq.prepare_attention(
+        attention_values,
+        attention_score_fn,
+        attention_construct_fn) = seq2seq.prepare_attention(
                 attention_states=self.attention_states,
                 attention_option="bahdanau",
                 num_units=self.args.h_units_decoder,
@@ -236,6 +251,8 @@ class Model:
             name='attention_decoder'
         )
 
+        output_fn = lambda output: tf.contrib.layers.linear(output, self.vocab_size)
+
         decoder_fn_inference = seq2seq.attention_decoder_fn_inference(
             output_fn=output_fn,
             encoder_state=self.encoder_state,
@@ -243,7 +260,7 @@ class Model:
             attention_values=attention_values,
             attention_score_fn=attention_score_fn,
             attention_construct_fn=attention_construct_fn,
-            embeddings=lookup_matrix,
+            embeddings=self.lookup_matrix,
             start_of_sequence_id=EOS,
             end_of_sequence_id=EOS,
             maximum_length = n_words + 3,
@@ -258,7 +275,6 @@ class Model:
                 time_major=True,
                 scope=scope)
 
-        output_fn = lambda output : tf.contrib.layers.linear(outputs, self.vocab_size, scope=scope)
 
         self.decoder_logits_train = output_fn(self.decoder_outputs_train)
         self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')

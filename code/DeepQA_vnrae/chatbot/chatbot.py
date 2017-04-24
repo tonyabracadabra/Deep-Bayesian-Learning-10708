@@ -163,9 +163,12 @@ class Chatbot:
             print('Dataset created! Thanks for using this program')
             return  # No need to go further
 
+        # Initialize embeddings with pre-trained word2vec vectors
+        lookup_matrix = self.loadEmbedding(self.sess)
+
         # Prepare the model
         with tf.device(self.getDevice()):
-            self.model = Model(self.args, self.textData)
+            self.model = Model(self.args, self.textData, lookup_matrix)
 
         # Saver/summaries
         self.writer = tf.summary.FileWriter(self._getSummaryName())
@@ -192,10 +195,6 @@ class Chatbot:
         # Reload the model eventually (if it exist.), on testing mode, the models are not loaded here (but in predictTestset)
         if self.args.test != Chatbot.TestMode.ALL:
             self.managePreviousModel(self.sess)
-
-        # Initialize embeddings with pre-trained word2vec vectors
-        if self.args.initEmbeddings:
-            self.loadEmbedding(self.sess)
 
         if self.args.test:
             if self.args.test == Chatbot.TestMode.INTERACTIVE:
@@ -389,10 +388,12 @@ class Chatbot:
         """
 
         # Fetch embedding variables from model
+        '''
         with tf.variable_scope("embedding_rnn_seq2seq/rnn/embedding_wrapper", reuse=True):
             em_in = tf.get_variable("embedding")
         with tf.variable_scope("embedding_rnn_seq2seq/embedding_rnn_decoder", reuse=True):
             em_out = tf.get_variable("embedding")
+        '''
 
         # Disable training for embeddings
         variables = tf.get_collection_ref(tf.GraphKeys.TRAINABLE_VARIABLES)
@@ -445,8 +446,9 @@ class Chatbot:
             initW = np.dot(U[:, :self.args.embeddingSize], S[:self.args.embeddingSize, :self.args.embeddingSize])
 
         # Initialize input and output embeddings
-        sess.run(em_in.assign(initW))
-        sess.run(em_out.assign(initW))
+        #sess.run(em_in.assign(initW))
+        #sess.run(em_out.assign(initW))
+        return initW
 
 
     def managePreviousModel(self, sess):
