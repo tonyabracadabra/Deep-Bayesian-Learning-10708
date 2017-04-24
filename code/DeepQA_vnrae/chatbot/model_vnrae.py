@@ -99,13 +99,26 @@ class Model:
         # after embedding (batch_size, n_words, embedding_size)
         # after lstm, if use return_sequences=True, the output should has shape (batch_size, n_words, h_units_words)
 
-        # shape = (batch_size, n_sentences, n_words)
-        self.convs_placeholder = tf.placeholder(tf.float32, [None, None, None])
-
         self._init_embedding(lookup_matrix)
         self._define_layers()
         # Construct the graphs
         self._buildNetwork()
+
+    def _define_placeholders():
+        # shape = (batch_size, n_sentences, n_words)
+        # This is the conversation
+        self.encoder_inputs = tf.placeholder(tf.float32, [None, None, None])
+        # shape = (batch_size, n_sentences, n_words)
+        # This is the target sequence to be predicted
+        self.decoder_targets = tf.placeholder(tf.float32, [None, None, None])
+
+        # (batch_size, n_words_max)
+        self.decoder_weights = tf.ones([
+            batch_size,
+            tf.reduce_max(self.decoder_train_length)
+        ], dtype=tf.float32, name="loss_weights")
+
+
 
     def _init_embedding(self, lookup_matrix):
         # Uniform(-sqrt(3), sqrt(3)) has variance=1.
@@ -149,46 +162,14 @@ class Model:
 
         # Initialize the optimizer
         opt = tf.train.AdamOptimizer(
-            learning_rate=self.args.learningRate,
+            learning_rate=self.args.learning_rate,
             beta1=0.9,
             beta2=0.999,
             epsilon=1e-08
         )
+
         self.opt_op = opt.minimize(self.loss)
         
-        # TODO: When the LSTM hidden size is too big, we should project the LSTM output into a smaller space (4086 => 2046): Should speed up
-        # training and reduce memory usage. Other solution, use sampling softmax
-
-        # For testing only
-        if self.args.test:
-            if not output_projection:
-                self.outputs = decoderOutputs
-            else:
-                self.outputs = [output_projection(output) for output in decoderOutputs]
-
-            # TODO: Attach a summary to visualize the output
-
-        # For training only
-        else:
-            # Finally, we define the loss function
-            self.lossFct = tf.contrib.legacy_seq2seq.sequence_loss(
-                decoderOutputs,
-                self.decoderTargets,
-                self.decoderWeights,
-                self.textData.getVocabularySize(),
-                softmax_loss_function= sampledSoftmax if outputProjection else None  # If None, use default SoftMax
-            )
-            tf.summary.scalar('loss', self.lossFct)  # Keep track of the cost
-
-            # Initialize the optimizer
-            opt = tf.train.AdamOptimizer(
-                learning_rate=self.args.learningRate,
-                beta1=0.9,
-                beta2=0.999,
-                epsilon=1e-08
-            )
-            self.optOp = opt.minimize(self.lossFct)
-
 
     def _init_encoder(self):
         inner_lstm = Sequential()
@@ -209,23 +190,27 @@ class Model:
         '''
 
         # shape = (n_sentences, batch_size, n_words)
-        convs_placeholder_trans = tf.transpose(self.convs_placeholder, [1,0,2])
+        # Change the order of dimension
+        # Each vector in its first dimension can be seen as the input for the inner LSTM
+        encoder_inputs_trans = tf.transpose(self.encoder_inputs, [1,0,2])
 
         # (n_sentence, batch_size, n_words, h_units_words)
-        inner_outputs = tf.map_fn(lambda x:inner_lstm(x), convs_placeholder_trans)
+        inner_lstm_outputs = tf.map_fn(lambda x:inner_lstm(x), encoder_inputs_trans)
 
         # (batch_size, n_sentence, n_words, h_units_words)
-        inner_outputs_trans = tf.transpose(inner_outputs, [1,0,2,3])
+        inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1,0,2,3])
         # sum out the third dimension for the input of outer lstm
-        outer_lstm_input = tf.reduce_sum(inner_outputs_trans, axis=2)
+        outer_lstm_input = tf.reduce_sum(inner_lstm_outputs_trans, axis=2)
 
         #  The encoded state to initialize the dynamic_rnn_decoder
+        # encoder_end_state, or the output of the outer lstm
         encoder_end_state = outer_lstm(outer_lstm_input)
 
         self.encoder_state = variational_encoder(encoder_end_state, self.args.h_units_decoder)
 
         # attention state for the use of apply attention to the decoder [batch_size, n_words, h_units_words]
         self.attention_states = inner_outputs_trans[:, -1, :, :]
+
 
     def _init_decoder(self):
          '''
@@ -270,7 +255,6 @@ class Model:
                 cell=self.decoder_cell,
                 decoder_fn=decoder_fn_train,
                 inputs=self.decoder_train_inputs_embedded,
-                sequence_length=self.decoder_train_length,
                 time_major=True,
                 scope=scope)
 
@@ -296,10 +280,11 @@ class Model:
 
 
     def _define_loss(self):
+
         self.loss_reconstruct = tf.contrib.seq2seq.sequence_loss(
             decoderOutputs,
-            self.decoderTargets,
-            self.decoderWeights,
+            self.decoder_targets,
+            self.decoder_weights,
             self.textData.getVocabularySize(),
             softmax_loss_function= sampled_softmax if output_projection else None  # If None, use default SoftMax
             average_across_timesteps = False
@@ -331,8 +316,14 @@ class Model:
         ops = None
 
         if not self.args.test:  # Training
+            feedDict[self.encoder_inputs] = batch.encoder_convs
+            feedDict[self.decoder_targets] = batch.target_seqs
+            feedDict[self.decoder_weights] = batch.target_seqs
+
+
+
             for i in range(self.args.maxLengthEnco):
-                feedDict[self.encoderInputs[i]]  = batch.encoderSeqs[i]
+                feedDict[self.encoder_inputs[i]]  = batch.encoderSeqs[i]
             for i in range(self.args.maxLengthDeco):
                 feedDict[self.decoderInputs[i]]  = batch.decoderSeqs[i]
                 feedDict[self.decoderTargets[i]] = batch.targetSeqs[i]
@@ -340,8 +331,11 @@ class Model:
 
             ops = (self.optOp, self.lossFct)
         else:  # Testing (batchSize == 1)
+            feedDict[self.encoder_inputs] = batch.encoder_convs
+            feedDict[self.decoder_targets] = batch.target_seqs
+
             for i in range(self.args.maxLengthEnco):
-                feedDict[self.encoderInputs[i]]  = batch.encoderSeqs[i]
+                  = batch.encoderSeqs[i]
             feedDict[self.decoderInputs[0]]  = [self.textData.goToken]
 
             ops = (self.outputs,)
