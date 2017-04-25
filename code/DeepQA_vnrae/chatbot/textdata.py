@@ -435,7 +435,7 @@ class TextData:
 
             if inputWords and targetWords:  # Filter wrong samples (if one of the list is empty)
                 self.trainingSamples.append([inputWords, targetWords])
-                print(inputWords)
+                # print(inputWords)
 
     def extractText(self, line):
         """Extract the words from a sample lines

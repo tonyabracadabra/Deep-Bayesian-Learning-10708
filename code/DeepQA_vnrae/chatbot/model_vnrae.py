@@ -22,58 +22,14 @@ Model to predict the next sentence given an input sequence
 import tensorflow as tf
 from utils import *
 from tensorflow.contrib.rnn import LSTMCell, LSTMStateTuple
+import numpy as np
 import math
-from keras.layers.core import Lambda
+from keras.layers.core import Dense
 from keras.models import Sequential
 from functools import partial
 import tensorflow.contrib.seq2seq as seq2seq
 
 from chatbot.textdata import Batch
-
-
-class ProjectionOp:
-    """ Single layer perceptron
-    Project input tensor on the output dimension
-    """
-    def __init__(self, shape, scope=None, dtype=None):
-        """
-        Args:
-            shape: a tuple (input dim, output dim)
-            scope (str): encapsulate variables
-            dtype: the weights type
-        """
-        assert len(shape) == 2
-
-        self.scope = scope
-
-        # Projection on the keyboard
-        with tf.variable_scope('weights_' + self.scope):
-            self.W_t = tf.get_variable(
-                'weights',
-                shape,
-                # initializer=tf.truncated_normal_initializer()  # TODO: Tune value (fct of input size: 1/sqrt(input_dim))
-                dtype=dtype
-            )
-            self.b = tf.get_variable(
-                'bias',
-                shape[0],
-                initializer=tf.constant_initializer(),
-                dtype=dtype
-            )
-            self.W = tf.transpose(self.W_t)
-
-    def getWeights(self):
-        """ Convenience method for some tf arguments
-        """
-        return self.W, self.b
-
-    def __call__(self, X):
-        """ Project the output of the decoder into the vocabulary space
-        Args:
-            X (tf.Tensor): input value
-        """
-        with tf.name_scope(self.scope):
-            return tf.matmul(X, self.W) + self.b
 
 
 class Model:
@@ -98,7 +54,7 @@ class Model:
 
         self.encoder_inner_cell = LSTMCell(self.args.h_units_words)
         self.encoder_outer_cell = LSTMCell(self.args.h_units_sentences)
-        self.decoder_cell = LSTMCell(self.args.h_units_sentences)
+        self.decoder_cell = LSTMCell(self.args.h_units_decoder)
         self.lookup_matrix = lookup_matrix
 
         # (batch_size, n_words) is for inner lstm,
@@ -109,15 +65,20 @@ class Model:
         self._init_embedding(lookup_matrix)
         self._define_layers()
         # Construct the graphs
-        self._buildNetwork()
+        self._build_network()
 
     def _define_placeholders(self):
         # shape = (batch_size, n_sentences, n_words)
         # This is the conversation
         self.encoder_inputs = tf.placeholder(tf.float32, [None, None, None])
-        # shape = (batch_size, n_sentences, n_words)
+
+        # shape = (batch_size, n_words)
+        # This is the input sequence to decoder
+        self.decoder_inputs = tf.placeholder(tf.float32, [None, None])
+
+        # shape = (batch_size, n_words)
         # This is the target sequence to be predicted
-        self.decoder_targets = tf.placeholder(tf.float32, [None, None, None])
+        self.decoder_targets = tf.placeholder(tf.float32, [None, None])
 
         # shape = (batch_size, n_sentences)
         # number of words in sentences for inner encoder input
@@ -133,23 +94,18 @@ class Model:
 
         # (batch_size, n_words_max)
         self.decoder_weights = tf.ones([
-            self.batch_size,
-            tf.reduce_max(self.decoder_train_length)
+            self.args.batch_size,
+            tf.reduce_max(self.decoder_targets_length)
         ], dtype=tf.float32, name="loss_weights")
 
-
-
     def _init_embedding(self, lookup_matrix):
-        # Uniform(-sqrt(3), sqrt(3)) has variance=1.
-        with tf.variable_scope("embedding") as scope:
-            self.embedding_matrix = tf.constant(
-                lookup_matrix,
-                name="embedding_matrix")
-
+        if self.lookup_matrix is not None:
+            with tf.variable_scope("embedding") as scope:
+                self.embedding_matrix = tf.constant(
+                    lookup_matrix,
+                    name="embedding_matrix")
 
     def _define_layers(self):
-        self.Embedding = Lambda(lambda x : self.embedding_func(x))
-
         self.inner_lstm = partial(self._dynamic_bilstm, 'inner', self.encoder_inner_cell)
         self.outer_lstm = partial(self._dynamic_bilstm, 'outer', self.encoder_inner_cell)
 
@@ -158,8 +114,7 @@ class Model:
             encoder_inputs_embedded = encoder_inputs
 
             if level == 'inner':
-                encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, \
-                    self.encoder_inputs)
+                encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
 
             ((encoder_fw_outputs,
               encoder_bw_outputs),
@@ -178,24 +133,12 @@ class Model:
                 return encoder_outputs
 
             elif level == 'outer':
-                encoder_state = tf.concat((encoder_fw_state, encoder_bw_state), \
-                    1, name='bidirectional_concat')
-
+                encoder_state = tf.concat((encoder_fw_state, encoder_bw_state), 1, name='bidirectional_concat')
                 return encoder_state
 
-    def _buildNetwork(self):
+    def _build_network(self):
         """ Create the computational graph
         """
-
-        # Parameters of sampled softmax (needed for attention mechanism and a large vocabulary size)
-        output_projection = None
-        # Sampled softmax only makes sense if we sample less than vocabulary size.
-        if 0 < self.args.softmaxSamples < self.textData.getVocabularySize():
-            output_projection = ProjectionOp(
-                (self.textData.getVocabularySize(), self.args.hiddenSize),
-                scope='softmax_projection',
-                dtype=self.dtype
-        )
 
         self._init_encoder()
         self._init_decoder()
@@ -212,11 +155,6 @@ class Model:
         self.opt_op = opt.minimize(self.loss)
 
     def _init_encoder(self):
-
-        '''
-        Below is the nested LSTM
-        '''
-
         '''
         Encoder phase
         '''
@@ -224,14 +162,14 @@ class Model:
         # shape = (n_sentences, batch_size, n_words)
         # Change the order of dimension
         # Each vector in its first dimension can be seen as the input for the inner LSTM
-        encoder_inputs_trans = tf.transpose(self.encoder_inputs, [1,0,2])
+        encoder_inputs_trans = tf.transpose(self.encoder_inputs, [1, 0, 2])
 
         # (n_sentence, batch_size, n_words, h_units_words)
-        inner_lstm_outputs = tf.map_fn(lambda (x,y) : self.inner_lstm(x, y), 
+        inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]),
                             (encoder_inputs_trans, self.encoder_inner_length))
 
         # (batch_size, n_sentence, n_words, h_units_words)
-        inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1,0,2,3])
+        inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1, 0, 2, 3])
         # sum out the third dimension for the input of outer lstm
         outer_lstm_input = tf.reduce_sum(inner_lstm_outputs_trans, axis=2)
 
@@ -239,16 +177,17 @@ class Model:
         # encoder_end_state, or the output of the outer lstm
         encoder_end_state = self.outer_lstm(outer_lstm_input, self.encoder_outer_length)
 
-        self.encoder_state = variational_encoder(encoder_end_state, self.args.h_units_decoder)
+        self.encoder_state = self._init_variational_encoder(encoder_end_state, self.args.h_units_decoder)
 
         # attention state for the use of apply attention to the decoder [batch_size, n_words, h_units_words]
         self.attention_states = inner_lstm_outputs_trans[:, -1, :, :]
-
 
     def _init_decoder(self):
         '''
         Decoder phase
         '''
+
+        self.decoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, self.decoder_inputs)
 
         (attention_keys,
         attention_values,
@@ -269,7 +208,10 @@ class Model:
             name='attention_decoder'
         )
 
-        output_fn = lambda output: tf.contrib.layers.linear(output, self.vocab_size)
+        self.W_proj = tf.get_variable('weights', [self.args.h_units_decoder, self.textData.getVocabularySize()])
+        self.b_proj = tf.get_variable('bias', [self.textData.getVocabularySize()])
+
+        output_fn = lambda output: tf.add(tf.matmul(self.W_proj, output), self.b_proj)
 
         decoder_fn_inference = seq2seq.attention_decoder_fn_inference(
             output_fn=output_fn,
@@ -281,23 +223,18 @@ class Model:
             embeddings=self.lookup_matrix,
             start_of_sequence_id=self.textData.goToken,
             end_of_sequence_id=self.textData.eosToken,
-            maximum_length = tf.reduce_max(self.decoder_targets_length) + 3,
-            # vocabulary size
-            num_decoder_symbols=n_all_words,
+            maximum_length=tf.reduce_max(self.decoder_targets_length) + 3,
+            num_decoder_symbols=self.textData.getVocabularySize(),
         )
 
         (decoder_outputs_train, decoder_state_train, decoder_context_state_train) = seq2seq.dynamic_rnn_decoder(
                 cell=self.decoder_cell,
                 decoder_fn=decoder_fn_train,
-                inputs=self.decoder_train_inputs_embedded,
-                time_major=True,
-                scope=scope)
+                inputs=self.decoder_inputs_embedded,
+                time_major=False)
 
-
-        self.decoder_logits_train = output_fn(self.decoder_outputs_train)
+        self.decoder_logits_train = output_fn(decoder_outputs_train)
         self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
-
-        scope.reuse_variables()
 
         (decoder_logits_inference,
             decoder_state_inference,
@@ -305,23 +242,61 @@ class Model:
             seq2seq.dynamic_rnn_decoder(
                 cell=self.decoder_cell,
                 decoder_fn=decoder_fn_inference,
-                time_major=True,
-                scope=scope,
+                time_major=False,
             )
         )
 
-        self.decoder_prediction_inference = tf.argmax(self.decoder_logits_inference, axis=-1, name='decoder_prediction_inference')
+        self.decoder_prediction_inference = tf.argmax(decoder_logits_inference, axis=-1, name='decoder_prediction_inference')
 
+    @staticmethod
+    def reparameterizing_z(mu, logsigma):
+        sigma_std = tf.exp(0.5 * logsigma)
+        epsilon = tf.random_normal(tf.shape(sigma_std))
+        z = tf.add(mu, tf.multiply(sigma_std, epsilon))
+        return z
+
+    def _init_variational_encoder(self, encoder_end_state, h_units_decoder):
+        # get mu and sigma from encoder state
+        self.encoder_state_mu = tf.contrib.layers.fully_connected(encoder_end_state.h, self.latent_size)
+        self.encoder_state_logsigma = tf.contrib.layers.fully_connected(encoder_end_state.h, self.latent_size)
+        # reparameter to get z
+        sample_z = self.reparameterizing_z(self.encoder_state_mu, self.encoder_state_logsigma)
+        # get intital state of decoder from z
+        encoder_state_h = tf.contrib.layers.fully_connected(sample_z, h_units_decoder)
+
+        encoder_state_c = encoder_end_state.c
+
+        encoder_state = LSTMStateTuple(c=encoder_state_c, h=encoder_state_h)
+        return encoder_state
+
+    def sampled_softmax(self, labels, inputs):
+        labels = tf.reshape(labels, [-1, 1])  # Add one dimension (nb of true classes, here 1)
+
+        # We need to compute the sampled_softmax_loss using 32bit floats to
+        # avoid numerical instabilities.
+        local_wt = tf.cast(self.W_proj, tf.float32)
+        local_b = tf.cast(self.b_proj, tf.float32)
+        localInputs = tf.cast(inputs, tf.float32)
+
+        return tf.cast(
+            tf.nn.sampled_softmax_loss(
+                tf.transpose(local_wt),  # Should have shape [num_classes, dim]
+                local_b,
+                labels,
+                localInputs,
+                self.args.softmaxSamples,  # The number of classes to randomly sample per batch
+                self.textData.getVocabularySize()),  # The number of classes
+            self.dtype)
 
     def _define_loss(self):
 
         self.loss_reconstruct = tf.contrib.seq2seq.sequence_loss(
-            decoderOutputs,
+            self.decoder_logits_train,
             self.decoder_targets,
             self.decoder_weights,
             self.textData.getVocabularySize(),
-            softmax_loss_function = sampled_softmax if output_projection else None,  # If None, use default SoftMax
-            average_across_timesteps = False
+            softmax_loss_function=self.sampled_softmax,  # If None, use default SoftMax
+            average_across_timesteps=False
         )
 
         self.KL = tf.reduce_mean(-0.5 * tf.reduce_sum(1 + self.encoder_state_logsigma 
@@ -334,7 +309,6 @@ class Model:
         tf.summary.scalar('loss_reconstruct', self.loss_reconstruct)
         tf.summary.scalar('KL', self.KL)
         tf.summary.scalar('loss', self.loss)
-
 
     def step(self, batch):
         """ Forward/training step operation.
@@ -349,11 +323,32 @@ class Model:
         feedDict = {}
         ops = None
 
+        encoder_inputs = np.array([[[1,3,4,5,-1,-1],[2,3,-1,-1,-1,-1],[2,3,555,1,2,666]],
+                          [[999,666,4,-1,-1,-1],[2,3,888,777,-1,-1],[-1,-1,-1,-1,-1,-1]]])
+
+        decoder_inputs = np.array([[-1, 1, 3, 5, 7, 9], [-1, 2, 4, 6, 8, 10]])
+        decoder_targets = np.array([[1,3,5,7,9,1],[2,4,6,8,10,2]])
+
+        encoder_inner_length = np.array([[4,2,6],[3,4,0]])
+        encoder_outer_length = np.array([3,2])
+        decoder_targets_length = np.array([6, 6])
+
+        feedDict[self.encoder_inputs] = encoder_inputs
+        feedDict[self.decoder_targets] = decoder_targets
+        feedDict[self.encoder_inner_length] = encoder_inner_length
+        feedDict[self.encoder_outer_length] = encoder_outer_length
+        feedDict[self.decoder_targets_length] = decoder_targets_length
+        feedDict[self.encoder_inputs] = decoder_inputs
+
+        ops = (self.opt_op, self.loss)
+
+        '''
         if not self.args.test:  # Training
             feedDict[self.encoder_inputs] = batch.encoder_convs   
             feedDict[self.decoder_targets] = batch.target_seqs
-            feedDict[self.decoder_targets] = batch.target_seqs
-            feedDict[self.decoder_weights] = batch.target_seqs
+            feedDict[self.encoder_inner_length] = batch.encoder_inner_length
+            feedDict[self.encoder_outer_length] = batch.encoder_outer_length
+            feedDict[self.target_seqs] = batch.target_seqs
 
             for i in range(self.args.maxLengthEnco):
                 feedDict[self.encoder_inputs[i]]  = batch.encoderSeqs[i]
@@ -372,6 +367,7 @@ class Model:
             feedDict[self.decoderInputs[0]]  = [self.textData.goToken]
 
             ops = (self.outputs,)
+        '''
 
         # Return one pass operator
         return ops, feedDict

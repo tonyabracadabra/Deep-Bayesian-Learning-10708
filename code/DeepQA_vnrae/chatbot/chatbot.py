@@ -31,7 +31,8 @@ from tqdm import tqdm  # Progress bar
 from tensorflow.python import debug as tf_debug
 
 from chatbot.textdata import TextData
-from chatbot.model import Model
+# from chatbot.model import Model
+from chatbot.model_vnrae import Model
 
 
 class Chatbot:
@@ -123,6 +124,9 @@ class Chatbot:
         nnArgs.add_argument('--initEmbeddings', action='store_true', help='if present, the program will initialize the embeddings with pre-trained word2vec vectors')
         nnArgs.add_argument('--embeddingSize', type=int, default=64, help='embedding size of the word representation')
         nnArgs.add_argument('--embeddingSource', type=str, default="GoogleNews-vectors-negative300.bin", help='embedding file to use for the word representation')
+        nnArgs.add_argument('--h_units_words', type=int, default=50, help='number of hidden units in inner encoder')
+        nnArgs.add_argument('--h_units_sentences', type=int, default=50, help='number of hidden units in outer encoder')
+        nnArgs.add_argument('--h_units_decoder', type=int, default=50, help='number of hidden units in decoder')
 
         # Training options
         trainingArgs = parser.add_argument_group('Training options')
@@ -131,6 +135,7 @@ class Chatbot:
         trainingArgs.add_argument('--batchSize', type=int, default=256, help='mini-batch size')
         trainingArgs.add_argument('--learningRate', type=float, default=0.002, help='Learning rate')
         trainingArgs.add_argument('--dropout', type=float, default=0.9, help='Dropout rate (keep probabilities)')
+        trainingArgs.add_argument('--batch_size', type=int, default=2, help='mini-batch size')
 
         return parser.parse_args(args)
 
@@ -164,11 +169,12 @@ class Chatbot:
             return  # No need to go further
 
         # Initialize embeddings with pre-trained word2vec vectors
+        lookup_matrix = None
         # lookup_matrix = self.loadEmbedding(self.sess)
 
         # Prepare the model
         with tf.device(self.getDevice()):
-            self.model = Model(self.args, self.textData)
+            self.model = Model(self.args, self.textData, lookup_matrix)
 
         # Saver/summaries
         self.writer = tf.summary.FileWriter(self._getSummaryName())
