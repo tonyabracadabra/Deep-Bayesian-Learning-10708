@@ -124,7 +124,7 @@ class Model:
                                                     inputs=encoder_inputs_embedded,
                                                     sequence_length=encoder_inputs_length,
                                                     time_major=True,
-                                                    dtype=tf.float64)
+                                                    dtype=tf.float32)
                     )
 
             # (batch_size, n_words, h_units_words)
@@ -177,7 +177,7 @@ class Model:
 
         inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]), \
                             (encoder_inputs_trans, encoder_inner_length_trans), \
-                            dtype=tf.float64)
+                            dtype=tf.float32)
 
         # (batch_size, n_sentence, n_words, h_units_words)
         inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1, 0, 2, 3])
@@ -193,6 +193,12 @@ class Model:
         # attention state for the use of apply attention to the decoder [batch_size, n_words, h_units_words]
         self.attention_states = inner_lstm_outputs_trans[:, -1, :, :]
 
+    # Projection function
+    def _output_fn(self, output):
+        self.W_proj = tf.get_variable('weights', [self.args.h_units_decoder, self.textData.getVocabularySize()])
+        self.b_proj = tf.get_variable('bias', [self.textData.getVocabularySize()])
+
+        return tf.add(tf.matmul(output, self.W_proj), self.b_proj)
 
     def _init_decoder(self):
         '''
@@ -220,13 +226,8 @@ class Model:
             name='attention_decoder'
         )
 
-        self.W_proj = tf.get_variable('weights', [self.args.h_units_decoder, self.textData.getVocabularySize()])
-        self.b_proj = tf.get_variable('bias', [self.textData.getVocabularySize()])
-
-        output_fn = lambda output: tf.add(tf.matmul(self.W_proj, output), self.b_proj)
-
         decoder_fn_inference = seq2seq.attention_decoder_fn_inference(
-            output_fn=output_fn,
+            output_fn=self._output_fn,
             encoder_state=self.encoder_state,
             attention_keys=attention_keys,
             attention_values=attention_values,
@@ -239,9 +240,9 @@ class Model:
             num_decoder_symbols=self.textData.getVocabularySize(),
         )
 
-        print(self.decoder_inputs_embedded)
-        print(self.decoder_targets_length)
-
+        # Check back here later...the hidden size of decoder_cell has to be in the same size of embedding layer?
+        # !!!
+        # decoder_outputs_train.shape = (batch_size, n_words, hidden_size)
         (decoder_outputs_train, decoder_state_train, decoder_context_state_train) = seq2seq.dynamic_rnn_decoder(
                 cell=self.decoder_cell,
                 decoder_fn=decoder_fn_train,
@@ -249,9 +250,19 @@ class Model:
                 sequence_length=self.decoder_targets_length,
                 time_major=False)
 
-        self.decoder_logits_train = output_fn(decoder_outputs_train)
+        print('************************')
+        print(decoder_outputs_train)
+
+        self.decoder_logits_train = tf.map_fn(self._output_fn, decoder_outputs_train)
+
+        print('================================')
+        print(self.decoder_logits_train)
+
+        # self.decoder_logits_train = self._output_fn(decoder_outputs_train)
         self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
 
+
+        # Reuse weights???
         (decoder_logits_inference,
             decoder_state_inference,
             decoder_context_state_inference) = (
@@ -267,15 +278,15 @@ class Model:
     @staticmethod
     def reparameterizing_z(mu, logsigma):
         sigma_std = tf.exp(0.5 * logsigma)
-        epsilon = tf.random_normal(tf.shape(sigma_std), dtype=tf.float64)
+        epsilon = tf.random_normal(tf.shape(sigma_std), dtype=tf.float32)
         z = tf.add(mu, tf.multiply(sigma_std, epsilon))
 
         return z
 
     def _init_variational_encoder(self, encoder_end_state, h_units_decoder):
-        # get mu and sigma from encoder state
         encoder_end_state_h, encoder_end_state_c = encoder_end_state
 
+        # get mu and sigma from encoder state
         self.encoder_state_mu = tf.contrib.layers.fully_connected(encoder_end_state_h, self.args.latent_size)
         self.encoder_state_logsigma = tf.contrib.layers.fully_connected(encoder_end_state_h, self.args.latent_size)
         # reparameter to get z

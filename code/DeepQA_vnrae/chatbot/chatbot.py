@@ -170,7 +170,7 @@ class Chatbot:
             return  # No need to go further
 
         # Initialize embeddings with pre-trained word2vec vectors
-        lookup_matrix = np.ones((1000,30))
+        lookup_matrix = np.ones((1000,30)).astype(np.float32)
         # lookup_matrix = self.loadEmbedding(self.sess)
 
         # Prepare the model
