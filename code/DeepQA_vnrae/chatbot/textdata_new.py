@@ -424,6 +424,7 @@ class TextData:
         # Preprocessing data
 
         for conversation in tqdm(conversations, desc='Extract conversations'):
+            print(conversation)
             self.extractConversation(conversation)
 
         # The dataset will be saved in the same order it has been extracted
