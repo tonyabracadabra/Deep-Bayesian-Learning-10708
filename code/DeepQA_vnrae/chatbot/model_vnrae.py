@@ -198,7 +198,7 @@ class Model:
         self.W_proj = tf.get_variable('weights', [self.args.h_units_decoder, self.textData.getVocabularySize()])
         self.b_proj = tf.get_variable('bias', [self.textData.getVocabularySize()])
 
-        return tf.add(tf.matmul(output, self.W_proj), self.b_proj)
+        return tf.add(tf.matmul(self.W_proj, output), self.b_proj)
 
     def _init_decoder(self):
         '''
@@ -250,19 +250,11 @@ class Model:
                 sequence_length=self.decoder_targets_length,
                 time_major=False)
 
-        print('************************')
-        print(decoder_outputs_train)
 
         self.decoder_logits_train = tf.map_fn(self._output_fn, decoder_outputs_train)
 
-        print('================================')
-        print(self.decoder_logits_train)
-
-        # self.decoder_logits_train = self._output_fn(decoder_outputs_train)
         self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
 
-
-        # Reuse weights???
         (decoder_logits_inference,
             decoder_state_inference,
             decoder_context_state_inference) = (
