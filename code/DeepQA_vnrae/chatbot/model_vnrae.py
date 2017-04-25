@@ -92,7 +92,7 @@ class Model:
         # (batch_size, n_words_max)
         self.decoder_weights = tf.ones([
             self.args.batch_size,
-            5
+            6
             # tf.reduce_max(self.decoder_targets_length)
         ], dtype=tf.float32, name="loss_weights")
 
@@ -135,10 +135,10 @@ class Model:
                 return encoder_outputs
 
             elif level == 'outer':
-                encoder_state_h = tf.concat((encoder_fw_state.h, encoder_bw_state.h), \
+                encoder_state_h = tf.concat((encoder_fw_state.h, encoder_bw_state.h),
                     1, name='bidirectional_concat_h')
 
-                encoder_state_c = tf.concat((encoder_fw_state.c, encoder_bw_state.c), \
+                encoder_state_c = tf.concat((encoder_fw_state.c, encoder_bw_state.c),
                     1, name='bidirectional_concat_c')
 
                 return (encoder_state_h, encoder_state_c)
@@ -204,76 +204,79 @@ class Model:
         '''
         Decoder phase
         '''
+        with tf.variable_scope("Decoder") as scope:
+            self.decoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, self.decoder_inputs)
 
-        self.decoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, self.decoder_inputs)
-
-        (attention_keys,
-        attention_values,
-        attention_score_fn,
-        attention_construct_fn) = seq2seq.prepare_attention(
-                attention_states=self.attention_states,
-                attention_option="bahdanau",
-                num_units=self.args.h_units_decoder,
-        )
-
-        # attention is added
-        decoder_fn_train = seq2seq.attention_decoder_fn_train(
-            encoder_state=self.encoder_state,
-            attention_keys=attention_keys,
-            attention_values=attention_values,
-            attention_score_fn=attention_score_fn,
-            attention_construct_fn=attention_construct_fn,
-            name='attention_decoder'
-        )
-
-        decoder_fn_inference = seq2seq.attention_decoder_fn_inference(
-            output_fn=self._output_fn,
-            encoder_state=self.encoder_state,
-            attention_keys=attention_keys,
-            attention_values=attention_values,
-            attention_score_fn=attention_score_fn,
-            attention_construct_fn=attention_construct_fn,
-            embeddings=self.lookup_matrix,
-            start_of_sequence_id=self.textData.goToken,
-            end_of_sequence_id=self.textData.eosToken,
-            maximum_length=tf.reduce_max(self.decoder_targets_length) + 3,
-            num_decoder_symbols=self.textData.getVocabularySize(),
-        )
-
-        # Check back here later...the hidden size of decoder_cell has to be in the same size of embedding layer?
-        # !!!
-        # decoder_outputs_train.shape = (batch_size, n_words, hidden_size)
-        (decoder_outputs_train, decoder_state_train, decoder_context_state_train) = seq2seq.dynamic_rnn_decoder(
-                cell=self.decoder_cell,
-                decoder_fn=decoder_fn_train,
-                inputs=self.decoder_inputs_embedded,
-                sequence_length=self.decoder_targets_length,
-                time_major=False)
-
-        print('************************')
-        print(decoder_outputs_train)
-
-        self.decoder_logits_train = tf.map_fn(self._output_fn, decoder_outputs_train)
-
-        print('================================')
-        print(self.decoder_logits_train)
-
-        # self.decoder_logits_train = self._output_fn(decoder_outputs_train)
-        self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
-
-
-        # Reuse weights???
-        (decoder_logits_inference,
-            decoder_state_inference,
-            decoder_context_state_inference) = (
-            seq2seq.dynamic_rnn_decoder(
-                cell=self.decoder_cell,
-                decoder_fn=decoder_fn_inference,
-                time_major=False,
+            (attention_keys,
+            attention_values,
+            attention_score_fn,
+            attention_construct_fn) = seq2seq.prepare_attention(
+                    attention_states=self.attention_states,
+                    attention_option="bahdanau",
+                    num_units=self.args.h_units_decoder,
             )
-        )
 
-        self.decoder_prediction_inference = tf.argmax(decoder_logits_inference, axis=-1, name='decoder_prediction_inference')
+            # attention is added
+            decoder_fn_train = seq2seq.attention_decoder_fn_train(
+                encoder_state=self.encoder_state,
+                attention_keys=attention_keys,
+                attention_values=attention_values,
+                attention_score_fn=attention_score_fn,
+                attention_construct_fn=attention_construct_fn,
+                name='attention_decoder'
+            )
+
+            decoder_fn_inference = seq2seq.attention_decoder_fn_inference(
+                output_fn=self._output_fn,
+                encoder_state=self.encoder_state,
+                attention_keys=attention_keys,
+                attention_values=attention_values,
+                attention_score_fn=attention_score_fn,
+                attention_construct_fn=attention_construct_fn,
+                embeddings=self.lookup_matrix,
+                start_of_sequence_id=self.textData.goToken,
+                end_of_sequence_id=self.textData.eosToken,
+                maximum_length=tf.reduce_max(self.decoder_targets_length) + 3,
+                num_decoder_symbols=self.textData.getVocabularySize(),
+            )
+
+            # Check back here later...the hidden size of decoder_cell has to be in the same size of embedding layer?
+            # !!!
+            # decoder_outputs_train.shape = (batch_size, n_words, hidden_size)
+            (decoder_outputs_train, decoder_state_train, decoder_context_state_train) = seq2seq.dynamic_rnn_decoder(
+                    cell=self.decoder_cell,
+                    decoder_fn=decoder_fn_train,
+                    inputs=self.decoder_inputs_embedded,
+                    sequence_length=self.decoder_targets_length,
+                    time_major=False,
+                    scope=scope
+            )
+
+            print('************************')
+            print(decoder_outputs_train)
+
+            self.decoder_logits_train = tf.map_fn(self._output_fn, decoder_outputs_train)
+
+            print('================================')
+            print(self.decoder_logits_train)
+
+            # self.decoder_logits_train = self._output_fn(decoder_outputs_train)
+            self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
+
+            scope.reuse_variables()
+
+            (decoder_logits_inference,
+                decoder_state_inference,
+                decoder_context_state_inference) = (
+                seq2seq.dynamic_rnn_decoder(
+                    cell=self.decoder_cell,
+                    decoder_fn=decoder_fn_inference,
+                    time_major=False,
+                    scope=scope
+                )
+            )
+
+            self.decoder_prediction_inference = tf.argmax(decoder_logits_inference, axis=-1, name='decoder_prediction_inference')
 
     @staticmethod
     def reparameterizing_z(mu, logsigma):
@@ -321,20 +324,20 @@ class Model:
 
     def _define_loss(self):
 
-        self.loss_reconstruct = tf.contrib.seq2seq.sequence_loss(
-            self.decoder_logits_train,
-            self.decoder_targets,
-            self.decoder_weights,
-            self.textData.getVocabularySize(),
+        self.loss_reconstruct = tf.reduce_sum(seq2seq.sequence_loss(
+            logits=self.decoder_logits_train,
+            targets=self.decoder_targets,
+            weights=self.decoder_weights,
             softmax_loss_function=self.sampled_softmax,  # If None, use default SoftMax
-            average_across_timesteps=False
+            average_across_timesteps=False,
+            average_across_batch=True)
         )
 
         self.KL = tf.reduce_mean(-0.5 * tf.reduce_sum(1 + self.encoder_state_logsigma 
                                  - tf.pow(self.encoder_state_mu, 2)
                                  - tf.exp(self.encoder_state_logsigma), axis=1))
 
-        self.loss = tf.add(self.KL, tf.reduce_sum(self.loss_reconstruct))
+        self.loss = tf.add(self.KL, self.loss_reconstruct)
 
         # Keep track of the cost
         tf.summary.scalar('loss_reconstruct', self.loss_reconstruct)
