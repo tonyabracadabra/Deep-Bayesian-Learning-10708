@@ -20,12 +20,9 @@ Model to predict the next sentence given an input sequence
 """
 
 import tensorflow as tf
-from utils import *
 from tensorflow.contrib.rnn import LSTMCell, LSTMStateTuple
 import numpy as np
 import math
-from keras.layers.core import Dense
-from keras.models import Sequential
 from functools import partial
 import tensorflow.contrib.seq2seq as seq2seq
 
@@ -70,11 +67,11 @@ class Model:
     def _define_placeholders(self):
         # shape = (batch_size, n_sentences, n_words)
         # This is the conversation
-        self.encoder_inputs = tf.placeholder(tf.float32, [None, None, None])
+        self.encoder_inputs = tf.placeholder(tf.int32, [None, None, None])
 
         # shape = (batch_size, n_words)
         # This is the input sequence to decoder
-        self.decoder_inputs = tf.placeholder(tf.float32, [None, None])
+        self.decoder_inputs = tf.placeholder(tf.int32, [None, None])
 
         # shape = (batch_size, n_words)
         # This is the target sequence to be predicted
@@ -82,28 +79,28 @@ class Model:
 
         # shape = (batch_size, n_sentences)
         # number of words in sentences for inner encoder input
-        self.encoder_inner_length = tf.placeholder(tf.float32, [None, None])
+        self.encoder_inner_length = tf.placeholder(tf.int32, [None, None])
 
         # shape = (batch_size)
         # number of sentences for outer encoder input
-        self.encoder_outer_length = tf.placeholder(tf.float32, [None])
+        self.encoder_outer_length = tf.placeholder(tf.int32, [None])
 
         # shape = (batch_size)
         # number of words for decoder output
-        self.decoder_targets_length = tf.placeholder(tf.float32, [None])
+        self.decoder_targets_length = tf.placeholder(tf.int32, [None])
 
         # (batch_size, n_words_max)
         self.decoder_weights = tf.ones([
             self.args.batch_size,
-            tf.reduce_max(self.decoder_targets_length)
+            5
+            # tf.reduce_max(self.decoder_targets_length)
         ], dtype=tf.float32, name="loss_weights")
 
     def _init_embedding(self, lookup_matrix):
-        if self.lookup_matrix is not None:
-            with tf.variable_scope("embedding") as scope:
-                self.embedding_matrix = tf.constant(
-                    lookup_matrix,
-                    name="embedding_matrix")
+        with tf.variable_scope("embedding") as scope:
+            self.embedding_matrix = tf.constant(
+                lookup_matrix,
+                name="embedding_matrix")
 
     def _define_layers(self):
         self.inner_lstm = partial(self._dynamic_bilstm, 'inner', self.encoder_inner_cell)
@@ -114,22 +111,28 @@ class Model:
             encoder_inputs_embedded = encoder_inputs
 
             if level == 'inner':
+                # (batch_size, n_words, embedding_size)
                 encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
 
-            ((encoder_fw_outputs,
-              encoder_bw_outputs),
-             (encoder_fw_state,
-              encoder_bw_state)) = (
-                tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
-                                                cell_bw=encoder_cell,
-                                                inputs=encoder_inputs_embedded,
-                                                sequence_length=encoder_inputs_length,
-                                                time_major=True,
-                                                dtype=tf.float32)
-                )
+            with tf.variable_scope(level) as scope:
+                ((encoder_fw_outputs,
+                  encoder_bw_outputs),
+                 (encoder_fw_state,
+                  encoder_bw_state)) = (
+                    tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
+                                                    cell_bw=encoder_cell,
+                                                    inputs=encoder_inputs_embedded,
+                                                    sequence_length=encoder_inputs_length,
+                                                    time_major=True,
+                                                    dtype=tf.float64)
+                    )
 
+            # (batch_size, n_words, h_units_words)
+            
             if level == 'inner':
                 encoder_outputs = tf.concat((encoder_fw_outputs, encoder_bw_outputs), 2)
+                print(encoder_outputs)
+
                 return encoder_outputs
 
             elif level == 'outer':
@@ -163,15 +166,21 @@ class Model:
         # Change the order of dimension
         # Each vector in its first dimension can be seen as the input for the inner LSTM
         encoder_inputs_trans = tf.transpose(self.encoder_inputs, [1, 0, 2])
+        # (n_sentences, batch_size)
+        encoder_inner_length_trans = tf.transpose(self.encoder_inner_length, [1, 0])
 
-        # (n_sentence, batch_size, n_words, h_units_words)
-        inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]),
-                            (encoder_inputs_trans, self.encoder_inner_length))
+        # (n_sentence, batch_size, n_words)
+
+        inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]), \
+                            (encoder_inputs_trans, encoder_inner_length_trans), \
+                            dtype=tf.float64)
 
         # (batch_size, n_sentence, n_words, h_units_words)
         inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1, 0, 2, 3])
         # sum out the third dimension for the input of outer lstm
         outer_lstm_input = tf.reduce_sum(inner_lstm_outputs_trans, axis=2)
+
+
 
         #  The encoded state to initialize the dynamic_rnn_decoder
         # encoder_end_state, or the output of the outer lstm
@@ -181,6 +190,7 @@ class Model:
 
         # attention state for the use of apply attention to the decoder [batch_size, n_words, h_units_words]
         self.attention_states = inner_lstm_outputs_trans[:, -1, :, :]
+
 
     def _init_decoder(self):
         '''
