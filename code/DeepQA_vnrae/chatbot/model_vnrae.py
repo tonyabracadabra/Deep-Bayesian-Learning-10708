@@ -1,3 +1,4 @@
+
 # Copyright 2015 Conchylicultor. All Rights Reserved.
 # Modifications copyright (C) 2016 Carlos Segura
 #
@@ -16,7 +17,6 @@
 
 """
 Model to predict the next sentence given an input sequence
-
 """
 
 import tensorflow as tf
@@ -432,23 +432,19 @@ class Model:
             feedDict[self.encoder_inner_length] = batch.encoder_inner_length
             feedDict[self.encoder_outer_length] = batch.encoder_outer_length
             feedDict[self.target_seqs] = batch.target_seqs
-
             for i in range(self.args.maxLengthEnco):
                 feedDict[self.encoder_inputs[i]]  = batch.encoderSeqs[i]
             for i in range(self.args.maxLengthDeco):
                 feedDict[self.decoderInputs[i]]  = batch.decoderSeqs[i]
                 feedDict[self.decoderTargets[i]] = batch.targetSeqs[i]
                 feedDict[self.decoderWeights[i]] = batch.weights[i]
-
             ops = (self.optOp, self.lossFct)
         else:  # Testing (batchSize == 1)
             feedDict[self.encoder_inputs] = batch.encoder_convs
             feedDict[self.decoder_targets] = batch.target_seqs
-
             for i in range(self.args.maxLengthEnco):
                 feedDict[self.encoderInputs[i]] = batch.encoderSeqs[i]
             feedDict[self.decoderInputs[0]]  = [self.textData.goToken]
-
             ops = (self.outputs,)
         '''
 
