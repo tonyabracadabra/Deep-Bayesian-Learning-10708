@@ -29,6 +29,51 @@ import tensorflow.contrib.seq2seq as seq2seq
 from chatbot.textdata import Batch
 
 
+class ProjectionOp:
+    """ Single layer perceptron
+    Project input tensor on the output dimension
+    """
+    def __init__(self, shape, scope=None, dtype=None):
+        """
+        Args:
+            shape: a tuple (input dim, output dim)
+            scope (str): encapsulate variables
+            dtype: the weights type
+        """
+        assert len(shape) == 2
+
+        self.scope = scope
+
+        # Projection on the keyboard
+        with tf.variable_scope('weights_' + self.scope):
+            self.W_t = tf.get_variable(
+                'weights',
+                shape,
+                # initializer=tf.truncated_normal_initializer()  # TODO: Tune value (fct of input size: 1/sqrt(input_dim))
+                dtype=dtype
+            )
+            self.b = tf.get_variable(
+                'bias',
+                shape[0],
+                initializer=tf.constant_initializer(),
+                dtype=dtype
+            )
+            self.W = tf.transpose(self.W_t)
+
+    def getWeights(self):
+        """ Convenience method for some tf arguments
+        """
+        return self.W, self.b
+
+    def __call__(self, X):
+        """ Project the output of the decoder into the vocabulary space
+        Args:
+            X (tf.Tensor): input value
+        """
+        with tf.name_scope(self.scope):
+            return tf.matmul(X, self.W) + self.b
+
+
 class Model:
     """
     Implementation of a seq2seq model.
@@ -146,10 +191,36 @@ class Model:
     def _build_network(self):
         """ Create the computational graph
         """
+        output_projection = ProjectionOp(
+            (self.textData.getVocabularySize(), self.args.h_units_decoder),
+            scope='softmax_projection',
+            dtype=self.dtype
+        )
+
+        def sampled_softmax(inputs, labels):
+            labels = tf.reshape(labels, [-1, 1])  # Add one dimension (nb of true classes, here 1)
+
+            # We need to compute the sampled_softmax_loss using 32bit floats to
+            # avoid numerical instabilities.
+            local_wt = tf.cast(output_projection.W_t, tf.float32)
+            local_b = tf.cast(output_projection.b, tf.float32)
+            local_inputs = tf.cast(inputs, tf.float32)
+
+            print(local_inputs)
+
+            return tf.cast(
+                tf.nn.sampled_softmax_loss(
+                    tf.transpose(local_wt),  # Should have shape [num_classes, dim]
+                    local_b,
+                    labels,
+                    local_inputs,
+                    self.args.softmaxSamples,  # The number of classes to randomly sample per batch
+                    self.textData.getVocabularySize()),  # The number of classes
+                self.dtype)
 
         self._init_encoder()
-        self._init_decoder()
-        self._define_loss()
+        self._init_decoder(output_projection)
+        self._define_loss(sampled_softmax)
 
         # Initialize the optimizer
         opt = tf.train.AdamOptimizer(
@@ -188,19 +259,19 @@ class Model:
         # encoder_end_state, or the output of the outer lstm
         encoder_end_state = self.outer_lstm(outer_lstm_input, self.encoder_outer_length)
 
-        self.encoder_state = self._init_variational_encoder(encoder_end_state, self.args.h_units_decoder)
+        self.encoder_state = self._variational_encoder(encoder_end_state, self.args.h_units_decoder)
 
         # attention state for the use of apply attention to the decoder [batch_size, n_words, h_units_words]
         self.attention_states = inner_lstm_outputs_trans[:, -1, :, :]
 
     # Projection function
-    def _output_fn(self, output):
-        self.W_proj = tf.get_variable('weights', [self.args.h_units_decoder, self.textData.getVocabularySize()])
-        self.b_proj = tf.get_variable('bias', [self.textData.getVocabularySize()])
+    # def _output_fn(self, output):
+    #     self.W_proj = tf.get_variable('weights', [self.args.h_units_decoder, self.textData.getVocabularySize()])
+    #     self.b_proj = tf.get_variable('bias', [self.textData.getVocabularySize()])
+    #
+    #     return tf.add(tf.matmul(output, self.W_proj), self.b_proj)
 
-        return tf.add(tf.matmul(output, self.W_proj), self.b_proj)
-
-    def _init_decoder(self):
+    def _init_decoder(self, output_projection):
         '''
         Decoder phase
         '''
@@ -227,7 +298,7 @@ class Model:
             )
 
             decoder_fn_inference = seq2seq.attention_decoder_fn_inference(
-                output_fn=self._output_fn,
+                output_fn=output_projection,
                 encoder_state=self.encoder_state,
                 attention_keys=attention_keys,
                 attention_values=attention_values,
@@ -243,7 +314,7 @@ class Model:
             # Check back here later...the hidden size of decoder_cell has to be in the same size of embedding layer?
             # !!!
             # decoder_outputs_train.shape = (batch_size, n_words, hidden_size)
-            (decoder_outputs_train, decoder_state_train, decoder_context_state_train) = seq2seq.dynamic_rnn_decoder(
+            (self.decoder_outputs_train, decoder_state_train, decoder_context_state_train) = seq2seq.dynamic_rnn_decoder(
                     cell=self.decoder_cell,
                     decoder_fn=decoder_fn_train,
                     inputs=self.decoder_inputs_embedded,
@@ -252,15 +323,10 @@ class Model:
                     scope=scope
             )
 
-            print('************************')
-            print(decoder_outputs_train)
+            # self.decoder_logits_train = tf.map_fn(self._output_fn, self.decoder_outputs_train)
+            decoder_outputs_train_flat = tf.reshape(self.decoder_outputs_train, [-1, self.args.h_units_decoder])
+            self.decoder_logits_train = output_projection(decoder_outputs_train_flat)
 
-            self.decoder_logits_train = tf.map_fn(self._output_fn, decoder_outputs_train)
-
-            print('================================')
-            print(self.decoder_logits_train)
-
-            # self.decoder_logits_train = self._output_fn(decoder_outputs_train)
             self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
 
             scope.reuse_variables()
@@ -286,7 +352,7 @@ class Model:
 
         return z
 
-    def _init_variational_encoder(self, encoder_end_state, h_units_decoder):
+    def _variational_encoder(self, encoder_end_state, h_units_decoder):
         encoder_end_state_h, encoder_end_state_c = encoder_end_state
 
         # get mu and sigma from encoder state
@@ -303,32 +369,15 @@ class Model:
 
         return encoder_state
 
-    def sampled_softmax(self, labels, inputs):
-        labels = tf.reshape(labels, [-1, 1])  # Add one dimension (nb of true classes, here 1)
+    def _define_loss(self, sampled_softmax):
 
-        # We need to compute the sampled_softmax_loss using 32bit floats to
-        # avoid numerical instabilities.
-        local_wt = tf.cast(self.W_proj, tf.float32)
-        local_b = tf.cast(self.b_proj, tf.float32)
-        localInputs = tf.cast(inputs, tf.float32)
-
-        return tf.cast(
-            tf.nn.sampled_softmax_loss(
-                tf.transpose(local_wt),  # Should have shape [num_classes, dim]
-                local_b,
-                labels,
-                localInputs,
-                self.args.softmaxSamples,  # The number of classes to randomly sample per batch
-                self.textData.getVocabularySize()),  # The number of classes
-            self.dtype)
-
-    def _define_loss(self):
+        print(self.decoder_outputs_train)
 
         self.loss_reconstruct = tf.reduce_sum(seq2seq.sequence_loss(
-            logits=self.decoder_logits_train,
+            logits=self.decoder_outputs_train,
             targets=self.decoder_targets,
             weights=self.decoder_weights,
-            softmax_loss_function=self.sampled_softmax,  # If None, use default SoftMax
+            softmax_loss_function=sampled_softmax,
             average_across_timesteps=False,
             average_across_batch=True)
         )
