@@ -217,6 +217,7 @@ class Model:
                 beta2=0.999,
                 epsilon=1e-08
             )
+            
             self.optOp = opt.minimize(self.lossFct)
 
     def step(self, batch):

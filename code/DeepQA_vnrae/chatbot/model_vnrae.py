@@ -150,12 +150,38 @@ class Model:
     def _define_layers(self):
         self.Embedding = Lambda(lambda x : self.embedding_func(x))
 
-        dynamic_bilstm_inner = partial(dynamic_bilstm, self.encoder_inner_cell)
-        dynamic_bilstm_outer = partial(dynamic_bilstm, self.encoder_outer_cell)
+        self.inner_lstm = partial(self._dynamic_bilstm, 'inner', self.encoder_inner_cell)
+        self.outer_lstm = partial(self._dynamic_bilstm, 'outer', self.encoder_inner_cell)
 
-        self.DynamicInnerBiLSTM = Lambda(lambda x : dynamic_bilstm_inner(x))
-        self.DynamicOuterBiLSTM = Lambda(lambda x : dynamic_bilstm_outer(x))
+    def _dynamic_bilstm(self, level, encoder_cell, encoder_inputs, encoder_inputs_length):
+        with tf.variable_scope("BidirectionalEncoder") as scope:
+            encoder_inputs_embedded = encoder_inputs
 
+            if level == 'inner':
+                encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, \
+                    self.encoder_inputs)
+
+            ((encoder_fw_outputs,
+              encoder_bw_outputs),
+             (encoder_fw_state,
+              encoder_bw_state)) = (
+                tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
+                                                cell_bw=encoder_cell,
+                                                inputs=encoder_inputs_embedded,
+                                                sequence_length=encoder_inputs_length,
+                                                time_major=True,
+                                                dtype=tf.float32)
+                )
+
+            if level == 'inner':
+                encoder_outputs = tf.concat((encoder_fw_outputs, encoder_bw_outputs), 2)
+                return encoder_outputs
+
+            elif level == 'outer':
+                encoder_state = tf.concat((encoder_fw_state, encoder_bw_state), \
+                    1, name='bidirectional_concat')
+
+                return encoder_state
 
     def _buildNetwork(self):
         """ Create the computational graph
@@ -184,17 +210,8 @@ class Model:
         )
 
         self.opt_op = opt.minimize(self.loss)
-        
 
     def _init_encoder(self):
-        inner_lstm = Sequential()
-        inner_lstm.add(self.Embedding)
-        inner_lstm.add(self.DynamicInnerBiLSTM)
-
-        # This defines the outer LSTM
-        outer_lstm = Sequential()
-        # The embedding size here is the n_units_words from the inner LSTM
-        outer_lstm.add(self.DynamicOuterBiLSTM)
 
         '''
         Below is the nested LSTM
@@ -210,7 +227,8 @@ class Model:
         encoder_inputs_trans = tf.transpose(self.encoder_inputs, [1,0,2])
 
         # (n_sentence, batch_size, n_words, h_units_words)
-        inner_lstm_outputs = tf.map_fn(lambda x:inner_lstm(x), encoder_inputs_trans)
+        inner_lstm_outputs = tf.map_fn(lambda (x,y) : self.inner_lstm(x, y), 
+                            (encoder_inputs_trans, self.encoder_inner_length))
 
         # (batch_size, n_sentence, n_words, h_units_words)
         inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1,0,2,3])
@@ -219,7 +237,7 @@ class Model:
 
         #  The encoded state to initialize the dynamic_rnn_decoder
         # encoder_end_state, or the output of the outer lstm
-        encoder_end_state = outer_lstm(outer_lstm_input)
+        encoder_end_state = self.outer_lstm(outer_lstm_input, self.encoder_outer_length)
 
         self.encoder_state = variational_encoder(encoder_end_state, self.args.h_units_decoder)
 
@@ -332,7 +350,8 @@ class Model:
         ops = None
 
         if not self.args.test:  # Training
-            feedDict[self.encoder_inputs] = batch.encoder_convs
+            feedDict[self.encoder_inputs] = batch.encoder_convs   
+            feedDict[self.decoder_targets] = batch.target_seqs
             feedDict[self.decoder_targets] = batch.target_seqs
             feedDict[self.decoder_weights] = batch.target_seqs
 

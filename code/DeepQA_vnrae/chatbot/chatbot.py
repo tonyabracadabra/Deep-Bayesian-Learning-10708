@@ -164,11 +164,11 @@ class Chatbot:
             return  # No need to go further
 
         # Initialize embeddings with pre-trained word2vec vectors
-        lookup_matrix = self.loadEmbedding(self.sess)
+        # lookup_matrix = self.loadEmbedding(self.sess)
 
         # Prepare the model
         with tf.device(self.getDevice()):
-            self.model = Model(self.args, self.textData, lookup_matrix)
+            self.model = Model(self.args, self.textData)
 
         # Saver/summaries
         self.writer = tf.summary.FileWriter(self._getSummaryName())
@@ -350,6 +350,7 @@ class Chatbot:
         """
         # Create the input batch
         batch = self.textData.sentence2enco(question)
+
         if not batch:
             return None
         if questionSeq is not None:  # If the caller want to have the real input
@@ -396,9 +397,10 @@ class Chatbot:
         '''
 
         # Disable training for embeddings
-        #variables = tf.get_collection_ref(tf.GraphKeys.TRAINABLE_VARIABLES)
-        #variables.remove(em_in)
-        #variables.remove(em_out)
+
+        # variables = tf.get_collection_ref(tf.GraphKeys.TRAINABLE_VARIABLES)
+        # variables.remove(em_in)
+        # variables.remove(em_out)
 
         # If restoring a model, we can leave here
         if self.globStep != 0:
