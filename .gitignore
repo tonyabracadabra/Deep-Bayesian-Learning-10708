@@ -3,4 +3,5 @@ datasets/*
 others/*
 code/data/*
 code/DeepQA_vnrae/data/opensubs/*
+code/DeepQA_vnrae/chatbot/__pycache__
 DeepQA_vnrae/.idea
