@@ -396,9 +396,9 @@ class Chatbot:
         '''
 
         # Disable training for embeddings
-        variables = tf.get_collection_ref(tf.GraphKeys.TRAINABLE_VARIABLES)
-        variables.remove(em_in)
-        variables.remove(em_out)
+        #variables = tf.get_collection_ref(tf.GraphKeys.TRAINABLE_VARIABLES)
+        #variables.remove(em_in)
+        #variables.remove(em_out)
 
         # If restoring a model, we can leave here
         if self.globStep != 0:

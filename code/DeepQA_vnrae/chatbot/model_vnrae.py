@@ -261,9 +261,9 @@ class Model:
             attention_score_fn=attention_score_fn,
             attention_construct_fn=attention_construct_fn,
             embeddings=self.lookup_matrix,
-            start_of_sequence_id=EOS,
-            end_of_sequence_id=EOS,
-            maximum_length = n_words + 3,
+            start_of_sequence_id=self.textData.goToken,
+            end_of_sequence_id=self.textData.eosToken,
+            maximum_length = tf.reduce_max(self.decoder_targets_length) + 3,
             # vocabulary size
             num_decoder_symbols=n_all_words,
         )
@@ -302,7 +302,7 @@ class Model:
             self.decoder_targets,
             self.decoder_weights,
             self.textData.getVocabularySize(),
-            softmax_loss_function= sampled_softmax if output_projection else None  # If None, use default SoftMax
+            softmax_loss_function = sampled_softmax if output_projection else None,  # If None, use default SoftMax
             average_across_timesteps = False
         )
 
@@ -336,8 +336,6 @@ class Model:
             feedDict[self.decoder_targets] = batch.target_seqs
             feedDict[self.decoder_weights] = batch.target_seqs
 
-
-
             for i in range(self.args.maxLengthEnco):
                 feedDict[self.encoder_inputs[i]]  = batch.encoderSeqs[i]
             for i in range(self.args.maxLengthDeco):
@@ -351,7 +349,7 @@ class Model:
             feedDict[self.decoder_targets] = batch.target_seqs
 
             for i in range(self.args.maxLengthEnco):
-                  = batch.encoderSeqs[i]
+                feedDict[self.encoderInputs[i]] = batch.encoderSeqs[i]
             feedDict[self.decoderInputs[0]]  = [self.textData.goToken]
 
             ops = (self.outputs,)
