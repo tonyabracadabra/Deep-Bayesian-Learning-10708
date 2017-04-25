@@ -211,7 +211,7 @@ class TextData:
 
         batches = []
 
-        def genNextSamples():
+        def genNextSamples():                
             """ Generator over the mini-batch training samples
             """
             for i in range(0, self.getSampleSize(), self.args.batchSize):
@@ -400,7 +400,6 @@ class TextData:
 
         self.idCount.clear()  # Not usefull anymore. Free data
 
-
     def createFullCorpus(self, conversations):
         """Extract all data from the given vocabulary.
         Save the data on disk. Note that the entire corpus is pre-processed
@@ -436,6 +435,7 @@ class TextData:
 
             if inputWords and targetWords:  # Filter wrong samples (if one of the list is empty)
                 self.trainingSamples.append([inputWords, targetWords])
+                print(inputWords)
 
     def extractText(self, line):
         """Extract the words from a sample lines
