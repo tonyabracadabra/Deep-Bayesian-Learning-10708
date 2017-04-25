@@ -75,7 +75,7 @@ class Model:
 
         # shape = (batch_size, n_words)
         # This is the target sequence to be predicted
-        self.decoder_targets = tf.placeholder(tf.float32, [None, None])
+        self.decoder_targets = tf.placeholder(tf.int32, [None, None])
 
         # shape = (batch_size, n_sentences)
         # number of words in sentences for inner encoder input
@@ -131,13 +131,17 @@ class Model:
             
             if level == 'inner':
                 encoder_outputs = tf.concat((encoder_fw_outputs, encoder_bw_outputs), 2)
-                print(encoder_outputs)
 
                 return encoder_outputs
 
             elif level == 'outer':
-                encoder_state = tf.concat((encoder_fw_state, encoder_bw_state), 1, name='bidirectional_concat')
-                return encoder_state
+                encoder_state_h = tf.concat((encoder_fw_state.h, encoder_bw_state.h), \
+                    1, name='bidirectional_concat_h')
+
+                encoder_state_c = tf.concat((encoder_fw_state.c, encoder_bw_state.c), \
+                    1, name='bidirectional_concat_c')
+
+                return (encoder_state_h, encoder_state_c)
 
     def _build_network(self):
         """ Create the computational graph
@@ -179,8 +183,6 @@ class Model:
         inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1, 0, 2, 3])
         # sum out the third dimension for the input of outer lstm
         outer_lstm_input = tf.reduce_sum(inner_lstm_outputs_trans, axis=2)
-
-
 
         #  The encoded state to initialize the dynamic_rnn_decoder
         # encoder_end_state, or the output of the outer lstm
@@ -237,10 +239,14 @@ class Model:
             num_decoder_symbols=self.textData.getVocabularySize(),
         )
 
+        print(self.decoder_inputs_embedded)
+        print(self.decoder_targets_length)
+
         (decoder_outputs_train, decoder_state_train, decoder_context_state_train) = seq2seq.dynamic_rnn_decoder(
                 cell=self.decoder_cell,
                 decoder_fn=decoder_fn_train,
                 inputs=self.decoder_inputs_embedded,
+                sequence_length=self.decoder_targets_length,
                 time_major=False)
 
         self.decoder_logits_train = output_fn(decoder_outputs_train)
@@ -261,22 +267,26 @@ class Model:
     @staticmethod
     def reparameterizing_z(mu, logsigma):
         sigma_std = tf.exp(0.5 * logsigma)
-        epsilon = tf.random_normal(tf.shape(sigma_std))
+        epsilon = tf.random_normal(tf.shape(sigma_std), dtype=tf.float64)
         z = tf.add(mu, tf.multiply(sigma_std, epsilon))
+
         return z
 
     def _init_variational_encoder(self, encoder_end_state, h_units_decoder):
         # get mu and sigma from encoder state
-        self.encoder_state_mu = tf.contrib.layers.fully_connected(encoder_end_state.h, self.latent_size)
-        self.encoder_state_logsigma = tf.contrib.layers.fully_connected(encoder_end_state.h, self.latent_size)
+        encoder_end_state_h, encoder_end_state_c = encoder_end_state
+
+        self.encoder_state_mu = tf.contrib.layers.fully_connected(encoder_end_state_h, self.args.latent_size)
+        self.encoder_state_logsigma = tf.contrib.layers.fully_connected(encoder_end_state_h, self.args.latent_size)
         # reparameter to get z
         sample_z = self.reparameterizing_z(self.encoder_state_mu, self.encoder_state_logsigma)
         # get intital state of decoder from z
         encoder_state_h = tf.contrib.layers.fully_connected(sample_z, h_units_decoder)
 
-        encoder_state_c = encoder_end_state.c
+        encoder_state_c = encoder_end_state_c
 
         encoder_state = LSTMStateTuple(c=encoder_state_c, h=encoder_state_h)
+
         return encoder_state
 
     def sampled_softmax(self, labels, inputs):

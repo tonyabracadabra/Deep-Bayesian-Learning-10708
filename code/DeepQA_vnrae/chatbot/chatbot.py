@@ -126,7 +126,8 @@ class Chatbot:
         nnArgs.add_argument('--embeddingSource', type=str, default="GoogleNews-vectors-negative300.bin", help='embedding file to use for the word representation')
         nnArgs.add_argument('--h_units_words', type=int, default=50, help='number of hidden units in inner encoder')
         nnArgs.add_argument('--h_units_sentences', type=int, default=50, help='number of hidden units in outer encoder')
-        nnArgs.add_argument('--h_units_decoder', type=int, default=50, help='number of hidden units in decoder')
+        nnArgs.add_argument('--h_units_decoder', type=int, default=100, help='number of hidden units in decoder')
+        nnArgs.add_argument('--latent_size', type=int, default=30, help='Latent variable size in the variational model')
 
         # Training options
         trainingArgs = parser.add_argument_group('Training options')
