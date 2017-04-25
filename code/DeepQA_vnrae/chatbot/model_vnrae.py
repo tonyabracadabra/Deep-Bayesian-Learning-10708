@@ -25,6 +25,8 @@ import numpy as np
 import math
 from functools import partial
 import tensorflow.contrib.seq2seq as seq2seq
+from tensorflow.python.ops import array_ops
+#from chatbot.loss_new import sequence_loss
 
 from chatbot.textdata import Batch
 
@@ -137,8 +139,7 @@ class Model:
         # (batch_size, n_words_max)
         self.decoder_weights = tf.ones([
             self.args.batch_size,
-            6
-            # tf.reduce_max(self.decoder_targets_length)
+            tf.reduce_max(self.decoder_targets_length)
         ], dtype=tf.float32, name="loss_weights")
 
     def _init_embedding(self, lookup_matrix):
@@ -324,7 +325,11 @@ class Model:
             )
 
             # self.decoder_logits_train = tf.map_fn(self._output_fn, self.decoder_outputs_train)
-            decoder_outputs_train_flat = tf.reshape(self.decoder_outputs_train, [-1, self.args.h_units_decoder])
+            #print(self.decoder_outputs_train)
+            decoder_outputs_train_flat = array_ops.reshape(self.decoder_outputs_train, [-1,
+                                                                array_ops.shape(self.decoder_outputs_train)[2]])
+            #print(decoder_outputs_train_flat)
+
             self.decoder_logits_train = output_projection(decoder_outputs_train_flat)
 
             self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
@@ -370,8 +375,6 @@ class Model:
         return encoder_state
 
     def _define_loss(self, sampled_softmax):
-
-        print(self.decoder_outputs_train)
 
         self.loss_reconstruct = tf.reduce_sum(seq2seq.sequence_loss(
             logits=self.decoder_outputs_train,
