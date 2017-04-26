@@ -252,8 +252,7 @@ class TextData:
         """Load/create the conversations data
         """
 
-        datasetExist = False
-        datasetExist = os.path.isfile(self.filteredSamplesPath)
+        datasetExist = os.path.isfile(self.args.context_path)
         if not datasetExist:  # First time we load the database: creating all files
             print('Training samples not found. Creating dataset...')
 
@@ -314,6 +313,8 @@ class TextData:
             self.id2word = data['id2word']
             self.idCount = data.get('idCount', None)
             self.trainingSamples = data['trainingSamples']
+            print("************************")
+            print(self.trainingSamples)
 
             self.padToken = self.word2id['<pad>']
             self.goToken = self.word2id['<go>']

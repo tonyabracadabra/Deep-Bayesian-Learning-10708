@@ -25,6 +25,8 @@ import numpy as np
 import math
 from functools import partial
 import tensorflow.contrib.seq2seq as seq2seq
+from tensorflow.python.ops import array_ops
+#from chatbot.loss_new import sequence_loss
 
 from chatbot.textdata import Batch
 
@@ -137,8 +139,7 @@ class Model:
         # (batch_size, n_words_max)
         self.decoder_weights = tf.ones([
             self.args.batch_size,
-            6
-            # tf.reduce_max(self.decoder_targets_length)
+            tf.reduce_max(self.decoder_targets_length)
         ], dtype=tf.float32, name="loss_weights")
 
     def _init_embedding(self, lookup_matrix):
@@ -152,14 +153,19 @@ class Model:
         self.outer_lstm = partial(self._dynamic_bilstm, 'outer', self.encoder_inner_cell)
 
     def _dynamic_bilstm(self, level, encoder_cell, encoder_inputs, encoder_inputs_length):
-        with tf.variable_scope("BidirectionalEncoder") as scope:
-            encoder_inputs_embedded = encoder_inputs
+        encoder_inputs_embedded = encoder_inputs
 
-            if level == 'inner':
-                # (batch_size, n_words, embedding_size)
-                encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
+        if level == 'inner':
+            # (batch_size, n_words, embedding_size)
+            with tf.variable_scope("embedding") as embedding_scope:
+                try:
+                    encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
+                except ValueError:
+                    embedding_scope.reuse_variables()
+                    encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
 
-            with tf.variable_scope(level) as scope:
+        with tf.variable_scope(level) as scope_bilstm:
+            try:
                 ((encoder_fw_outputs,
                   encoder_bw_outputs),
                  (encoder_fw_state,
@@ -172,21 +178,36 @@ class Model:
                                                     dtype=tf.float32)
                     )
 
-            # (batch_size, n_words, h_units_words)
-            
-            if level == 'inner':
-                encoder_outputs = tf.concat((encoder_fw_outputs, encoder_bw_outputs), 2)
+            except ValueError:
 
-                return encoder_outputs
+                scope_bilstm.reuse_variables()
 
-            elif level == 'outer':
-                encoder_state_h = tf.concat((encoder_fw_state.h, encoder_bw_state.h),
-                    1, name='bidirectional_concat_h')
+                ((encoder_fw_outputs,
+                  encoder_bw_outputs),
+                 (encoder_fw_state,
+                  encoder_bw_state)) = (
+                    tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
+                                                    cell_bw=encoder_cell,
+                                                    inputs=encoder_inputs_embedded,
+                                                    sequence_length=encoder_inputs_length,
+                                                    time_major=True,
+                                                    dtype=tf.float32)
+                )
 
-                encoder_state_c = tf.concat((encoder_fw_state.c, encoder_bw_state.c),
-                    1, name='bidirectional_concat_c')
 
-                return (encoder_state_h, encoder_state_c)
+        # (batch_size, n_words, h_units_words)
+
+        if level == 'inner':
+            encoder_outputs = tf.concat((encoder_fw_outputs, encoder_bw_outputs), 2)
+
+            return encoder_outputs
+
+        elif level == 'outer':
+            encoder_state_h = tf.concat((encoder_fw_state.h, encoder_bw_state.h), 1, name='bidirectional_concat_h')
+
+            encoder_state_c = tf.concat((encoder_fw_state.c, encoder_bw_state.c), 1, name='bidirectional_concat_c')
+
+            return encoder_state_h, encoder_state_c
 
     def _build_network(self):
         """ Create the computational graph
@@ -207,9 +228,6 @@ class Model:
             local_inputs = tf.cast(inputs, tf.float32)
 
             print(local_inputs)
-            print("6666666666666")
-            print(inputs)
-            print(labels)
 
             return tf.cast(
                 tf.nn.sampled_softmax_loss(
@@ -248,10 +266,8 @@ class Model:
         encoder_inner_length_trans = tf.transpose(self.encoder_inner_length, [1, 0])
 
         # (n_sentence, batch_size, n_words)
-
-        inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]), \
-                            (encoder_inputs_trans, encoder_inner_length_trans), \
-                            dtype=tf.float32)
+        inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]),
+                        (encoder_inputs_trans, encoder_inner_length_trans), dtype=tf.float32)
 
         # (batch_size, n_sentence, n_words, h_units_words)
         inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1, 0, 2, 3])
@@ -327,7 +343,11 @@ class Model:
             )
 
             # self.decoder_logits_train = tf.map_fn(self._output_fn, self.decoder_outputs_train)
-            decoder_outputs_train_flat = tf.reshape(self.decoder_outputs_train, [-1, self.args.h_units_decoder])
+            #print(self.decoder_outputs_train)
+            decoder_outputs_train_flat = array_ops.reshape(self.decoder_outputs_train, [-1,
+                                                                array_ops.shape(self.decoder_outputs_train)[2]])
+            #print(decoder_outputs_train_flat)
+
             self.decoder_logits_train = output_projection(decoder_outputs_train_flat)
 
             self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
@@ -374,8 +394,6 @@ class Model:
 
     def _define_loss(self, sampled_softmax):
 
-        print(self.decoder_outputs_train)
-
         self.loss_reconstruct = tf.reduce_sum(seq2seq.sequence_loss(
             logits=self.decoder_outputs_train,
             targets=self.decoder_targets,
@@ -409,10 +427,11 @@ class Model:
         feedDict = {}
         ops = None
 
-        encoder_inputs = np.array([[[1,3,4,5,-1,-1],[2,3,-1,-1,-1,-1],[2,3,555,1,2,666]],
-                          [[999,666,4,-1,-1,-1],[2,3,888,777,-1,-1],[-1,-1,-1,-1,-1,-1]]])
+        # has to be zero, otherwise cannot be embedded
+        encoder_inputs = np.array([[[1,3,4,5,0,0],[2,3,0,0,0,0],[2,3,555,1,2,666]],
+                          [[999,666,4,0,0,0],[2,3,888,777,0,0],[0,0,0,0,0,0]]])
 
-        decoder_inputs = np.array([[-1, 1, 3, 5, 7, 9], [-1, 2, 4, 6, 8, 10]])
+        decoder_inputs = np.array([[0, 1, 3, 5, 7, 9], [0, 2, 4, 6, 8, 10]])
         decoder_targets = np.array([[1,3,5,7,9,1],[2,4,6,8,10,2]])
 
         encoder_inner_length = np.array([[4,2,6],[3,4,0]])
@@ -424,7 +443,7 @@ class Model:
         feedDict[self.encoder_inner_length] = encoder_inner_length
         feedDict[self.encoder_outer_length] = encoder_outer_length
         feedDict[self.decoder_targets_length] = decoder_targets_length
-        feedDict[self.encoder_inputs] = decoder_inputs
+        feedDict[self.decoder_inputs] = decoder_inputs
 
         ops = (self.opt_op, self.loss)
 

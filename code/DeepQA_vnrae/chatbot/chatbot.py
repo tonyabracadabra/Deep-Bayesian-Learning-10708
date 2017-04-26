@@ -116,13 +116,14 @@ class Chatbot:
         datasetArgs.add_argument('--maxLength', type=int, default=10, help='maximum length of the sentence (for input and output), define number of maximum step of the RNN')
         datasetArgs.add_argument('--filterVocab', type=int, default=1, help='remove rarelly used words (by default words used only once). 0 to keep all words.')
 
-        nnArgs.add_argument('--context_path', type=str, default=30, help='Path for the .npy file of the context')
+        # New!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        datasetArgs.add_argument('--context_path', type=str, default='../data/context_sentences.npy', help='Path for the .npy file of the context')
 
         # Network options (Warning: if modifying something here, also make the change on save/loadParams() )
         nnArgs = parser.add_argument_group('Network options', 'architecture related option')
         nnArgs.add_argument('--hiddenSize', type=int, default=512, help='number of hidden units in each RNN cell')
         nnArgs.add_argument('--numLayers', type=int, default=2, help='number of rnn layers')
-        nnArgs.add_argument('--softmaxSamples', type=int, default=0, help='Number of samples in the sampled softmax loss function. A value of 0 deactivates sampled softmax')
+        nnArgs.add_argument('--softmaxSamples', type=int, default=10, help='Number of samples in the sampled softmax loss function. A value of 0 deactivates sampled softmax')
         nnArgs.add_argument('--initEmbeddings', action='store_true', help='if present, the program will initialize the embeddings with pre-trained word2vec vectors')
         nnArgs.add_argument('--embeddingSize', type=int, default=64, help='embedding size of the word representation')
         nnArgs.add_argument('--embeddingSource', type=str, default="GoogleNews-vectors-negative300.bin", help='embedding file to use for the word representation')
@@ -136,7 +137,7 @@ class Chatbot:
         trainingArgs.add_argument('--numEpochs', type=int, default=30, help='maximum number of epochs to run')
         trainingArgs.add_argument('--saveEvery', type=int, default=2000, help='nb of mini-batch step before creating a model checkpoint')
         trainingArgs.add_argument('--batchSize', type=int, default=256, help='mini-batch size')
-        trainingArgs.add_argument('--learningRate', type=float, default=0.002, help='Learning rate')
+        trainingArgs.add_argument('--learning_rate', type=float, default=0.002, help='Learning rate')
         trainingArgs.add_argument('--dropout', type=float, default=0.9, help='Dropout rate (keep probabilities)')
         trainingArgs.add_argument('--batch_size', type=int, default=2, help='mini-batch size')
 
@@ -245,7 +246,7 @@ class Chatbot:
             for e in range(self.args.numEpochs):
 
                 print()
-                print("----- Epoch {}/{} ; (lr={}) -----".format(e+1, self.args.numEpochs, self.args.learningRate))
+                print("----- Epoch {}/{} ; (lr={}) -----".format(e+1, self.args.numEpochs, self.args.learning_rate))
 
                 batches = self.textData.getBatches()
 
@@ -257,6 +258,7 @@ class Chatbot:
                     ops, feedDict = self.model.step(nextBatch)
                     assert len(ops) == 2  # training, loss
                     _, loss, summary = sess.run(ops + (mergedSummaries,), feedDict)
+                    print("endendendend")
                     self.writer.add_summary(summary, self.globStep)
                     self.globStep += 1
 
