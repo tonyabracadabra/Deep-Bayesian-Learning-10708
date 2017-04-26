@@ -116,6 +116,8 @@ class Chatbot:
         datasetArgs.add_argument('--maxLength', type=int, default=10, help='maximum length of the sentence (for input and output), define number of maximum step of the RNN')
         datasetArgs.add_argument('--filterVocab', type=int, default=1, help='remove rarelly used words (by default words used only once). 0 to keep all words.')
 
+        nnArgs.add_argument('--context_path', type=str, default=30, help='Path for the .npy file of the context')
+
         # Network options (Warning: if modifying something here, also make the change on save/loadParams() )
         nnArgs = parser.add_argument_group('Network options', 'architecture related option')
         nnArgs.add_argument('--hiddenSize', type=int, default=512, help='number of hidden units in each RNN cell')

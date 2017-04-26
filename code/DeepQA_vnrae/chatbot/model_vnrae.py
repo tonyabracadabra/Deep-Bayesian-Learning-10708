@@ -207,6 +207,9 @@ class Model:
             local_inputs = tf.cast(inputs, tf.float32)
 
             print(local_inputs)
+            print("6666666666666")
+            print(inputs)
+            print(labels)
 
             return tf.cast(
                 tf.nn.sampled_softmax_loss(

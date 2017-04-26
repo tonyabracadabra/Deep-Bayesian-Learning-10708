@@ -596,7 +596,7 @@ class TextData:
         return sequence  # We return the raw sentence. Let the caller do some cleaning eventually
 
     def playDataset(self):
-        """Print a random dialogue from the dataset
+        """ Print a random dialogue from the dataset
         """
         print('Randomly play samples:')
         for i in range(self.args.playDataset):
@@ -618,4 +618,5 @@ def tqdm_wrap(iterable, *args, **kwargs):
     """
     if len(iterable) > 100:
         return tqdm(iterable, *args, **kwargs)
+
     return iterable
