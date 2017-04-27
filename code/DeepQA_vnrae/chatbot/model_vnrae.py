@@ -150,7 +150,7 @@ class Model:
 
     def _define_layers(self):
         self.inner_lstm = partial(self._dynamic_bilstm, 'inner', self.encoder_inner_cell)
-        self.outer_lstm = partial(self._dynamic_bilstm, 'outer', self.encoder_inner_cell)
+        self.outer_lstm = partial(self._dynamic_bilstm, 'outer', self.encoder_outer_cell)
 
     def _dynamic_bilstm(self, level, encoder_cell, encoder_inputs, encoder_inputs_length):
         encoder_inputs_embedded = encoder_inputs
@@ -174,7 +174,7 @@ class Model:
                                                     cell_bw=encoder_cell,
                                                     inputs=encoder_inputs_embedded,
                                                     sequence_length=encoder_inputs_length,
-                                                    time_major=True,
+                                                    time_major=False,
                                                     dtype=tf.float32)
                     )
 
@@ -190,7 +190,7 @@ class Model:
                                                     cell_bw=encoder_cell,
                                                     inputs=encoder_inputs_embedded,
                                                     sequence_length=encoder_inputs_length,
-                                                    time_major=True,
+                                                    time_major=False,
                                                     dtype=tf.float32)
                 )
 
@@ -227,11 +227,9 @@ class Model:
             local_b = tf.cast(output_projection.b, tf.float32)
             local_inputs = tf.cast(inputs, tf.float32)
 
-            print(local_inputs)
-
             return tf.cast(
                 tf.nn.sampled_softmax_loss(
-                    tf.transpose(local_wt),  # Should have shape [num_classes, dim]
+                    local_wt,  # Should have shape [num_classes, dim]
                     local_b,
                     labels,
                     local_inputs,
@@ -242,6 +240,26 @@ class Model:
         self._init_encoder()
         self._init_decoder(output_projection)
         self._define_loss(sampled_softmax)
+
+        # self.loss_reconstruct = tf.reduce_sum(seq2seq.sequence_loss(
+        #     logits=self.decoder_logits_train,
+        #     targets=self.decoder_targets,
+        #     weights=self.decoder_weights,
+        #     softmax_loss_function=sampled_softmax,
+        #     average_across_timesteps=False,
+        #     average_across_batch=True)
+        # )
+        #
+        # self.KL = tf.reduce_mean(-0.5 * tf.reduce_sum(1 + self.encoder_state_logsigma
+        #                                               - tf.pow(self.encoder_state_mu, 2)
+        #                                               - tf.exp(self.encoder_state_logsigma), axis=1))
+        #
+        # self.loss = tf.add(self.KL, self.loss_reconstruct)
+        #
+        # # Keep track of the cost
+        # tf.summary.scalar('loss_reconstruct', self.loss_reconstruct)
+        # tf.summary.scalar('KL', self.KL)
+        # tf.summary.scalar('loss', self.loss)
 
         # Initialize the optimizer
         opt = tf.train.AdamOptimizer(
@@ -268,6 +286,7 @@ class Model:
         # (n_sentence, batch_size, n_words)
         inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]),
                         (encoder_inputs_trans, encoder_inner_length_trans), dtype=tf.float32)
+
 
         # (batch_size, n_sentence, n_words, h_units_words)
         inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1, 0, 2, 3])
@@ -341,17 +360,16 @@ class Model:
                     time_major=False,
                     scope=scope
             )
+            #
+            # self.decoder_logits_train = output_projection(self.decoder_outputs_train)
+            # self.decoder_logits_train_trans = tf.reshape(self.decoder_outputs_train, [1,0,2])
 
-            # self.decoder_logits_train = tf.map_fn(self._output_fn, self.decoder_outputs_train)
-            #print(self.decoder_outputs_train)
-            decoder_outputs_train_flat = array_ops.reshape(self.decoder_outputs_train, [-1,
-                                                                array_ops.shape(self.decoder_outputs_train)[2]])
-            #print(decoder_outputs_train_flat)
-
-            self.decoder_logits_train = output_projection(decoder_outputs_train_flat)
+            self.decoder_logits_train = tf.transpose(tf.map_fn(output_projection,
+                                        tf.transpose(self.decoder_outputs_train, [1,0,2])),[1,0,2])
 
             self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
 
+            # for both training and inference
             scope.reuse_variables()
 
             (decoder_logits_inference,
@@ -392,6 +410,7 @@ class Model:
 
         return encoder_state
 
+
     def _define_loss(self, sampled_softmax):
 
         self.loss_reconstruct = tf.reduce_sum(seq2seq.sequence_loss(
@@ -424,7 +443,7 @@ class Model:
         """
 
         # Feed the dictionary
-        feedDict = {}
+        feed_dict = {}
         ops = None
 
         # has to be zero, otherwise cannot be embedded
@@ -438,14 +457,21 @@ class Model:
         encoder_outer_length = np.array([3,2])
         decoder_targets_length = np.array([6, 6])
 
-        feedDict[self.encoder_inputs] = encoder_inputs
-        feedDict[self.decoder_targets] = decoder_targets
-        feedDict[self.encoder_inner_length] = encoder_inner_length
-        feedDict[self.encoder_outer_length] = encoder_outer_length
-        feedDict[self.decoder_targets_length] = decoder_targets_length
-        feedDict[self.decoder_inputs] = decoder_inputs
+        feed_dict[self.encoder_inputs] = encoder_inputs
+        feed_dict[self.decoder_targets] = decoder_targets
+        feed_dict[self.encoder_inner_length] = encoder_inner_length
+        feed_dict[self.encoder_outer_length] = encoder_outer_length
+        feed_dict[self.decoder_targets_length] = decoder_targets_length
+        feed_dict[self.decoder_inputs] = decoder_inputs
 
         ops = (self.opt_op, self.loss)
+
+        # sess = tf.Session()
+        # sess.run(tf.global_variables_initializer())
+        # temp = sess.run(self.loss_reconstruct, feed_dict=feed_dict)
+        # print(temp)
+        # print(temp.shape)
+        # print(sess.run(self.loss, feed_dict=feed_dict))
 
         '''
         if not self.args.test:  # Training
@@ -471,4 +497,4 @@ class Model:
         '''
 
         # Return one pass operator
-        return ops, feedDict
+        return ops, feed_dict

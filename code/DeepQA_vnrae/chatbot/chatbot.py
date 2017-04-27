@@ -123,11 +123,7 @@ class Chatbot:
         nnArgs = parser.add_argument_group('Network options', 'architecture related option')
         nnArgs.add_argument('--hiddenSize', type=int, default=512, help='number of hidden units in each RNN cell')
         nnArgs.add_argument('--numLayers', type=int, default=2, help='number of rnn layers')
-<<<<<<< HEAD
-        nnArgs.add_argument('--softmaxSamples', type=int, default=10, help='Number of samples in the sampled softmax loss function. A value of 0 deactivates sampled softmax')
-=======
-        nnArgs.add_argument('--softmaxSamples', type=int, default=100, help='Number of samples in the sampled softmax loss function. A value of 0 deactivates sampled softmax')
->>>>>>> e8f83603c6efb834484a7f2d55e6b7ca8608ee7a
+        nnArgs.add_argument('--softmaxSamples', type=int, default=200, help='Number of samples in the sampled softmax loss function. A value of 0 deactivates sampled softmax')
         nnArgs.add_argument('--initEmbeddings', action='store_true', help='if present, the program will initialize the embeddings with pre-trained word2vec vectors')
         nnArgs.add_argument('--embeddingSize', type=int, default=64, help='embedding size of the word representation')
         nnArgs.add_argument('--embeddingSource', type=str, default="GoogleNews-vectors-negative300.bin", help='embedding file to use for the word representation')
