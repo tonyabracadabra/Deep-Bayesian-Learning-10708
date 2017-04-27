@@ -76,8 +76,8 @@ class TextData:
         # Path variables
         self.corpusDir = os.path.join(self.args.rootDir, 'data', self.args.corpus)
         basePath = self._constructBasePath()
-        self.fullSamplesPath = basePath + '.pkl'  # Full sentences length/vocab
-        self.filteredSamplesPath = basePath + '-lenght{}-filter{}.pkl'.format(
+        self.fullSamplesPath = basePath + '_context.pkl'  # Full sentences length/vocab
+        self.filteredSamplesPath = basePath + '-lenght{}-filter{}_context.pkl'.format(
             self.args.maxLength,
             self.args.filterVocab,
         )  # Sentences/vocab filtered for this model
@@ -127,6 +127,8 @@ class TextData:
         print('Shuffling the dataset...')
         random.shuffle(self.trainingSamples)
 
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
+
     def _createBatch(self, samples):
         """Create a single batch from the list of sample. The batch size is automatically defined by the number of
         samples given.
@@ -144,15 +146,19 @@ class TextData:
         # Create the batch tensor
         for i in range(batchSize):
             # Unpack the sample
+            # sample := (inputContext, targetWords)
             sample = samples[i]
             if not self.args.test and self.args.watsonMode:  # Watson mode: invert question and answer
                 sample = list(reversed(sample))
             if not self.args.test and self.args.autoEncode:  # Autoencode: use either the question or answer for both input and output
                 k = random.randint(0, 1)
                 sample = (sample[k], sample[k])
+
             # TODO: Why re-processed that at each epoch ? Could precompute that
             # once and reuse those every time. Is not the bottleneck so won't change
             # much ? and if preprocessing, should be compatible with autoEncode & cie.
+            # Tay: Yeah you are right, asshole
+
             batch.encoderSeqs.append(list(reversed(sample[0])))  # Reverse inputs (and not outputs), little trick as defined on the original seq2seq paper
             batch.decoderSeqs.append([self.goToken] + sample[1] + [self.eosToken])  # Add the <go> and <eos> tokens
             batch.targetSeqs.append(batch.decoderSeqs[-1][1:])  # Same as decoder, but shifted to the left (ignore the <go>)
@@ -196,11 +202,13 @@ class TextData:
         batch.weights = weightsT
 
         # # Debug
-        # self.printBatch(batch)  # Input inverted, padding should be correct
-        # print(self.sequence2str(samples[0][0]))
-        # print(self.sequence2str(samples[0][1]))  # Check we did not modified the original sample
+        #self.printBatch(batch)  # Input inverted, padding should be correct
+        print(self.sequence2str(samples[0][0]))
+        print(self.sequence2str(samples[0][1]))  # Check we did not modified the original sample
 
         return batch
+
+#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
     def getBatches(self):
         """Prepare the batches for the current epoch
@@ -211,7 +219,7 @@ class TextData:
 
         batches = []
 
-        def genNextSamples():                
+        def genNextSamples():
             """ Generator over the mini-batch training samples
             """
             for i in range(0, self.getSampleSize(), self.args.batchSize):
@@ -262,9 +270,11 @@ class TextData:
             else:
                 self.loadDataset(self.fullSamplesPath)
             self._printStats()
-
+            # WTF??
+            ###########################################
             print('Filtering words...')
             self.filterFromFull()  # Extract the sub vocabulary for the given maxLength and filterVocab
+            ###########################################
 
             # Saving
             print('Saving dataset...')
@@ -312,7 +322,8 @@ class TextData:
         """ Load the pre-processed full corpus and filter the vocabulary / sentences
         to match the given model options
         """
-
+        ####################################################################
+        # ********************************************
         def mergeSentences(sentences, fromEnd=False):
             """Merge the sentences until the max sentence length is reached
             Also decrement id count for unused sentences.
@@ -342,16 +353,24 @@ class TextData:
                     for w in sentence:
                         self.idCount[w] -= 1
             return merged
+        # ********************************************
 
         newSamples = []
-
+        #newSamples = self.trainingSamples.copy()
+        
         # 1st step: Iterate over all words and add filters the sentences
         # according to the sentence lengths
-        for inputWords, targetWords in tqdm(self.trainingSamples, desc='Filter sentences:', leave=False):
-            inputWords = mergeSentences(inputWords, fromEnd=True)
-            targetWords = mergeSentences(targetWords, fromEnd=False)
+        for inputContext, targetWords in tqdm(self.trainingSamples, desc='Filter sentences:', leave=False):
+            newContext = []
 
-            newSamples.append([inputWords, targetWords])
+            for i in range(len(inputContext) - 1):
+                inputWords = inputContext[i]
+                inputWords = mergeSentences(inputWords, fromEnd=True)
+                newContext.append(inputWords)           
+            targetWords = mergeSentences(targetWords, fromEnd=False)
+            
+            newSamples.append([newContext, targetWords])
+
         words = []
 
         # WARNING: DO NOT FILTER THE UNKNOWN TOKEN !!! Only word which has count==0 ?
@@ -390,15 +409,27 @@ class TextData:
             return valid
 
         self.trainingSamples.clear()
-        for inputWords, targetWords in tqdm(newSamples, desc='Replace ids:', leave=False):
+
+        for inputContext, targetWords in tqdm(newSamples, desc='Replace ids:', leave=False):
             valid = True
-            valid &= replace_words(inputWords)
+            # WARNING: If ONE of sentence is filtered, the whole conversation is invalid!!
+            
+            # traverse the whole input context
+            for i in range(len(inputContext) - 1):
+                inputWords = inputContext[i]
+                valid &= replace_words(inputWords)
+
             valid &= replace_words(targetWords)
 
             if valid:
-                self.trainingSamples.append([inputWords, targetWords])  # TODO: Could replace list by tuple
+                #self.trainingSamples.append([inputWords, targetWords])  # TODO: Could replace list by tuple
+
+                self.trainingSamples.append([inputContext, targetWords])  # TODO: Could replace list by tuple
 
         self.idCount.clear()  # Not usefull anymore. Free data
+        newSamples.clear()
+        ###############################################################
+
 
     def createFullCorpus(self, conversations):
         """Extract all data from the given vocabulary.
@@ -412,7 +443,7 @@ class TextData:
         self.unknownToken = self.getWordId('<unknown>')  # Word dropped from vocabulary
 
         # Preprocessing data
-
+        # conversation is convObj / miniConv
         for conversation in tqdm(conversations, desc='Extract conversations'):
             self.extractConversation(conversation)
 
@@ -423,19 +454,25 @@ class TextData:
         Args:
             conversation (Obj): a conversation object containing the lines to extract
         """
+        nLines = len(conversation['lines'])
+        targetLine = conversation['lines'][nLines - 1]
+        targetWords = self.extractText(targetLine['text'])
+        inputContext = []
 
-        # Iterate over all the lines of the conversation
-        for i in tqdm_wrap(range(len(conversation['lines']) - 1),  # We ignore the last line (no answer for it)
+        # (Tay: Now only iterate for the  context part)
+        # Iterate over all the lines of the conversation (convObj / miniConv)
+        for i in tqdm_wrap(range(len(conversation['lines']) - 2),  # We ignore the last line (no answer for it) Tay: no more 'ignore'
                            desc='Conversation', leave=False):
             inputLine  = conversation['lines'][i]
-            targetLine = conversation['lines'][i+1]
-
             inputWords  = self.extractText(inputLine['text'])
-            targetWords = self.extractText(targetLine['text'])
+            
+            if inputWords:
+                inputContext.append(inputWords)
 
-            if inputWords and targetWords:  # Filter wrong samples (if one of the list is empty)
-                self.trainingSamples.append([inputWords, targetWords])
-                # print(inputWords)
+        # TODO: Need to discuss spec of the context
+        if len(inputContext) > 0 and targetWords:
+            self.trainingSamples.append([inputContext, targetWords])
+
 
     def extractText(self, line):
         """Extract the words from a sample lines
@@ -596,7 +633,7 @@ class TextData:
         return sequence  # We return the raw sentence. Let the caller do some cleaning eventually
 
     def playDataset(self):
-        """ Print a random dialogue from the dataset
+        """Print a random dialogue from the dataset
         """
         print('Randomly play samples:')
         for i in range(self.args.playDataset):
@@ -618,5 +655,4 @@ def tqdm_wrap(iterable, *args, **kwargs):
     """
     if len(iterable) > 100:
         return tqdm(iterable, *args, **kwargs)
-
     return iterable
