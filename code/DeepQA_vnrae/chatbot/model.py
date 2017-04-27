@@ -77,7 +77,7 @@ class Model:
         2 LTSM layers
     """
 
-    def __init__(self, args, textData):
+    def __init__(self, args, textData, lookup_matrix):
         """
         Args:
             args: parameters of the model

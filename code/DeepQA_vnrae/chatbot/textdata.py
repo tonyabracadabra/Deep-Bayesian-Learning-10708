@@ -39,6 +39,7 @@ class Batch:
     """
     def __init__(self):
         self.encoderSeqs = []
+        self.encoderContext = []
         self.decoderSeqs = []
         self.targetSeqs = []
         self.weights = []
@@ -357,7 +358,7 @@ class TextData:
 
         newSamples = []
         #newSamples = self.trainingSamples.copy()
-        
+
         # 1st step: Iterate over all words and add filters the sentences
         # according to the sentence lengths
         for inputContext, targetWords in tqdm(self.trainingSamples, desc='Filter sentences:', leave=False):
@@ -366,9 +367,9 @@ class TextData:
             for i in range(len(inputContext) - 1):
                 inputWords = inputContext[i]
                 inputWords = mergeSentences(inputWords, fromEnd=True)
-                newContext.append(inputWords)           
+                newContext.append(inputWords)
             targetWords = mergeSentences(targetWords, fromEnd=False)
-            
+
             newSamples.append([newContext, targetWords])
 
         words = []
@@ -413,7 +414,7 @@ class TextData:
         for inputContext, targetWords in tqdm(newSamples, desc='Replace ids:', leave=False):
             valid = True
             # WARNING: If ONE of sentence is filtered, the whole conversation is invalid!!
-            
+
             # traverse the whole input context
             for i in range(len(inputContext) - 1):
                 inputWords = inputContext[i]
@@ -465,7 +466,7 @@ class TextData:
                            desc='Conversation', leave=False):
             inputLine  = conversation['lines'][i]
             inputWords  = self.extractText(inputLine['text'])
-            
+
             if inputWords:
                 inputContext.append(inputWords)
 
