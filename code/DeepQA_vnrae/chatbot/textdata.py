@@ -140,15 +140,19 @@ class TextData:
         Return:
             Batch: a batch object en
         """
-
         batch = Batch()
         batchSize = len(samples)
+        maxContextLength = 0
 
         # Create the batch tensor
         for i in range(batchSize):
             # Unpack the sample
-            # sample := (inputContext, targetWords)
+
             sample = samples[i]
+            ##########################################
+            # sample := (inputContext, targetWords)
+            ##########################################
+
             if not self.args.test and self.args.watsonMode:  # Watson mode: invert question and answer
                 sample = list(reversed(sample))
             if not self.args.test and self.args.autoEncode:  # Autoencode: use either the question or answer for both input and output
@@ -158,31 +162,56 @@ class TextData:
             # TODO: Why re-processed that at each epoch ? Could precompute that
             # once and reuse those every time. Is not the bottleneck so won't change
             # much ? and if preprocessing, should be compatible with autoEncode & cie.
-            # Tay: Yeah you are right, asshole
 
+            context = sample[0]
+            contextReversed = []
+            contextLength = len(context)
+            if contextLength > maxContextLength:
+                maxContextLength = contextLength
+
+            # Reverse input in whole context
+            for c in range(contextLength - 1):
+                inputSentence = context[c]
+                assert len(inputSentence) <= self.args.maxLengthEnco
+                # Padding (words)
+                inputSentence = inputSentence + [self.padToken] * (self.args.maxLengthEnco  - len(inputSentence))
+                contextReversed.append(list(reversed(inputSentence)))
+
+            batch.encoderContext.append(contextReversed)
             batch.encoderSeqs.append(list(reversed(sample[0])))  # Reverse inputs (and not outputs), little trick as defined on the original seq2seq paper
             batch.decoderSeqs.append([self.goToken] + sample[1] + [self.eosToken])  # Add the <go> and <eos> tokens
             batch.targetSeqs.append(batch.decoderSeqs[-1][1:])  # Same as decoder, but shifted to the left (ignore the <go>)
 
             # Long sentences should have been filtered during the dataset creation
-            assert len(batch.encoderSeqs[i]) <= self.args.maxLengthEnco
+
+            #assert len(batch.encoderSeqs[i]) <= self.args.maxLengthEnco
             assert len(batch.decoderSeqs[i]) <= self.args.maxLengthDeco
 
             # TODO: Should use tf batch function to automatically add padding and batch samples
             # Add padding & define weight
-            batch.encoderSeqs[i]   = [self.padToken] * (self.args.maxLengthEnco  - len(batch.encoderSeqs[i])) + batch.encoderSeqs[i]  # Left padding for the input
+            #batch.encoderSeqs[i]   = [self.padToken] * (self.args.maxLengthEnco  - len(batch.encoderSeqs[i])) + batch.encoderSeqs[i]  # Left padding for the input
             batch.weights.append([1.0] * len(batch.targetSeqs[i]) + [0.0] * (self.args.maxLengthDeco - len(batch.targetSeqs[i])))
             batch.decoderSeqs[i] = batch.decoderSeqs[i] + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoderSeqs[i]))
             batch.targetSeqs[i]  = batch.targetSeqs[i]  + [self.padToken] * (self.args.maxLengthDeco - len(batch.targetSeqs[i]))
 
+        # dynamical sentence-wise padding
+        emptySentence = [self.padToken] * (self.args.maxLengthEnco) # empty sentence
+        for i in range(batchSize):
+            for j in range(maxContextLength - len(batch.encoderContext[i])):
+                batch.encoderContext[i].append(emptySentence)
+
         # Simple hack to reshape the batch
+        '''
+        encoderContextT = []  # Corrected orientation
         encoderSeqsT = []  # Corrected orientation
+
         for i in range(self.args.maxLengthEnco):
             encoderSeqT = []
             for j in range(batchSize):
                 encoderSeqT.append(batch.encoderSeqs[j][i])
             encoderSeqsT.append(encoderSeqT)
         batch.encoderSeqs = encoderSeqsT
+        '''
 
         decoderSeqsT = []
         targetSeqsT = []
@@ -204,7 +233,7 @@ class TextData:
 
         # # Debug
         #self.printBatch(batch)  # Input inverted, padding should be correct
-        print(self.sequence2str(samples[0][0]))
+        print(self.sequence2str(samples[0][0][0]))
         print(self.sequence2str(samples[0][1]))  # Check we did not modified the original sample
 
         return batch
@@ -413,7 +442,9 @@ class TextData:
 
         for inputContext, targetWords in tqdm(newSamples, desc='Replace ids:', leave=False):
             valid = True
-            # WARNING: If ONE of sentence is filtered, the whole conversation is invalid!!
+            # ******************************************************************************************
+            # WARNING: If ONE of the conetxt sentences is filtered, the entire conversation is invalid!!
+            # ******************************************************************************************
 
             # traverse the whole input context
             for i in range(len(inputContext) - 1):
