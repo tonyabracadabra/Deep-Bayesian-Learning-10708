@@ -657,6 +657,7 @@ class TextData:
         if context == '':
             return None
 
+        contextBatch = []
         for i in range(len(context)):
             sentence = context[i]
             tokens = nltk.word_tokenize(sentence)
@@ -666,10 +667,12 @@ class TextData:
             wordIds = []
             for token in tokens:
                 wordIds.append(self.getWordId(token, create=False))
+            
+            contextBatch.append(wordIds)
 
-            batch = self._createBatch([[wordIds, []]]) # Mono batch, no target output
+        batch = self._createBatch([[contextBatch, []]]) # Mono batch, no target output
 
-            return batch
+        return batch
 
 #########################################################
 
