@@ -44,7 +44,7 @@ class Batch:
         self.decoder_targets = []
         self.encoder_inner_length = []
         self.encoder_outer_length = []
-        swlf.decoder_targets_length = []
+        self.decoder_targets_length = []
         self.weights = []
 
 
@@ -175,7 +175,7 @@ class TextData:
 
             # Reverse input in whole context
             nWordsVec = []
-            for c in range(contextLength - 1):
+            for c in range(contextLength):
                 inputSentence = context[c]
                 nWords = len(inputSentence)
                 assert nWords <= self.args.maxLengthEnco
@@ -184,14 +184,15 @@ class TextData:
                 inputSentence = inputSentence + [self.padToken] * (self.args.maxLengthEnco  - len(inputSentence))
                 contextReversed.append(list(reversed(inputSentence)))
 
-            batch.encoder_inner_length.append(nWordsVec)
-            batch.encoder_outer_length.append(contextLength)
-            batch.decoder_targets_length.append(len(batch.decoder_inputs[i]))
 
             batch.encoder_inputs.append(contextReversed)
             batch.encoderSeqs.append(list(reversed(sample[0])))  # Reverse inputs (and not outputs), little trick as defined on the original seq2seq paper
             batch.decoder_inputs.append([self.goToken] + sample[1] + [self.eosToken])  # Add the <go> and <eos> tokens
             batch.decoder_targets.append(batch.decoder_inputs[-1][1:])  # Same as decoder, but shifted to the left (ignore the <go>)
+            # assert len(nWordsVec) > 0
+            batch.encoder_inner_length.append(nWordsVec)
+            batch.encoder_outer_length.append(contextLength)
+            batch.decoder_targets_length.append(len(batch.decoder_inputs[i]))
 
             # Long sentences should have been filtered during the dataset creation
 
@@ -204,6 +205,10 @@ class TextData:
             batch.weights.append([1.0] * len(batch.decoder_targets[i]) + [0.0] * (self.args.maxLengthDeco - len(batch.decoder_targets[i])))
             batch.decoder_inputs[i] = batch.decoder_inputs[i] + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoder_inputs[i]))
             batch.decoder_targets[i]  = batch.decoder_targets[i]  + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoder_targets[i]))
+
+
+        max_len = max(map(len, batch.encoder_inner_length))
+        batch.encoder_inner_length = [i + (max_len - len(i)) * [0] for i in batch.encoder_inner_length]
 
         # dynamical sentence-wise padding
         emptySentence = [self.padToken] * (self.args.maxLengthEnco) # empty sentence
