@@ -40,11 +40,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2603">
-              <caret line="651" column="69" lean-forward="true" selection-start-line="651" selection-start-column="69" selection-end-line="651" selection-end-column="69" />
+            <state relative-caret-position="-4398">
+              <caret line="259" column="37" lean-forward="false" selection-start-line="259" selection-start-column="33" selection-end-line="259" selection-end-column="37" />
               <folding>
                 <element signature="e#752#791#0" expanded="true" />
               </folding>
@@ -52,15 +52,24 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="textdata.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="textdata.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4379">
-              <caret line="484" column="18" lean-forward="false" selection-start-line="484" selection-start-column="8" selection-end-line="484" selection-end-column="18" />
+            <state relative-caret-position="421">
+              <caret line="522" column="54" lean-forward="true" selection-start-line="522" selection-start-column="54" selection-end-line="522" selection-end-column="54" />
               <folding>
                 <element signature="e#740#758#0" expanded="true" />
-                <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="cornelldata.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/chatbot/corpus/cornelldata.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="97">
+              <caret line="33" column="11" lean-forward="false" selection-start-line="33" selection-start-column="10" selection-end-line="33" selection-end-column="11" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -69,9 +78,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>CONFIG_FILENAME</find>
-      <find>lookup</find>
-      <find>lookup_ma</find>
       <find>batch_size</find>
       <find>print(</find>
       <find>kl</find>
@@ -93,12 +99,15 @@
       <find>maxLen</find>
       <find>maxLength</find>
       <find>attention_states</find>
-      <find>newSamples</find>
-      <find>tqdm</find>
       <find>hidden</find>
       <find>load</find>
       <find>loadMo</find>
+      <find>newSamples</find>
+      <find>Filtering</find>
+      <find>filterFromFull</find>
       <find>h_units_decoder</find>
+      <find>filter</find>
+      <find>tqdm</find>
     </findStrings>
     <replaceStrings>
       <replace>encoder_inputs</replace>
@@ -109,10 +118,10 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/chatbot/textdata.py" />
         <option value="$PROJECT_DIR$/chatbot/model.py" />
         <option value="$PROJECT_DIR$/chatbot/model_vnrae.py" />
         <option value="$PROJECT_DIR$/chatbot/chatbot.py" />
+        <option value="$PROJECT_DIR$/chatbot/textdata.py" />
       </list>
     </option>
   </component>
@@ -167,6 +176,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="chatbot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DeepQA_vnrae" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DeepQA_vnrae" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="chatbot" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="corpus" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -487,7 +514,7 @@
         <state relative-caret-position="2445">
           <caret line="165" column="56" lean-forward="false" selection-start-line="165" selection-start-column="56" selection-end-line="165" selection-end-column="56" />
           <folding>
-            <element signature="e#800#823#0" expanded="true" />
+            <element signature="e#800#823#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -506,7 +533,6 @@
           <caret line="161" column="42" lean-forward="false" selection-start-line="161" selection-start-column="42" selection-end-line="161" selection-end-column="42" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
       </provider>
@@ -536,7 +562,7 @@
         <state relative-caret-position="2475">
           <caret line="165" column="56" lean-forward="true" selection-start-line="165" selection-start-column="56" selection-end-line="165" selection-end-column="56" />
           <folding>
-            <element signature="e#800#823#0" expanded="true" />
+            <element signature="e#800#823#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -555,7 +581,6 @@
           <caret line="161" column="42" lean-forward="true" selection-start-line="161" selection-start-column="42" selection-end-line="161" selection-end-column="42" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
       </provider>
@@ -585,7 +610,7 @@
         <state relative-caret-position="2205">
           <caret line="149" column="21" lean-forward="false" selection-start-line="149" selection-start-column="21" selection-end-line="149" selection-end-column="21" />
           <folding>
-            <element signature="e#800#823#0" expanded="true" />
+            <element signature="e#800#823#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -604,7 +629,6 @@
           <caret line="230" column="0" lean-forward="false" selection-start-line="230" selection-start-column="0" selection-end-line="230" selection-end-column="0" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
       </provider>
@@ -651,7 +675,7 @@
         <state relative-caret-position="2205">
           <caret line="149" column="21" lean-forward="false" selection-start-line="149" selection-start-column="21" selection-end-line="149" selection-end-column="21" />
           <folding>
-            <element signature="e#800#823#0" expanded="true" />
+            <element signature="e#800#823#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -680,7 +704,6 @@
           <caret line="465" column="30" lean-forward="false" selection-start-line="465" selection-start-column="30" selection-end-line="465" selection-end-column="30" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
       </provider>
@@ -709,7 +732,6 @@
           <caret line="429" column="30" lean-forward="true" selection-start-line="429" selection-start-column="30" selection-end-line="429" selection-end-column="30" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
       </provider>
@@ -757,7 +779,6 @@
           <caret line="596" column="0" lean-forward="false" selection-start-line="596" selection-start-column="0" selection-end-line="596" selection-end-column="0" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
       </provider>
@@ -783,13 +804,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1710">
           <caret line="116" column="40" lean-forward="false" selection-start-line="116" selection-start-column="40" selection-end-line="116" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chatbot/corpus/cornelldata.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="72">
-          <caret line="33" column="11" lean-forward="false" selection-start-line="33" selection-start-column="10" selection-end-line="33" selection-end-column="11" />
         </state>
       </provider>
     </entry>
@@ -851,7 +865,7 @@
         <state relative-caret-position="140">
           <caret line="222" column="24" lean-forward="false" selection-start-line="222" selection-start-column="24" selection-end-line="222" selection-end-column="24" />
           <folding>
-            <element signature="e#800#823#0" expanded="true" />
+            <element signature="e#800#823#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -874,23 +888,30 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
+    <entry file="file://$PROJECT_DIR$/chatbot/corpus/cornelldata.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4379">
-          <caret line="484" column="18" lean-forward="false" selection-start-line="484" selection-start-column="8" selection-end-line="484" selection-end-column="18" />
-          <folding>
-            <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
-          </folding>
+        <state relative-caret-position="97">
+          <caret line="33" column="11" lean-forward="false" selection-start-line="33" selection-start-column="10" selection-end-line="33" selection-end-column="11" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2603">
-          <caret line="651" column="69" lean-forward="true" selection-start-line="651" selection-start-column="69" selection-end-line="651" selection-end-column="69" />
+        <state relative-caret-position="-4398">
+          <caret line="259" column="37" lean-forward="false" selection-start-line="259" selection-start-column="33" selection-end-line="259" selection-end-column="37" />
           <folding>
             <element signature="e#752#791#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="421">
+          <caret line="522" column="54" lean-forward="true" selection-start-line="522" selection-start-column="54" selection-end-line="522" selection-end-column="54" />
+          <folding>
+            <element signature="e#740#758#0" expanded="true" />
           </folding>
         </state>
       </provider>

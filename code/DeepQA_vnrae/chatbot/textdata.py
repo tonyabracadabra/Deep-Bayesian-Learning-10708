@@ -509,36 +509,51 @@ class TextData:
         Args:
             conversation (Obj): a conversation object containing the lines to extract
         """
+
         maxContextSize = 5
-        nLines = len(conversation['lines'])
 
-        if nLines <= maxContextSize + 1:
-            targetLine = conversation['lines'][nLines - 1]
-            targetWords = self.extractText(targetLine['text'])
-            inputContext = []
+        words = list(map(lambda x: self.extractText(x['text']), conversation['lines']))
 
-            # (Tay: Now only iterate for the  context part)
-            # Iterate over all the lines of the conversation (convObj / miniConv)
-            for i in (range(len(conversation['lines']) - 1)):
-                inputLine  = conversation['lines'][i]
-                inputWords  = self.extractText(inputLine['text'])
-                if inputWords:
-                    inputContext.append(inputWords)
-
-            # TODO: Need to discuss spec of the context
-            if len(inputContext) > 0 and targetWords:
-                self.trainingSamples.append([inputContext, targetWords])
+        if len(conversation['lines']) <= maxContextSize + 1:
+            sub_conversations = [[words[:-1], words[-1]]]
         else:
-            # moving window
-            window = deque([], maxContextSize + 1)
-            for i in range(len(conversation['lines'])):
-                line = conversation['lines'][i]
-                words = self.extractText(line['text']) 
-                if words:
-                    window.append(words)
-                    context = list(window)[:-1] 
-                    target = list(window)[-1]
-                    self.trainingSamples.append([context, target]) 
+            sub_conversations = [[words[i:i + maxContextSize], words[i + maxContextSize]]
+                                 for i in range(len(words) - maxContextSize - 1)]
+
+        self.trainingSamples.extend(sub_conversations)
+
+        # nLines = len(conversation['lines'])
+        #
+        # # if nLines <= maxContextSize + 1:
+        # targetLine = conversation['lines'][nLines - 1]
+        # targetWords = self.extractText(targetLine['text'])
+        # inputContext = []
+        #
+        # # (Tay: Now only iterate for the  context part)
+        # # Iterate over all the lines of the conversation (convObj / miniConv)
+        # for i in (range(len(conversation['lines']))):
+        #     inputLine  = conversation['lines'][i]
+        #     inputWords  = self.extractText(inputLine['text'])
+        #     inputWords = self.extractText(inputLine['text'])
+        #     if inputWords:
+        #         inputContext.append(inputWords)
+        #
+        # # TODO: Need to discuss spec of the context
+        # if len(inputContext) > 0 and targetWords:
+        #     self.trainingSamples.append([inputContext, targetWords])
+        #
+        #
+        # else:
+        #     # moving window
+        #     window = deque([], maxContextSize + 1)
+        #     for i in range(len(conversation['lines'])):
+        #         line = conversation['lines'][i]
+        #         words = self.extractText(line['text'])
+        #         if words:
+        #             window.append(words)
+        #             context = list(window)[:-1]
+        #             target = list(window)[-1]
+        #             self.trainingSamples.append([context, target])
 
     def extractText(self, line):
         """Extract the words from a sample lines
