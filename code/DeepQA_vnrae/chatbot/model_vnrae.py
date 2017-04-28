@@ -139,16 +139,9 @@ class Model:
         self.annealing_term = tf.placeholder(tf.float32, shape=())
 
         # (batch_size, n_words_max)
-        self.decoder_weights = tf.ones([
-            self.args.batch_size,
-            tf.reduce_max(self.decoder_targets_length)
-        ], dtype=tf.float32, name="loss_weights")
-
-    # def _init_embedding(self, lookup_matrix):
-    #     with tf.variable_scope("embedding") as scope:
-    #         self.embedding_matrix = tf.constant(
-    #             lookup_matrix,
-    #             name="embedding_matrix")
+        self.decoder_weights = tf.cast(tf.sequence_mask(
+            self.decoder_targets_length), tf.float32)
+        
 
     def _define_layers(self):
         self.inner_lstm = partial(self._dynamic_bilstm, 'inner', self.encoder_inner_cell)
