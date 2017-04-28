@@ -28,6 +28,7 @@ import math
 import scipy.io as sio
 from tqdm import tqdm  # Progress bar
 from tensorflow.python import debug as tf_debug
+from collections import deque
 
 from chatbot.textdata import TextData
 # from chatbot.model import Model
@@ -323,6 +324,7 @@ class Chatbot:
                     f.write(predString)
                 print('Prediction finished, {}/{} sentences ignored (too long)'.format(nbIgnored, len(lines)))
 
+
     def mainTestInteractive(self, sess):
         """ Try predicting the sentences that the user will enter in the console
         Args:
@@ -337,13 +339,16 @@ class Chatbot:
         print('Welcome to the interactive mode, here you can ask to Deep Q&A the sentence you want. Don\'t have high '
               'expectation. Type \'exit\' or just press ENTER to quit the program. Have fun.')
 
+        maxContextLength = 5
+        context = deque([], maxContextLength)
         while True:
             question = input(self.SENTENCES_PREFIX[0])
             if question == '' or question == 'exit':
                 break
-
+            context.append(question)
             questionSeq = []  # Will be contain the question as seen by the encoder
-            answer = self.singlePredict(question, questionSeq)
+            #answer = self.singlePredict(question, questionSeq)
+            answer = self.singlePredict(list(context), questionSeq)
             if not answer:
                 print('Warning: sentence too long, sorry. Maybe try a simpler sentence.')
                 continue  # Back to the beginning, try again
