@@ -174,7 +174,7 @@ class Chatbot:
 
         # lookup_matrix = np.ones((1000,30)).astype(np.float32)
 
-        lookup_matrix = self.loadEmbedding(self.sess)
+        lookup_matrix = self.loadEmbedding(self.sess).astype(np.float32)
 
         # Prepare the model
         with tf.device(self.getDevice()):
@@ -248,8 +248,8 @@ class Chatbot:
                 print()
                 print("----- Epoch {}/{} ; (lr={}) -----".format(e+1, self.args.numEpochs, self.args.learning_rate))
 
-                # batches = self.textData.getBatches()
-                batches = range(100)
+                batches = self.textData.getBatches()
+                # batches = range(100)
 
                 # TODO: Also update learning parameters eventually
 
@@ -259,7 +259,7 @@ class Chatbot:
                     ops, feedDict = self.model.step(nextBatch)
                     assert len(ops) == 2  # training, loss
                     _, loss, summary = sess.run(ops + (mergedSummaries,), feedDict)
-                    print("endendendend")
+
                     self.writer.add_summary(summary, self.globStep)
                     self.globStep += 1
 

@@ -165,34 +165,34 @@ class Model:
                     encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
 
         with tf.variable_scope(level) as scope_bilstm:
-            try:
-                ((encoder_fw_outputs,
-                  encoder_bw_outputs),
-                 (encoder_fw_state,
-                  encoder_bw_state)) = (
-                    tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
-                                                    cell_bw=encoder_cell,
-                                                    inputs=encoder_inputs_embedded,
-                                                    sequence_length=encoder_inputs_length,
-                                                    time_major=False,
-                                                    dtype=tf.float32)
-                    )
-
-            except ValueError:
-
-                scope_bilstm.reuse_variables()
-
-                ((encoder_fw_outputs,
-                  encoder_bw_outputs),
-                 (encoder_fw_state,
-                  encoder_bw_state)) = (
-                    tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
-                                                    cell_bw=encoder_cell,
-                                                    inputs=encoder_inputs_embedded,
-                                                    sequence_length=encoder_inputs_length,
-                                                    time_major=False,
-                                                    dtype=tf.float32)
+            # try:
+            ((encoder_fw_outputs,
+              encoder_bw_outputs),
+             (encoder_fw_state,
+              encoder_bw_state)) = (
+                tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
+                                                cell_bw=encoder_cell,
+                                                inputs=encoder_inputs_embedded,
+                                                sequence_length=encoder_inputs_length,
+                                                time_major=False,
+                                                dtype=tf.float32)
                 )
+
+            # except ValueError:
+            #
+            #     scope_bilstm.reuse_variables()
+            #
+            #     ((encoder_fw_outputs,
+            #       encoder_bw_outputs),
+            #      (encoder_fw_state,
+            #       encoder_bw_state)) = (
+            #         tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
+            #                                         cell_bw=encoder_cell,
+            #                                         inputs=encoder_inputs_embedded,
+            #                                         sequence_length=encoder_inputs_length,
+            #                                         time_major=False,
+            #                                         dtype=tf.float32)
+            #     )
 
         # (batch_size, n_words, h_units_words)
 
@@ -481,6 +481,8 @@ class Model:
                                     [2, 4, 6, 8, 10, 2],
                                     [2, 4, 6, 8, 10, 2],
                                     [2, 4, 6, 8, 10, 2]])
+
+        print("===================")
 
 
         # # [batch_size, max_n_sentences_across_batches]
