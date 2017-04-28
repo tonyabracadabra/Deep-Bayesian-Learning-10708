@@ -44,6 +44,7 @@ class Batch:
         self.decoder_targets = []
         self.encoder_inner_length = []
         self.encoder_outer_length = []
+        swlf.decoder_targets_length = []
         self.weights = []
 
 
@@ -182,8 +183,10 @@ class TextData:
                 # Padding (words)
                 inputSentence = inputSentence + [self.padToken] * (self.args.maxLengthEnco  - len(inputSentence))
                 contextReversed.append(list(reversed(inputSentence)))
+
             batch.encoder_inner_length.append(nWordsVec)
             batch.encoder_outer_length.append(contextLength)
+            batch.decoder_targets_length.append(len(batch.decoder_inputs[i]))
 
             batch.encoder_inputs.append(contextReversed)
             batch.encoderSeqs.append(list(reversed(sample[0])))  # Reverse inputs (and not outputs), little trick as defined on the original seq2seq paper
