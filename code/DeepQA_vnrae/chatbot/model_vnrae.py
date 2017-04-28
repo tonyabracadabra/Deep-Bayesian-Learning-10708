@@ -241,20 +241,21 @@ class Model:
         self._init_decoder(output_projection)
         self._define_loss(sampled_softmax)
 
-        # self.loss_reconstruct = tf.reduce_sum(seq2seq.sequence_loss(
-        #     logits=self.decoder_logits_train,
-        #     targets=self.decoder_targets,
-        #     weights=self.decoder_weights,
-        #     softmax_loss_function=sampled_softmax,
-        #     average_across_timesteps=False,
-        #     average_across_batch=True)
-        # )
-        #
-        # self.KL = tf.reduce_mean(-0.5 * tf.reduce_sum(1 + self.encoder_state_logsigma
-        #                                               - tf.pow(self.encoder_state_mu, 2)
-        #                                               - tf.exp(self.encoder_state_logsigma), axis=1))
-        #
-        # self.loss = tf.add(self.KL, self.loss_reconstruct)
+        self.loss_reconstruct = tf.reduce_sum(seq2seq.sequence_loss(
+            logits=self.decoder_outputs_train,
+            targets=self.decoder_targets,
+            weights=self.decoder_weights,
+            softmax_loss_function=sampled_softmax,
+            average_across_timesteps=False,
+            average_across_batch=True)
+        )
+
+        self.KL = tf.reduce_mean(-0.5 * tf.reduce_sum(1 + self.encoder_state_logsigma
+                                                      - tf.pow(self.encoder_state_mu, 2)
+                                                      - tf.exp(self.encoder_state_logsigma), axis=1))
+
+        self.loss = tf.add(self.KL, self.loss_reconstruct)
+
         #
         # # Keep track of the cost
         # tf.summary.scalar('loss_reconstruct', self.loss_reconstruct)
@@ -262,6 +263,7 @@ class Model:
         # tf.summary.scalar('loss', self.loss)
 
         # Initialize the optimizer
+
         opt = tf.train.AdamOptimizer(
             learning_rate=self.args.learning_rate,
             beta1=0.9,
@@ -295,7 +297,15 @@ class Model:
 
         #  The encoded state to initialize the dynamic_rnn_decoder
         # encoder_end_state, or the output of the outer lstm
+
+        print('encoder_inputs')
+        print(self.encoder_inputs)
+        print('outer_lstm_input')
+        print(outer_lstm_input)
+
         encoder_end_state = self.outer_lstm(outer_lstm_input, self.encoder_outer_length)
+
+        # encoder_end_state = self.outer_lstm(self.encoder_inputs, self.encoder_outer_length)
 
         self.encoder_state = self._variational_encoder(encoder_end_state, self.args.h_units_decoder)
 
@@ -447,15 +457,39 @@ class Model:
         ops = None
 
         # has to be zero, otherwise cannot be embedded
+        # shape = [batch_size, max_n_sentences_across_batches, max_n_words_across_sentences]
+        # Each entry in the tensor is the wordid
         encoder_inputs = np.array([[[1,3,4,5,0,0],[2,3,0,0,0,0],[2,3,555,1,2,666]],
-                          [[999,666,4,0,0,0],[2,3,888,777,0,0],[0,0,0,0,0,0]]])
+                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+                                   [[999,666,4,0,0,0],[2,3,888,777,0,0],[0,0,0,0,0,0]]])
 
-        decoder_inputs = np.array([[0, 1, 3, 5, 7, 9], [0, 2, 4, 6, 8, 10]])
-        decoder_targets = np.array([[1,3,5,7,9,1],[2,4,6,8,10,2]])
+        # shape = [batch_size, max_n_words_across_sentences]
+        decoder_inputs = np.array([[0, 1, 3, 5, 7, 9],
+                                   [0, 2, 4, 6, 8, 10],
+                                   [0, 1, 3, 5, 7, 9],
+                                   [0, 1, 3, 5, 7, 9],
+                                   [0, 1, 3, 5, 7, 9],
+                                   [0, 1, 3, 5, 7, 9]])
 
-        encoder_inner_length = np.array([[4,2,6],[3,4,0]])
-        encoder_outer_length = np.array([3,2])
-        decoder_targets_length = np.array([6, 6])
+        # shape = [batch_size, max_n_words_across_sentences]
+        decoder_targets = np.array([[1,3,5,7,9,1],
+                                    [2,4,6,8,10,2],
+                                    [2, 4, 6, 8, 10, 2],
+                                    [2, 4, 6, 8, 10, 2],
+                                    [2, 4, 6, 8, 10, 2],
+                                    [2, 4, 6, 8, 10, 2]])
+        # [batch_size, max_n_sentences_across_batches]
+        # Each entry is the number of words in each sentence
+        encoder_inner_length = np.array([[4,2,6],[4,2,6],[4,2,6],[4,2,6],[4,2,6],[3,4,0]])
+        # [batch_size,]
+        # Each entry is the number of sentences in each batch
+        encoder_outer_length = np.array([3,3,3,3,3,2])
+        # [batch_size,]
+        # Each entry is the number of sentences in each batch
+        decoder_targets_length = np.array([6,6,6,6,6,6])
 
         feed_dict[self.encoder_inputs] = encoder_inputs
         feed_dict[self.decoder_targets] = decoder_targets

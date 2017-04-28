@@ -26,7 +26,7 @@ import os  # Files management
 import tensorflow as tf
 import numpy as np
 import math
-
+import scipy.io as sio
 from tqdm import tqdm  # Progress bar
 from tensorflow.python import debug as tf_debug
 
@@ -139,7 +139,7 @@ class Chatbot:
         trainingArgs.add_argument('--batchSize', type=int, default=256, help='mini-batch size')
         trainingArgs.add_argument('--learning_rate', type=float, default=0.002, help='Learning rate')
         trainingArgs.add_argument('--dropout', type=float, default=0.9, help='Dropout rate (keep probabilities)')
-        trainingArgs.add_argument('--batch_size', type=int, default=2, help='mini-batch size')
+        trainingArgs.add_argument('--batch_size', type=int, default=6, help='mini-batch size')
 
         return parser.parse_args(args)
 
@@ -173,7 +173,9 @@ class Chatbot:
             return  # No need to go further
 
         # Initialize embeddings with pre-trained word2vec vectors
+
         lookup_matrix = np.ones((1000,30)).astype(np.float32)
+
         # lookup_matrix = self.loadEmbedding(self.sess)
 
         # Prepare the model
@@ -248,7 +250,8 @@ class Chatbot:
                 print()
                 print("----- Epoch {}/{} ; (lr={}) -----".format(e+1, self.args.numEpochs, self.args.learning_rate))
 
-                batches = self.textData.getBatches()
+                # batches = self.textData.getBatches()
+                batches = range(100)
 
                 # TODO: Also update learning parameters eventually
 
@@ -419,6 +422,7 @@ class Chatbot:
 
         # New model, we load the pre-trained word2vec data and initialize embeddings
         embeddings_path = os.path.join(self.args.rootDir, 'data', 'embeddings', self.args.embeddingSource)
+        print(embeddings_path)
         embeddings_format = os.path.splitext(embeddings_path)[1][1:]
         print("Loading pre-trained word embeddings from %s " % embeddings_path)
         with open(embeddings_path, "rb") as f:
@@ -450,6 +454,10 @@ class Chatbot:
                         f.readline()
                     else:
                         raise Exception("Unkown format for embeddings: %s " % embeddings_format)
+            print(initW.shape)
+
+        np.save('embedding_opensubs.npy', initW)
+        np.save('word2id.npy', self.textData.word2id)
 
         # PCA Decomposition to reduce word2vec dimensionality
         if self.args.embeddingSize < vector_size:
@@ -458,9 +466,13 @@ class Chatbot:
             S[:vector_size, :vector_size] = np.diag(s)
             initW = np.dot(U[:, :self.args.embeddingSize], S[:self.args.embeddingSize, :self.args.embeddingSize])
 
+        print(initW.shape)
+
+
         # Initialize input and output embeddings
         #sess.run(em_in.assign(initW))
         #sess.run(em_out.assign(initW))
+
         return initW
 
 
