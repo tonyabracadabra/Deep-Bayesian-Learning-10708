@@ -242,6 +242,7 @@ class Chatbot:
 
         print('Start training (press Ctrl+C to save and exit)...')
 
+        c = np.log(2)/(self.args.numEpochs*100)
         try:  # If the user exit while training, we still try to save the model
             for e in range(self.args.numEpochs):
 
@@ -254,15 +255,19 @@ class Chatbot:
                 # TODO: Also update learning parameters eventually
 
                 tic = datetime.datetime.now()
+
+                annealing_term = min([np.exp(c*(e+1))-1, 1])
                 for nextBatch in tqdm(batches, desc="Training"):
                     # Training pass
                     if len(nextBatch.encoder_inputs) != self.args.batch_size:
                         continue
 
-                    ops, feedDict = self.model.step(nextBatch)
-                    assert len(ops) == 2  # training, loss
-                    _, loss, summary = sess.run(ops + (mergedSummaries,), feedDict)
-                    print('loss:', loss)
+                    ops, feedDict = self.model.step(nextBatch, annealing_term)
+                    assert len(ops) == 4  # training, loss
+                    _, loss, kl, loss_construct, summary = sess.run(ops + (mergedSummaries,), feedDict)
+                    print('loss: {}'.format(loss))
+                    print('KL loss: {}'.format(kl))
+                    print('loss construct: {}'.format(loss_construct))
 
                     self.writer.add_summary(summary, self.globStep)
                     self.globStep += 1

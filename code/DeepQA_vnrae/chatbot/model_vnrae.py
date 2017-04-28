@@ -136,6 +136,8 @@ class Model:
         # number of words for decoder output
         self.decoder_targets_length = tf.placeholder(tf.int32, [None])
 
+        self.annealing_term = tf.placeholder(tf.float32, shape=())
+
         # (batch_size, n_words_max)
         self.decoder_weights = tf.ones([
             self.args.batch_size,
@@ -248,29 +250,6 @@ class Model:
             average_across_timesteps=False,
             average_across_batch=True)
         )
-
-        self.KL = tf.reduce_mean(-0.5 * tf.reduce_sum(1 + self.encoder_state_logsigma
-                                                      - tf.pow(self.encoder_state_mu, 2)
-                                                      - tf.exp(self.encoder_state_logsigma), axis=1))
-
-        self.loss = tf.add(self.KL, self.loss_reconstruct)
-
-        #
-        # # Keep track of the cost
-        # tf.summary.scalar('loss_reconstruct', self.loss_reconstruct)
-        # tf.summary.scalar('KL', self.KL)
-        # tf.summary.scalar('loss', self.loss)
-
-        # Initialize the optimizer
-
-        opt = tf.train.AdamOptimizer(
-            learning_rate=self.args.learning_rate,
-            beta1=0.9,
-            beta2=0.999,
-            epsilon=1e-08
-        )
-
-        self.opt_op = opt.minimize(self.loss)
 
     def _init_encoder(self):
         '''
@@ -430,14 +409,23 @@ class Model:
                                  - tf.pow(self.encoder_state_mu, 2)
                                  - tf.exp(self.encoder_state_logsigma), axis=1))
 
-        self.loss = tf.add(self.KL, self.loss_reconstruct)
+        self.loss = tf.add(self.annealing_term * self.KL, self.loss_reconstruct)
 
         # Keep track of the cost
         tf.summary.scalar('loss_reconstruct', self.loss_reconstruct)
         tf.summary.scalar('KL', self.KL)
         tf.summary.scalar('loss', self.loss)
 
-    def step(self, batch):
+        opt = tf.train.AdamOptimizer(
+            learning_rate=self.args.learning_rate,
+            beta1=0.9,
+            beta2=0.999,
+            epsilon=1e-08
+        )
+
+        self.opt_op = opt.minimize(self.loss)
+
+    def step(self, batch, annealing_term):
         """ Forward/training step operation.
         Does not perform run on itself but just return the operators to do so. Those have then to be run
         Args:
@@ -519,7 +507,9 @@ class Model:
 
         # print("===============================================")
 
-        ops = (self.opt_op, self.loss)
+        feed_dict[self.annealing_term] = annealing_term
+
+        ops = (self.opt_op, self.loss, self.KL, self.loss_reconstruct)
 
         # sess = tf.Session()
         # sess.run(tf.global_variables_initializer())
