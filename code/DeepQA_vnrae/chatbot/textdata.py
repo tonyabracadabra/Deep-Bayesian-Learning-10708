@@ -39,9 +39,11 @@ class Batch:
     """
     def __init__(self):
         self.encoderSeqs = []
-        self.encoderContext = []
-        self.decoderSeqs = []
-        self.targetSeqs = []
+        self.encoder_inputs = []
+        self.decoder_inputs = []
+        self.decoder_targets = []
+        self.encoder_inner_length = []
+        self.encoder_outer_length = []
         self.weights = []
 
 
@@ -164,6 +166,7 @@ class TextData:
             # much ? and if preprocessing, should be compatible with autoEncode & cie.
 
             context = sample[0]
+
             contextReversed = []
             contextLength = len(context)
             if contextLength > maxContextLength:
@@ -177,32 +180,32 @@ class TextData:
                 inputSentence = inputSentence + [self.padToken] * (self.args.maxLengthEnco  - len(inputSentence))
                 contextReversed.append(list(reversed(inputSentence)))
 
-            batch.encoderContext.append(contextReversed)
+            batch.encoder_inputs.append(contextReversed)
             batch.encoderSeqs.append(list(reversed(sample[0])))  # Reverse inputs (and not outputs), little trick as defined on the original seq2seq paper
-            batch.decoderSeqs.append([self.goToken] + sample[1] + [self.eosToken])  # Add the <go> and <eos> tokens
-            batch.targetSeqs.append(batch.decoderSeqs[-1][1:])  # Same as decoder, but shifted to the left (ignore the <go>)
+            batch.decoder_inputs.append([self.goToken] + sample[1] + [self.eosToken])  # Add the <go> and <eos> tokens
+            batch.decoder_targets.append(batch.decoder_inputs[-1][1:])  # Same as decoder, but shifted to the left (ignore the <go>)
 
             # Long sentences should have been filtered during the dataset creation
 
             #assert len(batch.encoderSeqs[i]) <= self.args.maxLengthEnco
-            assert len(batch.decoderSeqs[i]) <= self.args.maxLengthDeco
+            assert len(batch.decoder_inputs[i]) <= self.args.maxLengthDeco
 
             # TODO: Should use tf batch function to automatically add padding and batch samples
             # Add padding & define weight
             #batch.encoderSeqs[i]   = [self.padToken] * (self.args.maxLengthEnco  - len(batch.encoderSeqs[i])) + batch.encoderSeqs[i]  # Left padding for the input
-            batch.weights.append([1.0] * len(batch.targetSeqs[i]) + [0.0] * (self.args.maxLengthDeco - len(batch.targetSeqs[i])))
-            batch.decoderSeqs[i] = batch.decoderSeqs[i] + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoderSeqs[i]))
-            batch.targetSeqs[i]  = batch.targetSeqs[i]  + [self.padToken] * (self.args.maxLengthDeco - len(batch.targetSeqs[i]))
+            batch.weights.append([1.0] * len(batch.decoder_targets[i]) + [0.0] * (self.args.maxLengthDeco - len(batch.decoder_targets[i])))
+            batch.decoder_inputs[i] = batch.decoder_inputs[i] + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoder_inputs[i]))
+            batch.decoder_targets[i]  = batch.decoder_targets[i]  + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoder_targets[i]))
 
         # dynamical sentence-wise padding
         emptySentence = [self.padToken] * (self.args.maxLengthEnco) # empty sentence
         for i in range(batchSize):
-            for j in range(maxContextLength - len(batch.encoderContext[i])):
-                batch.encoderContext[i].append(emptySentence)
+            for j in range(maxContextLength - len(batch.encoder_inputs[i])):
+                batch.encoder_inputs[i].append(emptySentence)
 
         # Simple hack to reshape the batch
         '''
-        encoderContextT = []  # Corrected orientation
+        encoder_inputsT = []  # Corrected orientation
         encoderSeqsT = []  # Corrected orientation
 
         for i in range(self.args.maxLengthEnco):
@@ -213,32 +216,30 @@ class TextData:
         batch.encoderSeqs = encoderSeqsT
         '''
 
-        decoderSeqsT = []
-        targetSeqsT = []
-        weightsT = []
-        for i in range(self.args.maxLengthDeco):
-            decoderSeqT = []
-            targetSeqT = []
-            weightT = []
-            for j in range(batchSize):
-                decoderSeqT.append(batch.decoderSeqs[j][i])
-                targetSeqT.append(batch.targetSeqs[j][i])
-                weightT.append(batch.weights[j][i])
-            decoderSeqsT.append(decoderSeqT)
-            targetSeqsT.append(targetSeqT)
-            weightsT.append(weightT)
-        batch.decoderSeqs = decoderSeqsT
-        batch.targetSeqs = targetSeqsT
-        batch.weights = weightsT
+        # decoder_inputsT = []
+        # decoder_targetsT = []
+        # weightsT = []
+        # for i in range(self.args.maxLengthDeco):
+        #     decoderSeqT = []
+        #     targetSeqT = []
+        #     weightT = []
+        #     for j in range(batchSize):
+        #         decoderSeqT.append(batch.decoder_inputs[j][i])
+        #         targetSeqT.append(batch.decoder_targets[j][i])
+        #         weightT.append(batch.weights[j][i])
+        #     decoder_inputsT.append(decoderSeqT)
+        #     decoder_targetsT.append(targetSeqT)
+        #     weightsT.append(weightT)
+        # batch.decoder_inputs = decoder_inputsT
+        # batch.decoder_targets = decoder_targetsT
+        # batch.weights = weightsT
 
         # # Debug
         #self.printBatch(batch)  # Input inverted, padding should be correct
-        print(self.sequence2str(samples[0][0][0]))
-        print(self.sequence2str(samples[0][1]))  # Check we did not modified the original sample
+        # print(self.sequence2str(samples[0][0]))
+        # print(self.sequence2str(samples[0][1]))  # Check we did not modified the original sample
 
         return batch
-
-#$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
     def getBatches(self):
         """Prepare the batches for the current epoch
@@ -260,6 +261,7 @@ class TextData:
         for samples in genNextSamples():
             batch = self._createBatch(samples)
             batches.append(batch)
+            
         return batches
 
     def getSampleSize(self):
@@ -567,8 +569,8 @@ class TextData:
         print('----- Print batch -----')
         for i in range(len(batch.encoderSeqs[0])):  # Batch size
             print('Encoder: {}'.format(self.batchSeq2str(batch.encoderSeqs, seqId=i)))
-            print('Decoder: {}'.format(self.batchSeq2str(batch.decoderSeqs, seqId=i)))
-            print('Targets: {}'.format(self.batchSeq2str(batch.targetSeqs, seqId=i)))
+            print('Decoder: {}'.format(self.batchSeq2str(batch.decoder_inputs, seqId=i)))
+            print('Targets: {}'.format(self.batchSeq2str(batch.decoder_targets, seqId=i)))
             print('Weights: {}'.format(' '.join([str(weight) for weight in [batchWeight[i] for batchWeight in batch.weights]])))
 
     def sequence2str(self, sequence, clean=False, reverse=False):

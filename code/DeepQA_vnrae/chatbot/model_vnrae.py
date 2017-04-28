@@ -454,7 +454,9 @@ class Model:
 
         # Feed the dictionary
         feed_dict = {}
-        ops = None
+
+        print(batch.__dict__.keys())
+        # batch.decoderSeqs
 
         # has to be zero, otherwise cannot be embedded
         # shape = [batch_size, max_n_sentences_across_batches, max_n_words_across_sentences]

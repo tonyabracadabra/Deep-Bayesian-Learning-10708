@@ -250,8 +250,7 @@ class Chatbot:
                 print()
                 print("----- Epoch {}/{} ; (lr={}) -----".format(e+1, self.args.numEpochs, self.args.learning_rate))
 
-                # batches = self.textData.getBatches()
-                batches = range(100)
+                batches = self.textData.getBatches()
 
                 # TODO: Also update learning parameters eventually
 
@@ -411,10 +410,6 @@ class Chatbot:
         '''
 
         # Disable training for embeddings
-
-        # variables = tf.get_collection_ref(tf.GraphKeys.TRAINABLE_VARIABLES)
-        # variables.remove(em_in)
-        # variables.remove(em_out)
 
         # If restoring a model, we can leave here
         if self.globStep != 0:
