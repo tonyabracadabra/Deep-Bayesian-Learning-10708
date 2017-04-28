@@ -106,7 +106,7 @@ class Model:
         # after lstm, if use return_sequences=True, the output should has shape (batch_size, n_words, h_units_words)
 
         self._define_placeholders()
-        self._init_embedding(lookup_matrix)
+        # self._init_embedding(lookup_matrix)
         self._define_layers()
         # Construct the graphs
         self._build_network()
@@ -142,11 +142,11 @@ class Model:
             tf.reduce_max(self.decoder_targets_length)
         ], dtype=tf.float32, name="loss_weights")
 
-    def _init_embedding(self, lookup_matrix):
-        with tf.variable_scope("embedding") as scope:
-            self.embedding_matrix = tf.constant(
-                lookup_matrix,
-                name="embedding_matrix")
+    # def _init_embedding(self, lookup_matrix):
+    #     with tf.variable_scope("embedding") as scope:
+    #         self.embedding_matrix = tf.constant(
+    #             lookup_matrix,
+    #             name="embedding_matrix")
 
     def _define_layers(self):
         self.inner_lstm = partial(self._dynamic_bilstm, 'inner', self.encoder_inner_cell)
@@ -193,7 +193,6 @@ class Model:
                                                     time_major=False,
                                                     dtype=tf.float32)
                 )
-
 
         # (batch_size, n_words, h_units_words)
 
@@ -507,24 +506,24 @@ class Model:
         # feed_dict[self.decoder_inputs] = np.array(decoder_inputs)
 
         feed_dict[self.encoder_inputs] = np.array(batch.encoder_inputs)
-        print(np.array(batch.encoder_inputs))
-
-        feed_dict[self.decoder_targets] = np.array(batch.decoder_targets)
-        print(np.array(batch.decoder_targets))
+        # print('encoder_inputs', np.array(batch.encoder_inputs))
 
         feed_dict[self.encoder_inner_length] = np.array(batch.encoder_inner_length)
-        print(np.array(batch.encoder_inner_length))
+        # print('encoder_inner_length', np.array(batch.encoder_inner_length))
 
         feed_dict[self.encoder_outer_length] = np.array(batch.encoder_outer_length)
-        print(np.array(batch.encoder_outer_length))
-
-        feed_dict[self.decoder_targets_length] = np.array(batch.decoder_targets_length)
-        print(np.array(batch.decoder_targets_length))
+        # print('encoder_outer_length', np.array(batch.encoder_outer_length))
 
         feed_dict[self.decoder_inputs] = np.array(batch.decoder_inputs)
-        print(np.array(batch.decoder_inputs))
+        # print('decoder_inputs', np.array(batch.decoder_inputs))
 
-        print("===============================================")
+        feed_dict[self.decoder_targets] = np.array(batch.decoder_targets)
+        # print('decoder_targets', np.array(batch.decoder_targets))
+
+        feed_dict[self.decoder_targets_length] = np.array(batch.decoder_targets_length)
+        # print('decoder_targets_length', np.array(batch.decoder_targets_length))
+
+        # print("===============================================")
 
         ops = (self.opt_op, self.loss)
 

@@ -15,7 +15,6 @@
 
 """
 Main script. See README.md for more information
-
 Use python 3
 """
 
@@ -31,7 +30,7 @@ from tqdm import tqdm  # Progress bar
 from tensorflow.python import debug as tf_debug
 
 from chatbot.textdata import TextData
-#from chatbot.model import Model
+# from chatbot.model import Model
 from chatbot.model_vnrae import Model
 
 
@@ -126,7 +125,7 @@ class Chatbot:
         nnArgs.add_argument('--softmaxSamples', type=int, default=200, help='Number of samples in the sampled softmax loss function. A value of 0 deactivates sampled softmax')
         nnArgs.add_argument('--initEmbeddings', action='store_true', help='if present, the program will initialize the embeddings with pre-trained word2vec vectors')
         nnArgs.add_argument('--embeddingSize', type=int, default=64, help='embedding size of the word representation')
-        nnArgs.add_argument('--embeddingSource', type=str, default="embedding.npy", help='embedding file to use for the word representation')
+        nnArgs.add_argument('--embeddingSource', type=str, default="GoogleNews-vectors-negative300.bin", help='embedding file to use for the word representation')
         nnArgs.add_argument('--h_units_words', type=int, default=50, help='number of hidden units in inner encoder')
         nnArgs.add_argument('--h_units_sentences', type=int, default=50, help='number of hidden units in outer encoder')
         nnArgs.add_argument('--h_units_decoder', type=int, default=100, help='number of hidden units in decoder')
@@ -138,7 +137,7 @@ class Chatbot:
         trainingArgs.add_argument('--saveEvery', type=int, default=2000, help='nb of mini-batch step before creating a model checkpoint')
         trainingArgs.add_argument('--learning_rate', type=float, default=0.002, help='Learning rate')
         trainingArgs.add_argument('--dropout', type=float, default=0.9, help='Dropout rate (keep probabilities)')
-        trainingArgs.add_argument('--batch_size', type=int, default=2, help='mini-batch size')
+        trainingArgs.add_argument('--batch_size', type=int, default=6, help='mini-batch size')
 
         return parser.parse_args(args)
 
@@ -173,21 +172,15 @@ class Chatbot:
 
         # Initialize embeddings with pre-trained word2vec vectors
 
-        lookup_matrix = np.ones((1000,30)).astype(np.float32)
-        # print(lookup_matrix.shape)
-        # print(lookup_matrix.dtype)
+        # lookup_matrix = np.ones((1000,30)).astype(np.float32)
 
-        lookup_matrix = self.loadEmbedding(self.sess).astype(np.float32)
-
-        # print(lookup_matrix.shape)
-        # print(lookup_matrix.dtype)
+        lookup_matrix = self.loadEmbedding(self.sess)
 
         # Prepare the model
         with tf.device(self.getDevice()):
             self.model = Model(self.args, self.textData, lookup_matrix)
 
         # Saver/summaries
-
         self.writer = tf.summary.FileWriter(self._getSummaryName())
         self.saver = tf.train.Saver(max_to_keep=200)
 
@@ -255,7 +248,8 @@ class Chatbot:
                 print()
                 print("----- Epoch {}/{} ; (lr={}) -----".format(e+1, self.args.numEpochs, self.args.learning_rate))
 
-                batches = self.textData.getBatches()
+                # batches = self.textData.getBatches()
+                batches = range(100)
 
                 # TODO: Also update learning parameters eventually
 
@@ -265,6 +259,7 @@ class Chatbot:
                     ops, feedDict = self.model.step(nextBatch)
                     assert len(ops) == 2  # training, loss
                     _, loss, summary = sess.run(ops + (mergedSummaries,), feedDict)
+                    print("endendendend")
                     self.writer.add_summary(summary, self.globStep)
                     self.globStep += 1
 
@@ -415,66 +410,70 @@ class Chatbot:
 
         # Disable training for embeddings
 
-        # If restoring a model, we can leave here
+        # variables = tf.get_collection_ref(tf.GraphKeys.TRAINABLE_VARIABLES)
+        # variables.remove(em_in)
+        # variables.remove(em_out)
 
+        # If restoring a model, we can leave here
         # if self.globStep != 0:
         #     return
 
         # New model, we load the pre-trained word2vec data and initialize embeddings
+
         embeddings_path = os.path.join(self.args.rootDir, 'data', 'embeddings', self.args.embeddingSource)
-        # print(embeddings_path)
-        # embeddings_format = os.path.splitext(embeddings_path)[1][1:]
-        # print("Loading pre-trained word embeddings from %s " % embeddings_path)
-        # with open(embeddings_path, "rb") as f:
-        #     header = f.readline()
-        #     vocab_size, vector_size = map(int, header.split())
-        #     binary_len = np.dtype('float32').itemsize * vector_size
-        #     initW = np.random.uniform(-0.25,0.25,(len(self.textData.word2id), vector_size))
-        #     for line in tqdm(range(vocab_size)):
-        #         word = []
-        #         while True:
-        #             ch = f.read(1)
-        #             if ch == b' ':
-        #                 word = b''.join(word).decode('utf-8')
-        #                 break
-        #             if ch != b'\n':
-        #                 word.append(ch)
-        #         if word in self.textData.word2id:
-        #             if embeddings_format == 'bin':
-        #                 vector = np.fromstring(f.read(binary_len), dtype='float32')
-        #             elif embeddings_format == 'vec':
-        #                 vector = np.fromstring(f.readline(), sep=' ', dtype='float32')
-        #             else:
-        #                 raise Exception("Unkown format for embeddings: %s " % embeddings_format)
-        #             initW[self.textData.word2id[word]] = vector
-        #         else:
-        #             if embeddings_format == 'bin':
-        #                 f.read(binary_len)
-        #             elif embeddings_format == 'vec':
-        #                 f.readline()
-        #             else:
-        #                 raise Exception("Unkown format for embeddings: %s " % embeddings_format)
+        print(embeddings_path)
+        embeddings_format = os.path.splitext(embeddings_path)[1][1:]
+        print("Loading pre-trained word embeddings from %s " % embeddings_path)
+        with open(embeddings_path, "rb") as f:
+            header = f.readline()
+            vocab_size, vector_size = map(int, header.split())
+            binary_len = np.dtype('float32').itemsize * vector_size
+            initW = np.random.uniform(-0.25,0.25,(len(self.textData.word2id), vector_size))
+            for line in tqdm(range(vocab_size)):
+                word = []
+                while True:
+                    ch = f.read(1)
+                    if ch == b' ':
+                        word = b''.join(word).decode('utf-8')
+                        break
+                    if ch != b'\n':
+                        word.append(ch)
+                if word in self.textData.word2id:
+                    if embeddings_format == 'bin':
+                        vector = np.fromstring(f.read(binary_len), dtype='float32')
+                    elif embeddings_format == 'vec':
+                        vector = np.fromstring(f.readline(), sep=' ', dtype='float32')
+                    else:
+                        raise Exception("Unkown format for embeddings: %s " % embeddings_format)
+                    initW[self.textData.word2id[word]] = vector
+                else:
+                    if embeddings_format == 'bin':
+                        f.read(binary_len)
+                    elif embeddings_format == 'vec':
+                        f.readline()
+                    else:
+                        raise Exception("Unkown format for embeddings: %s " % embeddings_format)
         #     print(initW.shape)
         #
-        # # np.save('embedding_opensubs.npy', initW)
-        # # np.save('word2id.npy', self.textData.word2id)
-        #
-        # # PCA Decomposition to reduce word2vec dimensionality
-        # if self.args.embeddingSize < vector_size:
-        #     U, s, Vt = np.linalg.svd(initW, full_matrices=False)
-        #     S = np.zeros((vector_size, vector_size), dtype=complex)
-        #     S[:vector_size, :vector_size] = np.diag(s)
-        #     initW = np.dot(U[:, :self.args.embeddingSize], S[:self.args.embeddingSize, :self.args.embeddingSize])
+        # np.save('embedding_opensubs.npy', initW)
+        # np.save('word2id.npy', self.textData.word2id)
+
+        # PCA Decomposition to reduce word2vec dimensionality
+        if self.args.embeddingSize < vector_size:
+            U, s, Vt = np.linalg.svd(initW, full_matrices=False)
+            S = np.zeros((vector_size, vector_size), dtype=complex)
+            S[:vector_size, :vector_size] = np.diag(s)
+            initW = np.dot(U[:, :self.args.embeddingSize], S[:self.args.embeddingSize, :self.args.embeddingSize])
 
         # print(initW.shape)
+
 
         # Initialize input and output embeddings
         #sess.run(em_in.assign(initW))
         #sess.run(em_out.assign(initW))
 
-        initW = np.load(embeddings_path)
-
         return initW
+
 
     def managePreviousModel(self, sess):
         """ Restore or reset the model, depending of the parameters

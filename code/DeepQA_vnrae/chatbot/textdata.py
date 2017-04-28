@@ -156,11 +156,11 @@ class TextData:
             # sample := (inputContext, targetWords)
             ##########################################
 
-            if not self.args.test and self.args.watsonMode:  # Watson mode: invert question and answer
-                sample = list(reversed(sample))
-            if not self.args.test and self.args.autoEncode:  # Autoencode: use either the question or answer for both input and output
-                k = random.randint(0, 1)
-                sample = (sample[k], sample[k])
+            # if not self.args.test and self.args.watsonMode:  # Watson mode: invert question and answer
+            #     sample = list(reversed(sample))
+            # if not self.args.test and self.args.autoEncode:  # Autoencode: use either the question or answer for both input and output
+            #     k = random.randint(0, 1)
+            #     sample = (sample[k], sample[k])
 
             # TODO: Why re-processed that at each epoch ? Could precompute that
             # once and reuse those every time. Is not the bottleneck so won't change
@@ -181,9 +181,8 @@ class TextData:
                 assert nWords <= self.args.maxLengthEnco
                 nWordsVec.append(nWords)
                 # Padding (words)
-                inputSentence = inputSentence + [self.padToken] * (self.args.maxLengthEnco  - len(inputSentence))
+                inputSentence = [self.padToken] * (self.args.maxLengthEnco  - len(inputSentence)) + inputSentence
                 contextReversed.append(list(reversed(inputSentence)))
-
 
             batch.encoder_inputs.append(contextReversed)
             batch.encoderSeqs.append(list(reversed(sample[0])))  # Reverse inputs (and not outputs), little trick as defined on the original seq2seq paper
@@ -203,17 +202,21 @@ class TextData:
             # Add padding & define weight
             #batch.encoderSeqs[i]   = [self.padToken] * (self.args.maxLengthEnco  - len(batch.encoderSeqs[i])) + batch.encoderSeqs[i]  # Left padding for the input
             batch.weights.append([1.0] * len(batch.decoder_targets[i]) + [0.0] * (self.args.maxLengthDeco - len(batch.decoder_targets[i])))
-            batch.decoder_inputs[i] = batch.decoder_inputs[i] + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoder_inputs[i]))
-            batch.decoder_targets[i]  = batch.decoder_targets[i]  + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoder_targets[i]))
 
         max_len = max(map(len, batch.encoder_inner_length))
         batch.encoder_inner_length = [i + (max_len - len(i)) * [0] for i in batch.encoder_inner_length]
 
         # dynamical sentence-wise padding
+        max_decoder_len = max(batch.decoder_targets_length)
         emptySentence = [self.padToken] * (self.args.maxLengthEnco) # empty sentence
         for i in range(batch_size):
             for j in range(maxContextLength - len(batch.encoder_inputs[i])):
                 batch.encoder_inputs[i].append(emptySentence)
+
+            batch.decoder_inputs[i] = batch.decoder_inputs[i] + [self.padToken] * (
+                max_decoder_len - len(batch.decoder_inputs[i]))
+            batch.decoder_targets[i] = batch.decoder_targets[i] + [self.padToken] * (
+                max_decoder_len - len(batch.decoder_targets[i]))
 
         # Simple hack to reshape the batch
         '''
@@ -396,6 +399,12 @@ class TextData:
                 else:  # If the sentence is not used, neither are the words
                     for w in sentence:
                         self.idCount[w] -= 1
+
+            # if len(merged) == 0:
+            # print('sentences', sentences)
+            # print('merged', merged)
+
+
             return merged
         # ********************************************
 
@@ -407,7 +416,7 @@ class TextData:
         for inputContext, targetWords in tqdm(self.trainingSamples, desc='Filter sentences:', leave=False):
             newContext = []
 
-            for i in range(len(inputContext) - 1):
+            for i in range(len(inputContext)):
                 inputWords = inputContext[i]
                 inputWords = mergeSentences(inputWords, fromEnd=True)
                 newContext.append(inputWords)
@@ -461,7 +470,7 @@ class TextData:
             # ******************************************************************************************
 
             # traverse the whole input context
-            for i in range(len(inputContext) - 1):
+            for i in range(len(inputContext)):
                 inputWords = inputContext[i]
                 valid &= replace_words(inputWords)
 
@@ -701,4 +710,5 @@ def tqdm_wrap(iterable, *args, **kwargs):
     """
     if len(iterable) > 100:
         return tqdm(iterable, *args, **kwargs)
+
     return iterable
