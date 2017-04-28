@@ -19,6 +19,9 @@
 Model to predict the next sentence given an input sequence
 """
 
+import os
+os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+
 import tensorflow as tf
 from tensorflow.contrib.rnn import LSTMCell, LSTMStateTuple
 import numpy as np
