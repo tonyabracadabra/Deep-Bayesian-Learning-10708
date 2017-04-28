@@ -328,7 +328,7 @@ class Model:
                 embeddings=self.lookup_matrix,
                 start_of_sequence_id=self.textData.goToken,
                 end_of_sequence_id=self.textData.eosToken,
-                maximum_length=tf.reduce_max(self.decoder_targets_length) + 3,
+                maximum_length=tf.reduce_max(self.decoder_targets_length),
                 num_decoder_symbols=self.textData.getVocabularySize(),
             )
 
@@ -439,54 +439,6 @@ class Model:
 
         # batch.decoderSeqs
         if not self.args.test:
-        # has to be zero, otherwise cannot be embedded
-        # shape = [batch_size, max_n_sentences_across_batches, max_n_words_across_sentences]
-        # Each entry in the tensor is the wordid
-        # encoder_inputs = np.array([[[1,3,4,5,0,0],[2,3,0,0,0,0],[2,3,555,1,2,666]],
-        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-        #                            [[999,666,4,0,0,0],[2,3,888,777,0,0],[0,0,0,0,0,0]]])
-        #
-        # # shape = [batch_size, max_n_words_across_sentences]
-        # decoder_inputs = np.array([[0, 1, 3, 5, 7, 9],
-        #                            [0, 2, 4, 6, 8, 10],
-        #                            [0, 1, 3, 5, 7, 9],
-        #                            [0, 1, 3, 5, 7, 9],
-        #                            [0, 1, 3, 5, 7, 9],
-        #                            [0, 1, 3, 5, 7, 9]])
-        #
-        # # shape = [batch_size, max_n_words_across_sentences]
-        # decoder_targets = np.array([[1,3,5,7,9,1],
-        #                             [2,4,6,8,10,2],
-        #                             [2, 4, 6, 8, 10, 2],
-        #                             [2, 4, 6, 8, 10, 2],
-        #                             [2, 4, 6, 8, 10, 2],
-        #                             [2, 4, 6, 8, 10, 2]])
-
-        # # [batch_size, max_n_sentences_across_batches]
-        # # Each entry is the number of words in each sentence
-        # encoder_inner_length = np.array([[4,2,6],[4,2,6],[4,2,6],[4,2,6],[4,2,6],[3,4,0]])
-        # # [batch_size,]
-        # # Each entry is the number of sentences in each batch
-        # encoder_outer_length = np.array([3,3,3,3,3,2])
-        # # [batch_size,]
-        # # Each entry is the number of sentences in each batch
-        # decoder_targets_length = np.array([6,6,6,6,6,6])
-        #
-        # feed_dict[self.encoder_inputs] = np.array(encoder_inputs)
-        #
-        # feed_dict[self.decoder_targets] = np.array(decoder_targets)
-        #
-        # feed_dict[self.encoder_inner_length] = np.array(encoder_inner_length)
-        #
-        # feed_dict[self.encoder_outer_length] = np.array(encoder_outer_length)
-        #
-        # feed_dict[self.decoder_targets_length] = np.array(decoder_targets_length)
-        #
-        # feed_dict[self.decoder_inputs] = np.array(decoder_inputs)
-
             feed_dict[self.encoder_inputs] = np.array(batch.encoder_inputs)
         # print('encoder_inputs', np.array(batch.encoder_inputs))
 
@@ -504,19 +456,21 @@ class Model:
 
             feed_dict[self.decoder_targets_length] = np.array(batch.decoder_targets_length)
         # print('decoder_targets_length', np.array(batch.decoder_targets_length))
+            feed_dict[self.annealing_term] = annealing_term
 
-        # print("===============================================")
+            ops = (self.opt_op, self.loss, self.KL, self.loss_reconstruct)
 
-        feed_dict[self.annealing_term] = annealing_term
+        else:
 
-        ops = (self.opt_op, self.loss, self.KL, self.loss_reconstruct)
+            feed_dict[self.encoder_inputs] = np.array(batch.encoder_inputs)
 
-        # sess = tf.Session()
-        # sess.run(tf.global_variables_initializer())
-        # temp = sess.run(self.loss_reconstruct, feed_dict=feed_dict)
-        # print(temp)
-        # print(temp.shape)
-        # print(sess.run(self.loss, feed_dict=feed_dict))
+            feed_dict[self.encoder_inner_length] = np.array(batch.encoder_inner_length)
+
+            feed_dict[self.encoder_outer_length] = np.array(batch.encoder_outer_length)
+
+            feed_dict[self.decoder_targets_length] = np.array([self.args.maxLength])
+
+            ops = (self.decoder_prediction_inference,)
 
         '''
         if not self.args.test:  # Training
@@ -542,4 +496,5 @@ class Model:
         '''
 
         # Return one pass operator
+
         return ops, feed_dict

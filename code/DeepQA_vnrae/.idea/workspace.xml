@@ -18,25 +18,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="model_vnrae.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="model_vnrae.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="520">
-              <caret line="509" column="39" lean-forward="true" selection-start-line="509" selection-start-column="39" selection-end-line="509" selection-end-column="39" />
+            <state relative-caret-position="332">
+              <caret line="481" column="43" lean-forward="false" selection-start-line="481" selection-start-column="37" selection-end-line="481" selection-end-column="43" />
               <folding>
                 <element signature="e#800#823#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="534">
-              <caret line="167" column="10" lean-forward="false" selection-start-line="167" selection-start-column="10" selection-end-line="167" selection-end-column="10" />
-              <folding>
-                <element signature="e#752#791#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -52,14 +40,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="textdata.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="370">
+              <caret line="124" column="43" lean-forward="true" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="43" />
+              <folding>
+                <element signature="e#752#791#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="textdata.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="205">
-              <caret line="145" column="23" lean-forward="true" selection-start-line="145" selection-start-column="23" selection-end-line="145" selection-end-column="23" />
+            <state relative-caret-position="4043">
+              <caret line="484" column="18" lean-forward="false" selection-start-line="484" selection-start-column="8" selection-end-line="484" selection-end-column="18" />
               <folding>
                 <element signature="e#740#758#0" expanded="true" />
-                <marker date="1493362543000" expanded="true" signature="1634:26744" ph="..." />
                 <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
               </folding>
             </state>
@@ -70,19 +69,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>eosTo</find>
-      <find>__dic</find>
-      <find>max</find>
-      <find>encoder</find>
-      <find>_createBatch</find>
-      <find>encoder_inputs</find>
-      <find>-1</find>
-      <find>12</find>
-      <find>- 1</find>
-      <find>merge</find>
-      <find>mergeSentences</find>
-      <find>write</find>
-      <find>save</find>
       <find>loadEm</find>
       <find>reverse</find>
       <find>loadE</find>
@@ -100,6 +86,19 @@
       <find>self.loss</find>
       <find>loss</find>
       <find>detected</find>
+      <find>SENTENCE</find>
+      <find>predictTestset</find>
+      <find>mainTestInteractive</find>
+      <find>singlePredict</find>
+      <find>single</find>
+      <find>context2</find>
+      <find>singlepredict</find>
+      <find>max</find>
+      <find>maxL</find>
+      <find>maxLen</find>
+      <find>maxLength</find>
+      <find>trainingSamples</find>
+      <find>newSamples</find>
     </findStrings>
     <replaceStrings>
       <replace>encoder_inputs</replace>
@@ -507,7 +506,6 @@
           <caret line="161" column="42" lean-forward="false" selection-start-line="161" selection-start-column="42" selection-end-line="161" selection-end-column="42" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="1634:26744" ph="..." />
             <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
@@ -557,7 +555,6 @@
           <caret line="161" column="42" lean-forward="true" selection-start-line="161" selection-start-column="42" selection-end-line="161" selection-end-column="42" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="1634:26744" ph="..." />
             <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
@@ -607,7 +604,6 @@
           <caret line="230" column="0" lean-forward="false" selection-start-line="230" selection-start-column="0" selection-end-line="230" selection-end-column="0" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="1634:26744" ph="..." />
             <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
@@ -645,7 +641,7 @@
         <state relative-caret-position="14550">
           <caret line="970" column="65" lean-forward="true" selection-start-line="970" selection-start-column="65" selection-end-line="970" selection-end-column="65" />
           <folding>
-            <element signature="e#740#778#0" expanded="true" />
+            <element signature="e#740#778#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -684,7 +680,6 @@
           <caret line="465" column="30" lean-forward="false" selection-start-line="465" selection-start-column="30" selection-end-line="465" selection-end-column="30" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="1634:26744" ph="..." />
             <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
@@ -714,7 +709,6 @@
           <caret line="429" column="30" lean-forward="true" selection-start-line="429" selection-start-column="30" selection-end-line="429" selection-end-column="30" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="1634:26744" ph="..." />
             <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
@@ -763,7 +757,6 @@
           <caret line="596" column="0" lean-forward="false" selection-start-line="596" selection-start-column="0" selection-end-line="596" selection-end-column="0" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="1634:26744" ph="..." />
             <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
@@ -841,7 +834,7 @@
         <state relative-caret-position="105">
           <caret line="970" column="65" lean-forward="false" selection-start-line="970" selection-start-column="65" selection-end-line="970" selection-end-column="65" />
           <folding>
-            <element signature="e#740#778#0" expanded="true" />
+            <element signature="e#740#778#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -863,18 +856,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="205">
-          <caret line="145" column="23" lean-forward="true" selection-start-line="145" selection-start-column="23" selection-end-line="145" selection-end-column="23" />
-          <folding>
-            <element signature="e#740#758#0" expanded="true" />
-            <marker date="1493362543000" expanded="true" signature="1634:26744" ph="..." />
-            <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
@@ -883,22 +864,33 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="332">
+          <caret line="481" column="43" lean-forward="false" selection-start-line="481" selection-start-column="37" selection-end-line="481" selection-end-column="43" />
+          <folding>
+            <element signature="e#800#823#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="534">
-          <caret line="167" column="10" lean-forward="false" selection-start-line="167" selection-start-column="10" selection-end-line="167" selection-end-column="10" />
+        <state relative-caret-position="370">
+          <caret line="124" column="43" lean-forward="true" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="43" />
           <folding>
             <element signature="e#752#791#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
+    <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="520">
-          <caret line="509" column="39" lean-forward="true" selection-start-line="509" selection-start-column="39" selection-end-line="509" selection-end-column="39" />
+        <state relative-caret-position="4043">
+          <caret line="484" column="18" lean-forward="false" selection-start-line="484" selection-start-column="8" selection-end-line="484" selection-end-column="18" />
           <folding>
-            <element signature="e#800#823#0" expanded="true" />
+            <element signature="e#740#758#0" expanded="true" />
+            <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
           </folding>
         </state>
       </provider>

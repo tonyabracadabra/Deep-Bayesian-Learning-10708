@@ -352,7 +352,8 @@ class Chatbot:
                 break
             context.append(question)
             questionSeq = []  # Will be contain the question as seen by the encoder
-            #answer = self.singlePredict(question, questionSeq)
+            # answer = self.singlePredict(question, questionSeq)
+
             answer = self.singlePredict(list(context), questionSeq)
             if not answer:
                 print('Warning: sentence too long, sorry. Maybe try a simpler sentence.')
@@ -376,16 +377,16 @@ class Chatbot:
             list <int>: the word ids corresponding to the answer
         """
         # Create the input batch
-        #batch = self.textData.sentence2enco(question)
+        # batch = self.textData.sentence2enco(question)
         batch = self.textData.context2enco(question)
 
         if not batch:
             return None
         if questionSeq is not None:  # If the caller want to have the real input
-            questionSeq.extend(batch.encoderSeqs)
+            questionSeq.extend(batch.encoder_inputs)
 
         # Run the model
-        ops, feedDict = self.model.step(batch)
+        ops, feedDict = self.model.step(batch, 0)
         output = self.sess.run(ops[0], feedDict)  # TODO: Summarize the output too (histogram, ...)
         answer = self.textData.deco2sentence(output)
 
