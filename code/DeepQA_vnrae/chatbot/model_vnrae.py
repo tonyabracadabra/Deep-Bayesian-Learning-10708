@@ -28,9 +28,6 @@ import numpy as np
 import math
 from functools import partial
 import tensorflow.contrib.seq2seq as seq2seq
-from tensorflow.python.ops import array_ops
-#from chatbot.loss_new import sequence_loss
-
 from chatbot.textdata import Batch
 
 
@@ -467,29 +464,6 @@ class Model:
             feed_dict[self.decoder_targets_length] = np.array([self.args.maxLength])
 
             ops = (self.decoder_prediction_inference,)
-
-        '''
-        if not self.args.test:  # Training
-            feedDict[self.encoder_inputs] = batch.encoder_convs   
-            feedDict[self.decoder_targets] = batch.target_seqs
-            feedDict[self.encoder_inner_length] = batch.encoder_inner_length
-            feedDict[self.encoder_outer_length] = batch.encoder_outer_length
-            feedDict[self.target_seqs] = batch.target_seqs
-            for i in range(self.args.maxLengthEnco):
-                feedDict[self.encoder_inputs[i]]  = batch.encoderSeqs[i]
-            for i in range(self.args.maxLengthDeco):
-                feedDict[self.decoderInputs[i]]  = batch.decoderSeqs[i]
-                feedDict[self.decoderTargets[i]] = batch.targetSeqs[i]
-                feedDict[self.decoderWeights[i]] = batch.weights[i]
-            ops = (self.optOp, self.lossFct)
-        else:  # Testing (batchSize == 1)
-            feedDict[self.encoder_inputs] = batch.encoder_convs
-            feedDict[self.decoder_targets] = batch.target_seqs
-            for i in range(self.args.maxLengthEnco):
-                feedDict[self.encoderInputs[i]] = batch.encoderSeqs[i]
-            feedDict[self.decoderInputs[0]]  = [self.textData.goToken]
-            ops = (self.outputs,)
-        '''
 
         # Return one pass operator
 
