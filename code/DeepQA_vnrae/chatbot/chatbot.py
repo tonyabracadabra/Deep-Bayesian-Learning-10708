@@ -32,7 +32,7 @@ from tensorflow.python import debug as tf_debug
 
 from chatbot.textdata import TextData
 #from chatbot.model import Model
-from chatbot.model_vnrae_final import Model
+from chatbot.model_vnrae import Model
 
 
 class Chatbot:
