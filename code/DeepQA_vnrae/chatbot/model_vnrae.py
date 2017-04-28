@@ -297,11 +297,6 @@ class Model:
         #  The encoded state to initialize the dynamic_rnn_decoder
         # encoder_end_state, or the output of the outer lstm
 
-        print('encoder_inputs')
-        print(self.encoder_inputs)
-        print('outer_lstm_input')
-        print(outer_lstm_input)
-
         encoder_end_state = self.outer_lstm(outer_lstm_input, self.encoder_outer_length)
 
         # encoder_end_state = self.outer_lstm(self.encoder_inputs, self.encoder_outer_length)
@@ -459,31 +454,28 @@ class Model:
         # has to be zero, otherwise cannot be embedded
         # shape = [batch_size, max_n_sentences_across_batches, max_n_words_across_sentences]
         # Each entry in the tensor is the wordid
-        encoder_inputs = np.array([[[1,3,4,5,0,0],[2,3,0,0,0,0],[2,3,555,1,2,666]],
-                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-                                   [[999,666,4,0,0,0],[2,3,888,777,0,0],[0,0,0,0,0,0]]])
-
-        # shape = [batch_size, max_n_words_across_sentences]
-        decoder_inputs = np.array([[0, 1, 3, 5, 7, 9],
-                                   [0, 2, 4, 6, 8, 10],
-                                   [0, 1, 3, 5, 7, 9],
-                                   [0, 1, 3, 5, 7, 9],
-                                   [0, 1, 3, 5, 7, 9],
-                                   [0, 1, 3, 5, 7, 9]])
-
-        # shape = [batch_size, max_n_words_across_sentences]
-        decoder_targets = np.array([[1,3,5,7,9,1],
-                                    [2,4,6,8,10,2],
-                                    [2, 4, 6, 8, 10, 2],
-                                    [2, 4, 6, 8, 10, 2],
-                                    [2, 4, 6, 8, 10, 2],
-                                    [2, 4, 6, 8, 10, 2]])
-
-        print("===================")
-
+        # encoder_inputs = np.array([[[1,3,4,5,0,0],[2,3,0,0,0,0],[2,3,555,1,2,666]],
+        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+        #                            [[999,666,4,0,0,0],[2,3,888,777,0,0],[0,0,0,0,0,0]]])
+        #
+        # # shape = [batch_size, max_n_words_across_sentences]
+        # decoder_inputs = np.array([[0, 1, 3, 5, 7, 9],
+        #                            [0, 2, 4, 6, 8, 10],
+        #                            [0, 1, 3, 5, 7, 9],
+        #                            [0, 1, 3, 5, 7, 9],
+        #                            [0, 1, 3, 5, 7, 9],
+        #                            [0, 1, 3, 5, 7, 9]])
+        #
+        # # shape = [batch_size, max_n_words_across_sentences]
+        # decoder_targets = np.array([[1,3,5,7,9,1],
+        #                             [2,4,6,8,10,2],
+        #                             [2, 4, 6, 8, 10, 2],
+        #                             [2, 4, 6, 8, 10, 2],
+        #                             [2, 4, 6, 8, 10, 2],
+        #                             [2, 4, 6, 8, 10, 2]])
 
         # # [batch_size, max_n_sentences_across_batches]
         # # Each entry is the number of words in each sentence
