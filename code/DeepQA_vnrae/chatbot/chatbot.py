@@ -133,7 +133,7 @@ class Chatbot:
 
         # Training options
         trainingArgs = parser.add_argument_group('Training options')
-        trainingArgs.add_argument('--numEpochs', type=int, default=30, help='maximum number of epochs to run')
+        trainingArgs.add_argument('--numEpochs', type=int, default=60, help='maximum number of epochs to run')
         trainingArgs.add_argument('--saveEvery', type=int, default=2000, help='nb of mini-batch step before creating a model checkpoint')
         trainingArgs.add_argument('--learning_rate', type=float, default=0.002, help='Learning rate')
         trainingArgs.add_argument('--dropout', type=float, default=0.9, help='Dropout rate (keep probabilities)')
@@ -257,6 +257,7 @@ class Chatbot:
                 tic = datetime.datetime.now()
 
                 annealing_term = min([np.exp(c*(e+1))-1, 1])
+                loss, kl, loss_construct = 0, 0, 0
                 for nextBatch in tqdm(batches, desc="Training"):
                     # Training pass
                     if len(nextBatch.encoder_inputs) != self.args.batch_size:
@@ -265,9 +266,6 @@ class Chatbot:
                     ops, feedDict = self.model.step(nextBatch, annealing_term)
                     assert len(ops) == 4  # training, loss
                     _, loss, kl, loss_construct, summary = sess.run(ops + (mergedSummaries,), feedDict)
-                    print('loss: {}'.format(loss))
-                    print('KL loss: {}'.format(kl))
-                    print('loss construct: {}'.format(loss_construct))
 
                     self.writer.add_summary(summary, self.globStep)
                     self.globStep += 1
@@ -275,7 +273,7 @@ class Chatbot:
                     # Output training status
                     if self.globStep % 100 == 0:
                         perplexity = math.exp(float(loss)) if loss < 300 else float("inf")
-                        tqdm.write("----- Step %d -- Loss %.2f -- Perplexity %.2f" % (self.globStep, loss, perplexity))
+                        tqdm.write("----- Step %d -- Loss %.2f -- Perplexity %.2f -- KL loss %.2f" % (self.globStep, loss, perplexity, kl))
 
                     # Checkpoint
                     if self.globStep % self.args.saveEvery == 0:

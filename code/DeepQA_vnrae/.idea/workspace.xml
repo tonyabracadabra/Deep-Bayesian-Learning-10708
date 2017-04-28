@@ -40,11 +40,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4398">
-              <caret line="259" column="37" lean-forward="false" selection-start-line="259" selection-start-column="33" selection-end-line="259" selection-end-column="37" />
+            <state relative-caret-position="-697">
+              <caret line="135" column="69" lean-forward="false" selection-start-line="135" selection-start-column="69" selection-end-line="135" selection-end-column="69" />
               <folding>
                 <element signature="e#752#791#0" expanded="true" />
               </folding>
@@ -52,10 +52,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="textdata.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="textdata.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="421">
+            <state relative-caret-position="974">
               <caret line="522" column="54" lean-forward="true" selection-start-line="522" selection-start-column="54" selection-end-line="522" selection-end-column="54" />
               <folding>
                 <element signature="e#740#758#0" expanded="true" />
@@ -78,8 +78,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>batch_size</find>
-      <find>print(</find>
       <find>kl</find>
       <find>learni</find>
       <find>annealing_term</find>
@@ -107,7 +105,9 @@
       <find>filterFromFull</find>
       <find>h_units_decoder</find>
       <find>filter</find>
+      <find>tq</find>
       <find>tqdm</find>
+      <find>numEpochs</find>
     </findStrings>
     <replaceStrings>
       <replace>encoder_inputs</replace>
@@ -120,8 +120,8 @@
       <list>
         <option value="$PROJECT_DIR$/chatbot/model.py" />
         <option value="$PROJECT_DIR$/chatbot/model_vnrae.py" />
-        <option value="$PROJECT_DIR$/chatbot/chatbot.py" />
         <option value="$PROJECT_DIR$/chatbot/textdata.py" />
+        <option value="$PROJECT_DIR$/chatbot/chatbot.py" />
       </list>
     </option>
   </component>
@@ -896,22 +896,22 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
+    <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4398">
-          <caret line="259" column="37" lean-forward="false" selection-start-line="259" selection-start-column="33" selection-end-line="259" selection-end-column="37" />
+        <state relative-caret-position="974">
+          <caret line="522" column="54" lean-forward="true" selection-start-line="522" selection-start-column="54" selection-end-line="522" selection-end-column="54" />
           <folding>
-            <element signature="e#752#791#0" expanded="true" />
+            <element signature="e#740#758#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
+    <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="421">
-          <caret line="522" column="54" lean-forward="true" selection-start-line="522" selection-start-column="54" selection-end-line="522" selection-end-column="54" />
+        <state relative-caret-position="-697">
+          <caret line="135" column="69" lean-forward="false" selection-start-line="135" selection-start-column="69" selection-end-line="135" selection-end-column="69" />
           <folding>
-            <element signature="e#740#758#0" expanded="true" />
+            <element signature="e#752#791#0" expanded="true" />
           </folding>
         </state>
       </provider>
