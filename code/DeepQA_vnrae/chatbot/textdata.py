@@ -651,6 +651,28 @@ class TextData:
             sequence.append(batchSeq[i][seqId])
         return self.sequence2str(sequence, **kwargs)
 
+#########################################################
+
+    def context2enco(self, context):
+        if context == '':
+            return None
+
+        for i in range(len(context)):
+            sentence = context[i]
+            tokens = nltk.word_tokenize(sentence)
+            if len(tokens) > self.args.maxLength:
+                return None
+
+            wordIds = []
+            for token in tokens:
+                wordIds.append(self.getWordId(token, create=False))
+
+            batch = self._createBatch([[wordIds, []]]) # Mono batch, no target output
+
+            return batch
+
+#########################################################
+
     def sentence2enco(self, sentence):
         """Encode a sequence and return a batch as an input for the model
         Return:
