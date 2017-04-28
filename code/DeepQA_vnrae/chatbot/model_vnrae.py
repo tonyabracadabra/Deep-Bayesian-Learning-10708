@@ -141,7 +141,7 @@ class Model:
         # (batch_size, n_words_max)
         self.decoder_weights = tf.cast(tf.sequence_mask(
             self.decoder_targets_length), tf.float32)
-        
+
 
     def _define_layers(self):
         self.inner_lstm = partial(self._dynamic_bilstm, 'inner', self.encoder_inner_cell)
