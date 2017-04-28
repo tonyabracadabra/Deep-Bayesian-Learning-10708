@@ -137,18 +137,18 @@ class TextData:
         """Create a single batch from the list of sample. The batch size is automatically defined by the number of
         samples given.
         The inputs should already be inverted. The target should already have <go> and <eos>
-        Warning: This function should not make direct calls to args.batchSize !!!
+        Warning: This function should not make direct calls to args.batch_size !!!
         Args:
             samples (list<Obj>): a list of samples, each sample being on the form [input, target]
         Return:
             Batch: a batch object en
         """
         batch = Batch()
-        batchSize = len(samples)
+        batch_size = len(samples)
         maxContextLength = 0
 
         # Create the batch tensor
-        for i in range(batchSize):
+        for i in range(batch_size):
             # Unpack the sample
 
             sample = samples[i]
@@ -187,9 +187,9 @@ class TextData:
 
             batch.encoder_inputs.append(contextReversed)
             batch.encoderSeqs.append(list(reversed(sample[0])))  # Reverse inputs (and not outputs), little trick as defined on the original seq2seq paper
-            batch.decoder_inputs.append([self.goToken] + sample[1] + [self.eosToken])  # Add the <go> and <eos> tokens
-            batch.decoder_targets.append(batch.decoder_inputs[-1][1:])  # Same as decoder, but shifted to the left (ignore the <go>)
-            # assert len(nWordsVec) > 0
+            batch.decoder_inputs.append([self.goToken] + sample[1][:-1])  # Add the <go> and <eos> tokens
+            batch.decoder_targets.append(sample[1])  # Same as decoder, but shifted to the left (ignore the <go>)
+
             batch.encoder_inner_length.append(nWordsVec)
             batch.encoder_outer_length.append(contextLength)
             batch.decoder_targets_length.append(len(batch.decoder_inputs[i]))
@@ -206,13 +206,12 @@ class TextData:
             batch.decoder_inputs[i] = batch.decoder_inputs[i] + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoder_inputs[i]))
             batch.decoder_targets[i]  = batch.decoder_targets[i]  + [self.padToken] * (self.args.maxLengthDeco - len(batch.decoder_targets[i]))
 
-
         max_len = max(map(len, batch.encoder_inner_length))
         batch.encoder_inner_length = [i + (max_len - len(i)) * [0] for i in batch.encoder_inner_length]
 
         # dynamical sentence-wise padding
         emptySentence = [self.padToken] * (self.args.maxLengthEnco) # empty sentence
-        for i in range(batchSize):
+        for i in range(batch_size):
             for j in range(maxContextLength - len(batch.encoder_inputs[i])):
                 batch.encoder_inputs[i].append(emptySentence)
 
@@ -223,7 +222,7 @@ class TextData:
 
         for i in range(self.args.maxLengthEnco):
             encoderSeqT = []
-            for j in range(batchSize):
+            for j in range(batch_size):
                 encoderSeqT.append(batch.encoderSeqs[j][i])
             encoderSeqsT.append(encoderSeqT)
         batch.encoderSeqs = encoderSeqsT
@@ -236,7 +235,7 @@ class TextData:
         #     decoderSeqT = []
         #     targetSeqT = []
         #     weightT = []
-        #     for j in range(batchSize):
+        #     for j in range(batch_size):
         #         decoderSeqT.append(batch.decoder_inputs[j][i])
         #         targetSeqT.append(batch.decoder_targets[j][i])
         #         weightT.append(batch.weights[j][i])
@@ -266,8 +265,8 @@ class TextData:
         def genNextSamples():
             """ Generator over the mini-batch training samples
             """
-            for i in range(0, self.getSampleSize(), self.args.batchSize):
-                yield self.trainingSamples[i:min(i + self.args.batchSize, self.getSampleSize())]
+            for i in range(0, self.getSampleSize(), self.args.batch_size):
+                yield self.trainingSamples[i:min(i + self.args.batch_size, self.getSampleSize())]
 
         # TODO: Should replace that by generator (better: by tf.queue)
 

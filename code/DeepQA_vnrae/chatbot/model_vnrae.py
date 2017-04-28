@@ -455,34 +455,35 @@ class Model:
         # Feed the dictionary
         feed_dict = {}
 
-        # print(batch.__dict__.keys())
-        # # batch.decoderSeqs
-        #
-        # # has to be zero, otherwise cannot be embedded
-        # # shape = [batch_size, max_n_sentences_across_batches, max_n_words_across_sentences]
-        # # Each entry in the tensor is the wordid
-        # encoder_inputs = np.array([[[1,3,4,5,0,0],[2,3,0,0,0,0],[2,3,555,1,2,666]],
-        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-        #                            [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
-        #                            [[999,666,4,0,0,0],[2,3,888,777,0,0],[0,0,0,0,0,0]]])
-        #
-        # # shape = [batch_size, max_n_words_across_sentences]
-        # decoder_inputs = np.array([[0, 1, 3, 5, 7, 9],
-        #                            [0, 2, 4, 6, 8, 10],
-        #                            [0, 1, 3, 5, 7, 9],
-        #                            [0, 1, 3, 5, 7, 9],
-        #                            [0, 1, 3, 5, 7, 9],
-        #                            [0, 1, 3, 5, 7, 9]])
-        #
-        # # shape = [batch_size, max_n_words_across_sentences]
-        # decoder_targets = np.array([[1,3,5,7,9,1],
-        #                             [2,4,6,8,10,2],
-        #                             [2, 4, 6, 8, 10, 2],
-        #                             [2, 4, 6, 8, 10, 2],
-        #                             [2, 4, 6, 8, 10, 2],
-        #                             [2, 4, 6, 8, 10, 2]])
+        # batch.decoderSeqs
+
+        # has to be zero, otherwise cannot be embedded
+        # shape = [batch_size, max_n_sentences_across_batches, max_n_words_across_sentences]
+        # Each entry in the tensor is the wordid
+        encoder_inputs = np.array([[[1,3,4,5,0,0],[2,3,0,0,0,0],[2,3,555,1,2,666]],
+                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+                                   [[1, 3, 4, 5, 0, 0], [2, 3, 0, 0, 0, 0], [2, 3, 555, 1, 2, 666]],
+                                   [[999,666,4,0,0,0],[2,3,888,777,0,0],[0,0,0,0,0,0]]])
+
+        # shape = [batch_size, max_n_words_across_sentences]
+        decoder_inputs = np.array([[0, 1, 3, 5, 7, 9],
+                                   [0, 2, 4, 6, 8, 10],
+                                   [0, 1, 3, 5, 7, 9],
+                                   [0, 1, 3, 5, 7, 9],
+                                   [0, 1, 3, 5, 7, 9],
+                                   [0, 1, 3, 5, 7, 9]])
+
+        # shape = [batch_size, max_n_words_across_sentences]
+        decoder_targets = np.array([[1,3,5,7,9,1],
+                                    [2,4,6,8,10,2],
+                                    [2, 4, 6, 8, 10, 2],
+                                    [2, 4, 6, 8, 10, 2],
+                                    [2, 4, 6, 8, 10, 2],
+                                    [2, 4, 6, 8, 10, 2]])
+
+
         # # [batch_size, max_n_sentences_across_batches]
         # # Each entry is the number of words in each sentence
         # encoder_inner_length = np.array([[4,2,6],[4,2,6],[4,2,6],[4,2,6],[4,2,6],[3,4,0]])
@@ -492,24 +493,38 @@ class Model:
         # # [batch_size,]
         # # Each entry is the number of sentences in each batch
         # decoder_targets_length = np.array([6,6,6,6,6,6])
+        #
+        # feed_dict[self.encoder_inputs] = np.array(encoder_inputs)
+        #
+        # feed_dict[self.decoder_targets] = np.array(decoder_targets)
+        #
+        # feed_dict[self.encoder_inner_length] = np.array(encoder_inner_length)
+        #
+        # feed_dict[self.encoder_outer_length] = np.array(encoder_outer_length)
+        #
+        # feed_dict[self.decoder_targets_length] = np.array(decoder_targets_length)
+        #
+        # feed_dict[self.decoder_inputs] = np.array(decoder_inputs)
 
         feed_dict[self.encoder_inputs] = np.array(batch.encoder_inputs)
-        print(np.array(batch.encoder_inputs).shape)
+        print(np.array(batch.encoder_inputs))
 
         feed_dict[self.decoder_targets] = np.array(batch.decoder_targets)
-        print(np.array(batch.decoder_targets).shape)
+        print(np.array(batch.decoder_targets))
 
         feed_dict[self.encoder_inner_length] = np.array(batch.encoder_inner_length)
-        print(np.array(batch.encoder_inner_length).shape)
+        print(np.array(batch.encoder_inner_length))
 
         feed_dict[self.encoder_outer_length] = np.array(batch.encoder_outer_length)
-        print(np.array(batch.encoder_outer_length).shape)
+        print(np.array(batch.encoder_outer_length))
 
         feed_dict[self.decoder_targets_length] = np.array(batch.decoder_targets_length)
-        print(np.array(batch.decoder_targets_length).shape)
+        print(np.array(batch.decoder_targets_length))
 
         feed_dict[self.decoder_inputs] = np.array(batch.decoder_inputs)
-        print(np.array(batch.decoder_inputs).shape)
+        print(np.array(batch.decoder_inputs))
+
+        print("===============================================")
 
         ops = (self.opt_op, self.loss)
 

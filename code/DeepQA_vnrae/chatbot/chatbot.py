@@ -136,10 +136,9 @@ class Chatbot:
         trainingArgs = parser.add_argument_group('Training options')
         trainingArgs.add_argument('--numEpochs', type=int, default=30, help='maximum number of epochs to run')
         trainingArgs.add_argument('--saveEvery', type=int, default=2000, help='nb of mini-batch step before creating a model checkpoint')
-        trainingArgs.add_argument('--batchSize', type=int, default=256, help='mini-batch size')
         trainingArgs.add_argument('--learning_rate', type=float, default=0.002, help='Learning rate')
         trainingArgs.add_argument('--dropout', type=float, default=0.9, help='Dropout rate (keep probabilities)')
-        trainingArgs.add_argument('--batch_size', type=int, default=6, help='mini-batch size')
+        trainingArgs.add_argument('--batch_size', type=int, default=2, help='mini-batch size')
 
         return parser.parse_args(args)
 
@@ -636,7 +635,7 @@ class Chatbot:
         # Keep track of the learning params (but without restoring them)
         config['Training (won\'t be restored)'] = {}
         config['Training (won\'t be restored)']['learning_rate'] = str(self.args.learning_rate)
-        config['Training (won\'t be restored)']['batchSize'] = str(self.args.batchSize)
+        config['Training (won\'t be restored)']['batch_size'] = str(self.args.batch_size)
         config['Training (won\'t be restored)']['dropout'] = str(self.args.dropout)
 
         with open(os.path.join(self.modelDir, self.CONFIG_FILENAME), 'w') as configFile:
