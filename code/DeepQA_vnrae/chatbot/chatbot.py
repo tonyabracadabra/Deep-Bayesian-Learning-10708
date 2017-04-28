@@ -121,16 +121,15 @@ class Chatbot:
 
         # Network options (Warning: if modifying something here, also make the change on save/loadParams() )
         nnArgs = parser.add_argument_group('Network options', 'architecture related option')
-        nnArgs.add_argument('--hiddenSize', type=int, default=512, help='number of hidden units in each RNN cell')
         nnArgs.add_argument('--numLayers', type=int, default=2, help='number of rnn layers')
         nnArgs.add_argument('--softmaxSamples', type=int, default=200, help='Number of samples in the sampled softmax loss function. A value of 0 deactivates sampled softmax')
         nnArgs.add_argument('--initEmbeddings', action='store_true', help='if present, the program will initialize the embeddings with pre-trained word2vec vectors')
         nnArgs.add_argument('--embeddingSize', type=int, default=64, help='embedding size of the word representation')
         nnArgs.add_argument('--embeddingSource', type=str, default="GoogleNews-vectors-negative300.bin", help='embedding file to use for the word representation')
-        nnArgs.add_argument('--h_units_words', type=int, default=50, help='number of hidden units in inner encoder')
-        nnArgs.add_argument('--h_units_sentences', type=int, default=50, help='number of hidden units in outer encoder')
-        nnArgs.add_argument('--h_units_decoder', type=int, default=100, help='number of hidden units in decoder')
-        nnArgs.add_argument('--latent_size', type=int, default=30, help='Latent variable size in the variational model')
+        nnArgs.add_argument('--h_units_words', type=int, default=256, help='number of hidden units in inner encoder')
+        nnArgs.add_argument('--h_units_sentences', type=int, default=256, help='number of hidden units in outer encoder')
+        nnArgs.add_argument('--h_units_decoder', type=int, default=512, help='number of hidden units in decoder')
+        nnArgs.add_argument('--latent_size', type=int, default=64, help='Latent variable size in the variational model')
 
         # Training options
         trainingArgs = parser.add_argument_group('Training options')
@@ -587,13 +586,15 @@ class Chatbot:
             self.args.maxLength = config['Dataset'].getint('maxLength')  # We need to restore the model length because of the textData associated and the vocabulary size (TODO: Compatibility mode between different maxLength)
             self.args.filterVocab = config['Dataset'].getint('filterVocab')
 
-            self.args.hiddenSize = config['Network'].getint('hiddenSize')
             self.args.numLayers = config['Network'].getint('numLayers')
             self.args.softmaxSamples = config['Network'].getint('softmaxSamples')
             self.args.initEmbeddings = config['Network'].getboolean('initEmbeddings')
             self.args.embeddingSize = config['Network'].getint('embeddingSize')
             self.args.embeddingSource = config['Network'].get('embeddingSource')
-
+            self.args.h_units_words = config['Network'].get('h_units_words')
+            self.args.h_units_sentences = config['Network'].get('h_units_sentences')
+            self.args.h_units_decoder = config['Network'].get('h_units_decoder')
+            self.args.latent_size = config['Network'].get('latent_size')
 
             # No restoring for training params, batch size or other non model dependent parameters
 
@@ -607,7 +608,6 @@ class Chatbot:
             print('datasetTag: {}'.format(self.args.datasetTag))
             print('maxLength: {}'.format(self.args.maxLength))
             print('filterVocab: {}'.format(self.args.filterVocab))
-            print('hiddenSize: {}'.format(self.args.hiddenSize))
             print('numLayers: {}'.format(self.args.numLayers))
             print('softmaxSamples: {}'.format(self.args.softmaxSamples))
             print('initEmbeddings: {}'.format(self.args.initEmbeddings))
@@ -641,12 +641,15 @@ class Chatbot:
         config['Dataset']['filterVocab'] = str(self.args.filterVocab)
 
         config['Network'] = {}
-        config['Network']['hiddenSize'] = str(self.args.hiddenSize)
         config['Network']['numLayers'] = str(self.args.numLayers)
         config['Network']['softmaxSamples'] = str(self.args.softmaxSamples)
         config['Network']['initEmbeddings'] = str(self.args.initEmbeddings)
         config['Network']['embeddingSize'] = str(self.args.embeddingSize)
         config['Network']['embeddingSource'] = str(self.args.embeddingSource)
+        config['Network']['h_units_words'] = str(self.args.h_units_words)
+        config['Network']['h_units_sentences'] = str(self.args.h_units_sentences)
+        config['Network']['h_units_decoder'] = str(self.args.h_units_decoder)
+        config['Network']['latent_size'] = str(self.args.latent_size)
 
         # Keep track of the learning params (but without restoring them)
         config['Training (won\'t be restored)'] = {}

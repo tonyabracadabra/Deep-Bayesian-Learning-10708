@@ -21,8 +21,8 @@
       <file leaf-file-name="model_vnrae.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="332">
-              <caret line="481" column="43" lean-forward="false" selection-start-line="481" selection-start-column="37" selection-end-line="481" selection-end-column="43" />
+            <state relative-caret-position="707">
+              <caret line="285" column="69" lean-forward="true" selection-start-line="285" selection-start-column="69" selection-end-line="285" selection-end-column="69" />
               <folding>
                 <element signature="e#800#823#0" expanded="true" />
               </folding>
@@ -40,11 +40,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
-              <caret line="124" column="43" lean-forward="true" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="43" />
+            <state relative-caret-position="2603">
+              <caret line="651" column="69" lean-forward="true" selection-start-line="651" selection-start-column="69" selection-end-line="651" selection-end-column="69" />
               <folding>
                 <element signature="e#752#791#0" expanded="true" />
               </folding>
@@ -52,10 +52,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="textdata.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="textdata.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="4043">
+            <state relative-caret-position="4379">
               <caret line="484" column="18" lean-forward="false" selection-start-line="484" selection-start-column="8" selection-end-line="484" selection-end-column="18" />
               <folding>
                 <element signature="e#740#758#0" expanded="true" />
@@ -69,12 +69,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>loadEm</find>
-      <find>reverse</find>
-      <find>loadE</find>
-      <find>_init_embedding</find>
-      <find>embedding</find>
-      <find>embeddingSource</find>
       <find>CONFIG_FILENAME</find>
       <find>lookup</find>
       <find>lookup_ma</find>
@@ -95,10 +89,16 @@
       <find>singlepredict</find>
       <find>max</find>
       <find>maxL</find>
+      <find>trainingSamples</find>
       <find>maxLen</find>
       <find>maxLength</find>
-      <find>trainingSamples</find>
+      <find>attention_states</find>
       <find>newSamples</find>
+      <find>tqdm</find>
+      <find>hidden</find>
+      <find>load</find>
+      <find>loadMo</find>
+      <find>h_units_decoder</find>
     </findStrings>
     <replaceStrings>
       <replace>encoder_inputs</replace>
@@ -111,8 +111,8 @@
       <list>
         <option value="$PROJECT_DIR$/chatbot/textdata.py" />
         <option value="$PROJECT_DIR$/chatbot/model.py" />
-        <option value="$PROJECT_DIR$/chatbot/chatbot.py" />
         <option value="$PROJECT_DIR$/chatbot/model_vnrae.py" />
+        <option value="$PROJECT_DIR$/chatbot/chatbot.py" />
       </list>
     </option>
   </component>
@@ -866,31 +866,31 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="332">
-          <caret line="481" column="43" lean-forward="false" selection-start-line="481" selection-start-column="37" selection-end-line="481" selection-end-column="43" />
+        <state relative-caret-position="707">
+          <caret line="285" column="69" lean-forward="true" selection-start-line="285" selection-start-column="69" selection-end-line="285" selection-end-column="69" />
           <folding>
             <element signature="e#800#823#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="370">
-          <caret line="124" column="43" lean-forward="true" selection-start-line="124" selection-start-column="43" selection-end-line="124" selection-end-column="43" />
-          <folding>
-            <element signature="e#752#791#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4043">
+        <state relative-caret-position="4379">
           <caret line="484" column="18" lean-forward="false" selection-start-line="484" selection-start-column="8" selection-end-line="484" selection-end-column="18" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
             <marker date="1493362543000" expanded="true" signature="5626:5841" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2603">
+          <caret line="651" column="69" lean-forward="true" selection-start-line="651" selection-start-column="69" selection-end-line="651" selection-end-column="69" />
+          <folding>
+            <element signature="e#752#791#0" expanded="true" />
           </folding>
         </state>
       </provider>
