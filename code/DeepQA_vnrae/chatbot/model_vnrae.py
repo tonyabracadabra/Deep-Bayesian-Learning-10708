@@ -438,7 +438,7 @@ class Model:
         feed_dict = {}
 
         # batch.decoderSeqs
-
+        if not self.args.test:
         # has to be zero, otherwise cannot be embedded
         # shape = [batch_size, max_n_sentences_across_batches, max_n_words_across_sentences]
         # Each entry in the tensor is the wordid
@@ -487,22 +487,22 @@ class Model:
         #
         # feed_dict[self.decoder_inputs] = np.array(decoder_inputs)
 
-        feed_dict[self.encoder_inputs] = np.array(batch.encoder_inputs)
+            feed_dict[self.encoder_inputs] = np.array(batch.encoder_inputs)
         # print('encoder_inputs', np.array(batch.encoder_inputs))
 
-        feed_dict[self.encoder_inner_length] = np.array(batch.encoder_inner_length)
+            feed_dict[self.encoder_inner_length] = np.array(batch.encoder_inner_length)
         # print('encoder_inner_length', np.array(batch.encoder_inner_length))
 
-        feed_dict[self.encoder_outer_length] = np.array(batch.encoder_outer_length)
+            feed_dict[self.encoder_outer_length] = np.array(batch.encoder_outer_length)
         # print('encoder_outer_length', np.array(batch.encoder_outer_length))
 
-        feed_dict[self.decoder_inputs] = np.array(batch.decoder_inputs)
+            feed_dict[self.decoder_inputs] = np.array(batch.decoder_inputs)
         # print('decoder_inputs', np.array(batch.decoder_inputs))
 
-        feed_dict[self.decoder_targets] = np.array(batch.decoder_targets)
+            feed_dict[self.decoder_targets] = np.array(batch.decoder_targets)
         # print('decoder_targets', np.array(batch.decoder_targets))
 
-        feed_dict[self.decoder_targets_length] = np.array(batch.decoder_targets_length)
+            feed_dict[self.decoder_targets_length] = np.array(batch.decoder_targets_length)
         # print('decoder_targets_length', np.array(batch.decoder_targets_length))
 
         # print("===============================================")
