@@ -137,7 +137,7 @@ class Chatbot:
         trainingArgs.add_argument('--saveEvery', type=int, default=2000, help='nb of mini-batch step before creating a model checkpoint')
         trainingArgs.add_argument('--learning_rate', type=float, default=0.002, help='Learning rate')
         trainingArgs.add_argument('--dropout', type=float, default=0.9, help='Dropout rate (keep probabilities)')
-        trainingArgs.add_argument('--batch_size', type=int, default=6, help='mini-batch size')
+        trainingArgs.add_argument('--batch_size', type=int, default=32, help='mini-batch size')
 
         return parser.parse_args(args)
 
@@ -256,9 +256,13 @@ class Chatbot:
                 tic = datetime.datetime.now()
                 for nextBatch in tqdm(batches, desc="Training"):
                     # Training pass
+                    if len(nextBatch.encoder_inputs) != self.args.batch_size:
+                        continue
+
                     ops, feedDict = self.model.step(nextBatch)
                     assert len(ops) == 2  # training, loss
                     _, loss, summary = sess.run(ops + (mergedSummaries,), feedDict)
+                    print('loss:', loss)
 
                     self.writer.add_summary(summary, self.globStep)
                     self.globStep += 1
@@ -494,28 +498,28 @@ class Chatbot:
 
         modelName = self._getModelName()
 
-        if os.listdir(self.modelDir):
-            if self.args.reset:
-                print('Reset: Destroying previous model at {}'.format(self.modelDir))
-            # Analysing directory content
-            elif os.path.exists(modelName):  # Restore the model
-                print('Restoring previous model from {}'.format(modelName))
-                self.saver.restore(sess, modelName)  # Will crash when --reset is not activated and the model has not been saved yet
-            elif self._getModelList():
-                print('Conflict with previous models.')
-                raise RuntimeError('Some models are already present in \'{}\'. You should check them first (or re-try with the keepAll flag)'.format(self.modelDir))
-            else:  # No other model to conflict with (probably summary files)
-                print('No previous model found, but some files found at {}. Cleaning...'.format(self.modelDir))  # Warning: No confirmation asked
-                self.args.reset = True
-
-            if self.args.reset:
-                fileList = [os.path.join(self.modelDir, f) for f in os.listdir(self.modelDir)]
-                for f in fileList:
-                    print('Removing {}'.format(f))
-                    os.remove(f)
-
-        else:
-            print('No previous model found, starting from clean directory: {}'.format(self.modelDir))
+        # if os.listdir(self.modelDir):
+        #     if self.args.reset:
+        #         print('Reset: Destroying previous model at {}'.format(self.modelDir))
+        #     # Analysing directory content
+        #     elif os.path.exists(modelName):  # Restore the model
+        #         print('Restoring previous model from {}'.format(modelName))
+        #         self.saver.restore(sess, modelName)  # Will crash when --reset is not activated and the model has not been saved yet
+        #     elif self._getModelList():
+        #         print('Conflict with previous models.')
+        #         raise RuntimeError('Some models are already present in \'{}\'. You should check them first (or re-try with the keepAll flag)'.format(self.modelDir))
+        #     else:  # No other model to conflict with (probably summary files)
+        #         print('No previous model found, but some files found at {}. Cleaning...'.format(self.modelDir))  # Warning: No confirmation asked
+        #         self.args.reset = True
+        #
+        #     if self.args.reset:
+        #         fileList = [os.path.join(self.modelDir, f) for f in os.listdir(self.modelDir)]
+        #         for f in fileList:
+        #             print('Removing {}'.format(f))
+        #             os.remove(f)
+        #
+        # else:
+        #     print('No previous model found, starting from clean directory: {}'.format(self.modelDir))
 
     def _saveSession(self, sess):
         """ Save the model parameters and the variables

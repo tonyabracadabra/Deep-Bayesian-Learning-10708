@@ -251,8 +251,7 @@ class TextData:
     def loadCorpus(self):
         """Load/create the conversations data
         """
-
-        datasetExist = os.path.isfile(self.args.context_path)
+        datasetExist = os.path.isfile(self.filteredSamplesPath)
         if not datasetExist:  # First time we load the database: creating all files
             print('Training samples not found. Creating dataset...')
 
@@ -313,8 +312,6 @@ class TextData:
             self.id2word = data['id2word']
             self.idCount = data.get('idCount', None)
             self.trainingSamples = data['trainingSamples']
-            print("************************")
-            print(self.trainingSamples)
 
             self.padToken = self.word2id['<pad>']
             self.goToken = self.word2id['<go>']
@@ -427,7 +424,6 @@ class TextData:
         # Preprocessing data
 
         for conversation in tqdm(conversations, desc='Extract conversations'):
-            print(conversation)
             self.extractConversation(conversation)
 
         # The dataset will be saved in the same order it has been extracted
