@@ -44,6 +44,7 @@ class Batch:
         self.decoder_targets = []
         self.encoder_inner_length = []
         self.encoder_outer_length = []
+        swlf.decoder_targets_length = []
         self.weights = []
 
 
@@ -173,12 +174,19 @@ class TextData:
                 maxContextLength = contextLength
 
             # Reverse input in whole context
+            nWordsVec = []
             for c in range(contextLength - 1):
                 inputSentence = context[c]
-                assert len(inputSentence) <= self.args.maxLengthEnco
+                nWords = len(inputSentence)
+                assert nWords <= self.args.maxLengthEnco
+                nWordsVec.append(nWords)
                 # Padding (words)
                 inputSentence = inputSentence + [self.padToken] * (self.args.maxLengthEnco  - len(inputSentence))
                 contextReversed.append(list(reversed(inputSentence)))
+
+            batch.encoder_inner_length.append(nWordsVec)
+            batch.encoder_outer_length.append(contextLength)
+            batch.decoder_targets_length.append(len(batch.decoder_inputs[i]))
 
             batch.encoder_inputs.append(contextReversed)
             batch.encoderSeqs.append(list(reversed(sample[0])))  # Reverse inputs (and not outputs), little trick as defined on the original seq2seq paper
@@ -261,7 +269,7 @@ class TextData:
         for samples in genNextSamples():
             batch = self._createBatch(samples)
             batches.append(batch)
-            
+
         return batches
 
     def getSampleSize(self):
