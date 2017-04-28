@@ -26,7 +26,7 @@ import os  # Checking file existance
 import random
 import string
 from collections import OrderedDict
-
+from collections import deque
 from chatbot.corpus.cornelldata import CornellData
 from chatbot.corpus.opensubsdata import OpensubsData
 from chatbot.corpus.scotusdata import ScotusData
@@ -509,25 +509,36 @@ class TextData:
         Args:
             conversation (Obj): a conversation object containing the lines to extract
         """
+        maxContextSize = 5
         nLines = len(conversation['lines'])
-        targetLine = conversation['lines'][nLines - 1]
-        targetWords = self.extractText(targetLine['text'])
-        inputContext = []
 
-        # (Tay: Now only iterate for the  context part)
-        # Iterate over all the lines of the conversation (convObj / miniConv)
-        for i in tqdm_wrap(range(len(conversation['lines']) - 2),  # We ignore the last line (no answer for it) Tay: no more 'ignore'
-                           desc='Conversation', leave=False):
-            inputLine  = conversation['lines'][i]
-            inputWords  = self.extractText(inputLine['text'])
+        if nLines <= maxContextSize + 1:
+            targetLine = conversation['lines'][nLines - 1]
+            targetWords = self.extractText(targetLine['text'])
+            inputContext = []
 
-            if inputWords:
-                inputContext.append(inputWords)
+            # (Tay: Now only iterate for the  context part)
+            # Iterate over all the lines of the conversation (convObj / miniConv)
+            for i in (range(len(conversation['lines']) - 1)):
+                inputLine  = conversation['lines'][i]
+                inputWords  = self.extractText(inputLine['text'])
+                if inputWords:
+                    inputContext.append(inputWords)
 
-        # TODO: Need to discuss spec of the context
-        if len(inputContext) > 0 and targetWords:
-            self.trainingSamples.append([inputContext, targetWords])
-
+            # TODO: Need to discuss spec of the context
+            if len(inputContext) > 0 and targetWords:
+                self.trainingSamples.append([inputContext, targetWords])
+        else:
+            # moving window
+            window = deque([], maxContextSize + 1)
+            for i in range(len(conversation['lines'])):
+                line = conversation['lines'][i]
+                words = self.extractText(line['text']) 
+                if words:
+                    window.append(words)
+                    context = list(window)[:-1] 
+                    target = list(window)[-1]
+                    self.trainingSamples.append([context, target]) 
 
     def extractText(self, line):
         """Extract the words from a sample lines
@@ -667,7 +678,7 @@ class TextData:
             wordIds = []
             for token in tokens:
                 wordIds.append(self.getWordId(token, create=False))
-            
+
             contextBatch.append(wordIds)
 
         batch = self._createBatch([[contextBatch, []]]) # Mono batch, no target output
