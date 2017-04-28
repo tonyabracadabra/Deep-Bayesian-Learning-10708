@@ -451,8 +451,8 @@ class Chatbot:
                         raise Exception("Unkown format for embeddings: %s " % embeddings_format)
             print(initW.shape)
 
-        np.save('embedding_opensubs.npy', initW)
-        np.save('word2id.npy', self.textData.word2id)
+        # np.save('embedding_opensubs.npy', initW)
+        # np.save('word2id.npy', self.textData.word2id)
 
         # PCA Decomposition to reduce word2vec dimensionality
         if self.args.embeddingSize < vector_size:
@@ -461,7 +461,7 @@ class Chatbot:
             S[:vector_size, :vector_size] = np.diag(s)
             initW = np.dot(U[:, :self.args.embeddingSize], S[:self.args.embeddingSize, :self.args.embeddingSize])
 
-        print(initW.shape)
+        # print(initW.shape)
 
 
         # Initialize input and output embeddings

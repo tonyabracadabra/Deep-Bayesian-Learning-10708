@@ -187,7 +187,7 @@ class TextData:
 
             # Long sentences should have been filtered during the dataset creation
 
-            #assert len(batch.encoderSeqs[i]) <= self.args.maxLengthEnco
+            # assert len(batch.encoderSeqs[i]) <= self.args.maxLengthEnco
             assert len(batch.decoder_inputs[i]) <= self.args.maxLengthDeco
 
             # TODO: Should use tf batch function to automatically add padding and batch samples
