@@ -186,8 +186,8 @@ class TextData:
 
             batch.encoder_inputs.append(contextReversed)
             batch.encoderSeqs.append(list(reversed(sample[0])))  # Reverse inputs (and not outputs), little trick as defined on the original seq2seq paper
-            batch.decoder_inputs.append([self.goToken] + sample[1][:-1])  # Add the <go> and <eos> tokens
-            batch.decoder_targets.append(sample[1])  # Same as decoder, but shifted to the left (ignore the <go>)
+            batch.decoder_inputs.append([self.goToken] + sample[1])  # Add the <go> and <eos> tokens
+            batch.decoder_targets.append(sample[1]+[self.eosToken])  # Same as decoder, but shifted to the left (ignore the <go>)
 
             batch.encoder_inner_length.append(nWordsVec)
             batch.encoder_outer_length.append(contextLength)
