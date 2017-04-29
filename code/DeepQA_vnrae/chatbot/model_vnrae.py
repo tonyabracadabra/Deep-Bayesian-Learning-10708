@@ -1,4 +1,3 @@
-
 # Copyright 2017 Xupeng Tong, Yikang Li. All Rights Reserved.
 # Modifications copyright (C) 2016 Carlos Segura
 #
@@ -20,7 +19,8 @@ Model to predict the next sentence given an input sequence
 """
 
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 import tensorflow as tf
 from tensorflow.contrib.rnn import LSTMCell, LSTMStateTuple
@@ -35,6 +35,7 @@ class ProjectionOp:
     """ Single layer perceptron
     Project input tensor on the output dimension
     """
+
     def __init__(self, shape, scope=None, dtype=None):
         """
         Args:
@@ -153,7 +154,6 @@ class Model:
             # (batch_size, n_words, embedding_size)
             encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
 
-
         ((encoder_fw_outputs,
           encoder_bw_outputs),
          (encoder_fw_state,
@@ -164,7 +164,7 @@ class Model:
                                             sequence_length=encoder_inputs_length,
                                             time_major=False,
                                             dtype=tf.float32)
-            )
+        )
 
         # (batch_size, n_words, h_units_words)
 
@@ -211,7 +211,7 @@ class Model:
         self._init_encoder()
         self._init_decoder(output_projection)
         self._define_loss(sampled_softmax)
-        
+
     def _init_encoder(self):
         '''
         Encoder phase
@@ -232,8 +232,7 @@ class Model:
             scope_inner_lstm.reuse_variables()
             # (n_sentence, batch_size, n_words)
             inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]),
-                        (encoder_inputs_trans, encoder_inner_length_trans), dtype=tf.float32)
-
+                                           (encoder_inputs_trans, encoder_inner_length_trans), dtype=tf.float32)
 
         # (batch_size, n_sentence, n_words, h_units_words)
         inner_lstm_outputs_trans = tf.transpose(inner_lstm_outputs, [1, 0, 2, 3])
@@ -260,12 +259,12 @@ class Model:
             self.decoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, self.decoder_inputs)
 
             (attention_keys,
-            attention_values,
-            attention_score_fn,
-            attention_construct_fn) = seq2seq.prepare_attention(
-                    attention_states=self.attention_states,
-                    attention_option="bahdanau",
-                    num_units=self.args.h_units_decoder,
+             attention_values,
+             attention_score_fn,
+             attention_construct_fn) = seq2seq.prepare_attention(
+                attention_states=self.attention_states,
+                attention_option="bahdanau",
+                num_units=self.args.h_units_decoder,
             )
 
             # attention is added
@@ -295,29 +294,32 @@ class Model:
             # Check back here later...the hidden size of decoder_cell has to be in the same size of embedding layer?
             # !!!
             # decoder_outputs_train.shape = (batch_size, n_words, hidden_size)
-            (self.decoder_outputs_train, decoder_state_train, decoder_context_state_train) = seq2seq.dynamic_rnn_decoder(
-                    cell=self.decoder_cell,
-                    decoder_fn=decoder_fn_train,
-                    inputs=self.decoder_inputs_embedded,
-                    sequence_length=self.decoder_targets_length,
-                    time_major=False,
-                    scope=scope
+            (
+            self.decoder_outputs_train, decoder_state_train, decoder_context_state_train) = seq2seq.dynamic_rnn_decoder(
+                cell=self.decoder_cell,
+                decoder_fn=decoder_fn_train,
+                inputs=self.decoder_inputs_embedded,
+                sequence_length=self.decoder_targets_length,
+                time_major=False,
+                scope=scope
             )
 
             # self.decoder_logits_train = output_projection(self.decoder_outputs_train)
             # self.decoder_logits_train_trans = tf.reshape(self.decoder_outputs_train, [1,0,2])
 
             self.decoder_logits_train = tf.transpose(tf.map_fn(output_projection,
-                                        tf.transpose(self.decoder_outputs_train, [1,0,2])),[1,0,2])
+                                                               tf.transpose(self.decoder_outputs_train, [1, 0, 2])),
+                                                     [1, 0, 2])
 
-            self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1, name='decoder_prediction_train')
+            self.decoder_prediction_train = tf.argmax(self.decoder_logits_train, axis=-1,
+                                                      name='decoder_prediction_train')
 
             # for both training and inference
             scope.reuse_variables()
 
             (decoder_logits_inference,
-                decoder_state_inference,
-                decoder_context_state_inference) = (
+             decoder_state_inference,
+             decoder_context_state_inference) = (
                 seq2seq.dynamic_rnn_decoder(
                     cell=self.decoder_cell,
                     decoder_fn=decoder_fn_inference,
@@ -326,7 +328,8 @@ class Model:
                 )
             )
 
-            self.decoder_prediction_inference = tf.argmax(decoder_logits_inference, axis=-1, name='decoder_prediction_inference')
+            self.decoder_prediction_inference = tf.argmax(decoder_logits_inference, axis=-1,
+                                                          name='decoder_prediction_inference')
 
     @staticmethod
     def reparameterizing_z(mu, logsigma):
@@ -353,7 +356,6 @@ class Model:
 
         return encoder_state
 
-
     def _define_loss(self, sampled_softmax):
 
         self.loss_reconstruct = seq2seq.sequence_loss(
@@ -364,9 +366,9 @@ class Model:
             average_across_timesteps=True,
             average_across_batch=True)
 
-        self.KL = tf.reduce_mean(-0.5 * tf.reduce_sum(1 + self.encoder_state_logsigma 
-                                 - tf.pow(self.encoder_state_mu, 2)
-                                 - tf.exp(self.encoder_state_logsigma), axis=1))
+        self.KL = tf.reduce_mean(-0.5 * tf.reduce_sum(1 + self.encoder_state_logsigma
+                                                      - tf.pow(self.encoder_state_mu, 2)
+                                                      - tf.exp(self.encoder_state_logsigma), axis=1))
 
         self.loss = tf.add(self.annealing_term * self.KL, self.loss_reconstruct)
 
@@ -399,22 +401,22 @@ class Model:
         # batch.decoderSeqs
         if not self.args.test:
             feed_dict[self.encoder_inputs] = np.array(batch.encoder_inputs)
-        # print('encoder_inputs', np.array(batch.encoder_inputs))
+            # print('encoder_inputs', np.array(batch.encoder_inputs))
 
             feed_dict[self.encoder_inner_length] = np.array(batch.encoder_inner_length)
-        # print('encoder_inner_length', np.array(batch.encoder_inner_length))
+            # print('encoder_inner_length', np.array(batch.encoder_inner_length))
 
             feed_dict[self.encoder_outer_length] = np.array(batch.encoder_outer_length)
-        # print('encoder_outer_length', np.array(batch.encoder_outer_length))
+            # print('encoder_outer_length', np.array(batch.encoder_outer_length))
 
             feed_dict[self.decoder_inputs] = np.array(batch.decoder_inputs)
-        # print('decoder_inputs', np.array(batch.decoder_inputs))
+            # print('decoder_inputs', np.array(batch.decoder_inputs))
 
             feed_dict[self.decoder_targets] = np.array(batch.decoder_targets)
-        # print('decoder_targets', np.array(batch.decoder_targets))
+            # print('decoder_targets', np.array(batch.decoder_targets))
 
             feed_dict[self.decoder_targets_length] = np.array(batch.decoder_targets_length)
-        # print('decoder_targets_length', np.array(batch.decoder_targets_length))
+            # print('decoder_targets_length', np.array(batch.decoder_targets_length))
             feed_dict[self.annealing_term] = annealing_term
 
             ops = (self.opt_op, self.loss, self.KL, self.loss_reconstruct)

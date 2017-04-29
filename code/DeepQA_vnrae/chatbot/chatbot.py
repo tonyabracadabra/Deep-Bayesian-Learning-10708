@@ -178,6 +178,7 @@ class Chatbot:
 
         # Prepare the model
         with tf.device(self.getDevice()):
+            self.args = self.parseArgs(args)
             self.model = Model(self.args, self.textData, lookup_matrix)
 
         # Saver/summaries
@@ -507,28 +508,27 @@ class Chatbot:
 
         modelName = self._getModelName()
 
-        # if os.listdir(self.modelDir):
-        #     if self.args.reset:
-        #         print('Reset: Destroying previous model at {}'.format(self.modelDir))
-        #     # Analysing directory content
-        #     elif os.path.exists(modelName):  # Restore the model
-        #         print('Restoring previous model from {}'.format(modelName))
-        #         self.saver.restore(sess, modelName)  # Will crash when --reset is not activated and the model has not been saved yet
-        #     elif self._getModelList():
-        #         print('Conflict with previous models.')
-        #         raise RuntimeError('Some models are already present in \'{}\'. You should check them first (or re-try with the keepAll flag)'.format(self.modelDir))
-        #     else:  # No other model to conflict with (probably summary files)
-        #         print('No previous model found, but some files found at {}. Cleaning...'.format(self.modelDir))  # Warning: No confirmation asked
-        #         self.args.reset = True
-        #
-        #     if self.args.reset:
-        #         fileList = [os.path.join(self.modelDir, f) for f in os.listdir(self.modelDir)]
-        #         for f in fileList:
-        #             print('Removing {}'.format(f))
-        #             os.remove(f)
-        #
-        # else:
-        #     print('No previous model found, starting from clean directory: {}'.format(self.modelDir))
+        if os.listdir(self.modelDir):
+            if self.args.reset:
+                print('Reset: Destroying previous model at {}'.format(self.modelDir))
+            # Analysing directory content
+            elif os.path.exists(modelName):  # Restore the model
+                print('Restoring previous model from {}'.format(modelName))
+                self.saver.restore(sess, modelName)  # Will crash when --reset is not activated and the model has not been saved yet
+            elif self._getModelList():
+                print('Conflict with previous models.')
+                raise RuntimeError('Some models are already present in \'{}\'. You should check them first (or re-try with the keepAll flag)'.format(self.modelDir))
+            else:  # No other model to conflict with (probably summary files)
+                print('No previous model found, but some files found at {}. Cleaning...'.format(self.modelDir))  # Warning: No confirmation asked
+                self.args.reset = True
+
+            if self.args.reset:
+                fileList = [os.path.join(self.modelDir, f) for f in os.listdir(self.modelDir)]
+                for f in fileList:
+                    print('Removing {}'.format(f))
+                    os.remove(f)
+        else:
+            print('No previous model found, starting from clean directory: {}'.format(self.modelDir))
 
     def _saveSession(self, sess):
         """ Save the model parameters and the variables
