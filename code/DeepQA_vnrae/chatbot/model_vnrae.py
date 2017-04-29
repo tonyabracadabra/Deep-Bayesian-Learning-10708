@@ -1,5 +1,5 @@
 
-# Copyright 2015 Conchylicultor. All Rights Reserved.
+# Copyright 2017 Xupeng Tong, Yikang Li. All Rights Reserved.
 # Modifications copyright (C) 2016 Carlos Segura
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -262,13 +262,6 @@ class Model:
         # attention state for the use of apply attention to the decoder [batch_size, n_words, h_units_words]
         self.attention_states = inner_lstm_outputs_trans[:, -1, :, :]
 
-    # Projection function
-    # def _output_fn(self, output):
-    #     self.W_proj = tf.get_variable('weights', [self.args.h_units_decoder, self.textData.getVocabularySize()])
-    #     self.b_proj = tf.get_variable('bias', [self.textData.getVocabularySize()])
-    #
-    #     return tf.add(tf.matmul(output, self.W_proj), self.b_proj)
-
     def _init_decoder(self, output_projection):
         '''
         Decoder phase
@@ -320,7 +313,7 @@ class Model:
                     time_major=False,
                     scope=scope
             )
-            #
+
             # self.decoder_logits_train = output_projection(self.decoder_outputs_train)
             # self.decoder_logits_train_trans = tf.reshape(self.decoder_outputs_train, [1,0,2])
 
