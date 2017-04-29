@@ -385,7 +385,7 @@ class Chatbot:
         # Run the model
         ops, feedDict = self.model.step(batch, 0)
         output = self.sess.run(ops[0], feedDict)  # TODO: Summarize the output too (histogram, ...)
-        answer = self.textData.deco2sentence(output)
+        answer = self.textData.deco2sentence(output[0])
 
         return answer
 

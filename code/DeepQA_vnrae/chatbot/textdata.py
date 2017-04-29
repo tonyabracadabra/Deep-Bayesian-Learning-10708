@@ -690,7 +690,7 @@ class TextData:
             sentence = context[i]
             tokens = nltk.word_tokenize(sentence)
             if len(tokens) > self.args.maxLength:
-                return None
+                tokens = tokens[:self.args.maxLength]
 
             wordIds = []
             for token in tokens:
