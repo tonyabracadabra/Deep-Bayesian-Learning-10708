@@ -152,21 +152,20 @@ class Model:
 
         if level == 'inner':
             # (batch_size, n_words, embedding_size)
-            with tf.variable_scope("embedding") as embedding_scope:
-                encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
+            encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
 
-        with tf.variable_scope(level) as scope:
-            ((encoder_fw_outputs,
-              encoder_bw_outputs),
-             (encoder_fw_state,
-              encoder_bw_state)) = (
-                tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
-                                                cell_bw=encoder_cell,
-                                                inputs=encoder_inputs_embedded,
-                                                sequence_length=encoder_inputs_length,
-                                                time_major=False,
-                                                dtype=tf.float32)
-                )
+
+        ((encoder_fw_outputs,
+          encoder_bw_outputs),
+         (encoder_fw_state,
+          encoder_bw_state)) = (
+            tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
+                                            cell_bw=encoder_cell,
+                                            inputs=encoder_inputs_embedded,
+                                            sequence_length=encoder_inputs_length,
+                                            time_major=False,
+                                            dtype=tf.float32)
+            )
 
         # (batch_size, n_words, h_units_words)
 
