@@ -153,14 +153,9 @@ class Model:
         if level == 'inner':
             # (batch_size, n_words, embedding_size)
             with tf.variable_scope("embedding") as embedding_scope:
-                try:
-                    encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
-                except ValueError:
-                    embedding_scope.reuse_variables()
-                    encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
+                encoder_inputs_embedded = tf.nn.embedding_lookup(self.lookup_matrix, encoder_inputs)
 
-        with tf.variable_scope(level) as scope_bilstm:
-            # try:
+        with tf.variable_scope(level) as scope:
             ((encoder_fw_outputs,
               encoder_bw_outputs),
              (encoder_fw_state,
@@ -172,22 +167,6 @@ class Model:
                                                 time_major=False,
                                                 dtype=tf.float32)
                 )
-
-            # except ValueError:
-            #
-            #     scope_bilstm.reuse_variables()
-            #
-            #     ((encoder_fw_outputs,
-            #       encoder_bw_outputs),
-            #      (encoder_fw_state,
-            #       encoder_bw_state)) = (
-            #         tf.nn.bidirectional_dynamic_rnn(cell_fw=encoder_cell,
-            #                                         cell_bw=encoder_cell,
-            #                                         inputs=encoder_inputs_embedded,
-            #                                         sequence_length=encoder_inputs_length,
-            #                                         time_major=False,
-            #                                         dtype=tf.float32)
-            #     )
 
         # (batch_size, n_words, h_units_words)
 
@@ -256,8 +235,14 @@ class Model:
         # (n_sentences, batch_size)
         encoder_inner_length_trans = tf.transpose(self.encoder_inner_length, [1, 0])
 
-        # (n_sentence, batch_size, n_words)
-        inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]),
+        # create inner lstm variables
+        with tf.variable_scope("inner_lstm") as scope_inner_lstm:
+            # create graph
+            self.inner_lstm(encoder_inputs_trans[0], encoder_inner_length_trans[0])
+            # reuse variables
+            scope_inner_lstm.reuse_variables()
+            # (n_sentence, batch_size, n_words)
+            inner_lstm_outputs = tf.map_fn(lambda x: self.inner_lstm(x[0], x[1]),
                         (encoder_inputs_trans, encoder_inner_length_trans), dtype=tf.float32)
 
 
