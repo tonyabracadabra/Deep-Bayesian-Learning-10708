@@ -317,7 +317,7 @@ class Model:
             # for both training and inference
             scope.reuse_variables()
 
-            (decoder_logits_inference,
+            (self.decoder_logits_inference,
              decoder_state_inference,
              decoder_context_state_inference) = (
                 seq2seq.dynamic_rnn_decoder(
@@ -328,8 +328,8 @@ class Model:
                 )
             )
 
-            self.decoder_prediction_inference = tf.argmax(decoder_logits_inference, axis=-1,
-                                                          name='decoder_prediction_inference')
+            # self.decoder_prediction_inference = tf.argmax(decoder_logits_inference, axis=-1,
+            #                                               name='decoder_prediction_inference')
 
     @staticmethod
     def reparameterizing_z(mu, logsigma):
@@ -431,7 +431,7 @@ class Model:
 
             feed_dict[self.decoder_targets_length] = np.array([self.args.maxLength])
 
-            ops = (self.decoder_prediction_inference,)
+            ops = (self.decoder_logits_inference,)
 
         # Return one pass operator
 
