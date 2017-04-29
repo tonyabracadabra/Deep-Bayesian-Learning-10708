@@ -212,16 +212,7 @@ class Model:
         self._init_encoder()
         self._init_decoder(output_projection)
         self._define_loss(sampled_softmax)
-
-        self.loss_reconstruct = tf.reduce_sum(seq2seq.sequence_loss(
-            logits=self.decoder_outputs_train,
-            targets=self.decoder_targets,
-            weights=self.decoder_weights,
-            softmax_loss_function=sampled_softmax,
-            average_across_timesteps=False,
-            average_across_batch=True)
-        )
-
+        
     def _init_encoder(self):
         '''
         Encoder phase
