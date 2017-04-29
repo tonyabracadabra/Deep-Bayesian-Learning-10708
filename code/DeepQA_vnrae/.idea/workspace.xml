@@ -2,11 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6eadc302-cd36-4069-95db-f167e4f9c66c" name="Default" comment="">
+<<<<<<< HEAD
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/DeepQA_vnrae.iml" afterPath="$PROJECT_DIR$/.idea/DeepQA_vnrae.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/chatbot/chatbot.py" afterPath="$PROJECT_DIR$/chatbot/chatbot.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/chatbot/model_vnrae.py" afterPath="$PROJECT_DIR$/chatbot/model_vnrae.py" />
+=======
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/chatbot/chatbot.py" afterPath="$PROJECT_DIR$/chatbot/chatbot.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
     </list>
     <ignored path=".idea/dataSources.local.xml" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -17,10 +22,14 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
+<<<<<<< HEAD
     <SUITE FILE_PATH="coverage/DeepQA_vnrae$main.coverage" NAME="main Coverage Results" MODIFIED="1493505676652" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
+=======
+    <SUITE FILE_PATH="coverage/DeepQA_vnrae$main.coverage" NAME="main Coverage Results" MODIFIED="1493505625932" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
@@ -28,28 +37,49 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="model_vnrae.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="model_vnrae.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
           <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
             <state relative-caret-position="118">
               <caret line="422" column="0" selection-start-line="422" selection-start-column="0" selection-end-line="422" selection-end-column="0" />
+=======
+            <state relative-caret-position="209">
+              <caret line="29" column="16" lean-forward="false" selection-start-line="29" selection-start-column="14" selection-end-line="29" selection-end-column="16" />
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
               <folding />
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/model.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1018">
               <caret line="194" column="28" selection-start-line="194" selection-start-column="21" selection-end-line="194" selection-end-column="28" />
               <folding />
+=======
+      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="284">
+              <caret line="181" column="46" lean-forward="true" selection-start-line="181" selection-start-column="46" selection-end-line="181" selection-end-column="46" />
+              <folding>
+                <element signature="e#752#791#0" expanded="true" />
+              </folding>
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
             </state>
           </provider>
         </entry>
       </file>
+<<<<<<< HEAD
       <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
+=======
+      <file leaf-file-name="trainner.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/chatbot/trainner.py">
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="156">
               <caret line="377" column="42" selection-start-line="377" selection-start-column="30" selection-end-line="377" selection-end-column="42" />
@@ -84,8 +114,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>filterFromFull</find>
-      <find>h_units_decoder</find>
       <find>tq</find>
       <find>tqdm</find>
       <find>numEpochs</find>
@@ -112,8 +140,10 @@
       <find>save</find>
       <find>args.</find>
       <find>h_u</find>
-      <find>self.args</find>
       <find>feed_dictz</find>
+      <find>self.args</find>
+      <find>load</find>
+      <find>loadE</find>
     </findStrings>
     <replaceStrings>
       <replace>encoder_inputs</replace>
@@ -127,9 +157,16 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
+<<<<<<< HEAD
         <option value="$USER_HOME$/anaconda3/lib/python3.6/site-packages/tensorflow/python/client/session.py" />
         <option value="$PROJECT_DIR$/chatbot/chatbot.py" />
         <option value="$PROJECT_DIR$/chatbot/model_vnrae.py" />
+=======
+        <option value="$PROJECT_DIR$/chatbot/model_vnrae.py" />
+        <option value="$USER_HOME$/anaconda3/lib/python3.6/site-packages/tensorflow/python/client/session.py" />
+        <option value="$PROJECT_DIR$/main.py" />
+        <option value="$PROJECT_DIR$/chatbot/chatbot.py" />
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
       </list>
     </option>
   </component>
@@ -140,7 +177,11 @@
     <sorting>DEFINITION_ORDER</sorting>
   </component>
   <component name="ProjectFrameBounds">
+<<<<<<< HEAD
     <option name="x" value="53" />
+=======
+    <option name="x" value="285" />
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
     <option name="y" value="23" />
     <option name="width" value="1308" />
     <option name="height" value="807" />
@@ -493,16 +534,28 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
+<<<<<<< HEAD
     <frame x="53" y="23" width="1308" height="807" extended-state="0" />
+=======
+    <frame x="285" y="23" width="1308" height="899" extended-state="0" />
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21406004" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+<<<<<<< HEAD
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.38321677" sideWeight="0.123222746" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32867134" sideWeight="0.49684045" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32867134" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31748253" sideWeight="0.87677723" order="2" side_tool="false" content_ui="tabs" />
+=======
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40722892" sideWeight="0.11238532" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.40722892" sideWeight="0.88761467" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -867,14 +920,22 @@
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="156">
           <caret line="377" column="42" selection-start-line="377" selection-start-column="30" selection-end-line="377" selection-end-column="42" />
+=======
+    <entry file="file://$USER_HOME$/anaconda3/lib/python3.6/site-packages/tensorflow/python/client/session.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="199">
+          <caret line="1016" column="66" lean-forward="true" selection-start-line="1016" selection-start-column="66" selection-end-line="1016" selection-end-column="66" />
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
           <folding />
         </state>
       </provider>
     </entry>
+<<<<<<< HEAD
     <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="279">
@@ -889,15 +950,37 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1018">
           <caret line="194" column="28" selection-start-line="194" selection-start-column="21" selection-end-line="194" selection-end-column="28" />
+=======
+    <entry file="file://$PROJECT_DIR$/main.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="390">
+          <caret line="26" column="31" lean-forward="true" selection-start-line="26" selection-start-column="31" selection-end-line="26" selection-end-column="31" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
       <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="29" column="16" lean-forward="false" selection-start-line="29" selection-start-column="14" selection-end-line="29" selection-end-column="16" />
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
+      <provider selected="true" editor-type-id="text-editor">
+<<<<<<< HEAD
         <state relative-caret-position="118">
           <caret line="422" column="0" selection-start-line="422" selection-start-column="0" selection-end-line="422" selection-end-column="0" />
           <folding />
+=======
+        <state relative-caret-position="284">
+          <caret line="181" column="46" lean-forward="true" selection-start-line="181" selection-start-column="46" selection-end-line="181" selection-end-column="46" />
+          <folding>
+            <element signature="e#752#791#0" expanded="true" />
+          </folding>
+>>>>>>> a115eb07b50164575804010ffa60e7316fe31caf
         </state>
       </provider>
     </entry>
