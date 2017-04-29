@@ -21,8 +21,8 @@
       <file leaf-file-name="model_vnrae.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="234">
-              <caret line="249" column="49" lean-forward="true" selection-start-line="249" selection-start-column="49" selection-end-line="249" selection-end-column="49" />
+            <state relative-caret-position="355">
+              <caret line="239" column="54" lean-forward="false" selection-start-line="239" selection-start-column="54" selection-end-line="239" selection-end-column="54" />
               <folding />
             </state>
           </provider>
@@ -106,7 +106,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>learni</find>
       <find>annealing_term</find>
       <find>self.loss</find>
       <find>loss</find>
@@ -136,6 +135,7 @@
       <find>numEpochs</find>
       <find>filter</find>
       <find>lstm</find>
+      <find>reuse</find>
     </findStrings>
     <replaceStrings>
       <replace>encoder_inputs</replace>
@@ -951,8 +951,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="234">
-          <caret line="249" column="49" lean-forward="true" selection-start-line="249" selection-start-column="49" selection-end-line="249" selection-end-column="49" />
+        <state relative-caret-position="355">
+          <caret line="239" column="54" lean-forward="false" selection-start-line="239" selection-start-column="54" selection-end-line="239" selection-end-column="54" />
           <folding />
         </state>
       </provider>
