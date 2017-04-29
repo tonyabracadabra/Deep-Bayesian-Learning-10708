@@ -450,7 +450,9 @@ class TextData:
                 del self.id2word[wordId]  # Will be recreated if newId == wordId
                 self.word2id[word] = newId
                 self.id2word[newId] = word
-                newId += 1
+                # if newId < 30 or word is 'then' or word is 'how' or word is 'Okay':
+                #     print('id {0}: {1}'.format(newId, word))
+                # newId += 1
 
         # Last step: replace old ids by new ones and filters empty sentences
         def replace_words(words):

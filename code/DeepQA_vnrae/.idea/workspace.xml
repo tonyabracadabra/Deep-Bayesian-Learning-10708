@@ -11,7 +11,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/DeepQA_vnrae$main.coverage" NAME="main Coverage Results" MODIFIED="1493490035266" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DeepQA_vnrae$main.coverage" NAME="main Coverage Results" MODIFIED="1493494826004" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -22,11 +22,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="model_vnrae.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="model_vnrae.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="310" column="81" selection-start-line="310" selection-start-column="81" selection-end-line="310" selection-end-column="81" />
+            <state relative-caret-position="328">
+              <caret line="372" column="6" selection-start-line="372" selection-start-column="6" selection-end-line="372" selection-end-column="6" />
               <folding />
             </state>
           </provider>
@@ -35,7 +35,7 @@
       <file leaf-file-name="model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3090">
+            <state relative-caret-position="479">
               <caret line="208" column="53" selection-start-line="208" selection-start-column="39" selection-end-line="208" selection-end-column="53" />
               <folding />
             </state>
@@ -45,8 +45,8 @@
       <file leaf-file-name="textdata.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="291">
-              <caret line="186" column="56" selection-start-line="186" selection-start-column="56" selection-end-line="186" selection-end-column="56" />
+            <state relative-caret-position="188">
+              <caret line="364" column="20" selection-start-line="364" selection-start-column="12" selection-end-line="364" selection-end-column="20" />
               <folding>
                 <element signature="e#740#758#0" expanded="true" />
               </folding>
@@ -54,15 +54,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="chatbot.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6060">
-              <caret line="419" column="48" selection-start-line="419" selection-start-column="48" selection-end-line="419" selection-end-column="48" />
+            <state relative-caret-position="158">
+              <caret line="262" column="32" selection-start-line="262" selection-start-column="32" selection-end-line="262" selection-end-column="32" />
               <folding>
                 <element signature="e#752#791#0" expanded="true" />
-                <marker date="1493487240000" expanded="true" signature="2625:8561" ph="..." />
-                <marker date="1493487240000" expanded="true" signature="15100:15102" ph="..." />
+                <marker date="1493494795000" expanded="true" signature="2625:8561" ph="..." />
+                <marker date="1493494795000" expanded="true" signature="15049:15051" ph="..." />
               </folding>
             </state>
           </provider>
@@ -113,9 +113,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/chatbot/model.py" />
+        <option value="$PROJECT_DIR$/chatbot/textdata.py" />
         <option value="$PROJECT_DIR$/chatbot/chatbot.py" />
         <option value="$PROJECT_DIR$/chatbot/model_vnrae.py" />
-        <option value="$PROJECT_DIR$/chatbot/textdata.py" />
       </list>
     </option>
   </component>
@@ -482,13 +482,13 @@
     <frame x="83" y="23" width="1308" height="805" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21721959" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22037914" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.33239833" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32959327" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2454418" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -528,7 +528,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -538,10 +537,8 @@
           <caret line="421" column="49" selection-start-line="421" selection-start-column="49" selection-end-line="421" selection-end-column="49" />
           <folding>
             <element signature="e#752#791#0" expanded="true" />
-            <marker date="1493487240000" expanded="true" signature="2625:8561" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15102" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15249" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15696" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="2625:8561" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="15049:15051" ph="..." />
           </folding>
         </state>
       </provider>
@@ -582,7 +579,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -602,10 +598,8 @@
           <caret line="262" column="40" selection-start-line="262" selection-start-column="40" selection-end-line="262" selection-end-column="40" />
           <folding>
             <element signature="e#752#791#0" expanded="true" />
-            <marker date="1493487240000" expanded="true" signature="2625:8561" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15102" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15249" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15696" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="2625:8561" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="15049:15051" ph="..." />
           </folding>
         </state>
       </provider>
@@ -629,7 +623,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -649,10 +642,8 @@
           <caret line="262" column="40" selection-start-line="262" selection-start-column="40" selection-end-line="262" selection-end-column="40" />
           <folding>
             <element signature="e#752#791#0" expanded="true" />
-            <marker date="1493487240000" expanded="true" signature="2625:8561" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15102" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15249" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15696" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="2625:8561" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="15049:15051" ph="..." />
           </folding>
         </state>
       </provider>
@@ -676,7 +667,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -696,10 +686,8 @@
           <caret line="248" column="7" selection-start-line="248" selection-start-column="7" selection-end-line="248" selection-end-column="7" />
           <folding>
             <element signature="e#752#791#0" expanded="true" />
-            <marker date="1493487240000" expanded="true" signature="2625:8561" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15102" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15249" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15696" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="2625:8561" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="15049:15051" ph="..." />
           </folding>
         </state>
       </provider>
@@ -727,10 +715,8 @@
           <caret line="175" column="12" selection-start-line="175" selection-start-column="8" selection-end-line="175" selection-end-column="12" />
           <folding>
             <element signature="e#752#791#0" expanded="true" />
-            <marker date="1493487240000" expanded="true" signature="2625:8561" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15102" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15249" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15696" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="2625:8561" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="15049:15051" ph="..." />
           </folding>
         </state>
       </provider>
@@ -739,7 +725,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="420">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -826,10 +811,8 @@
           <caret line="119" column="41" selection-start-line="119" selection-start-column="31" selection-end-line="119" selection-end-column="41" />
           <folding>
             <element signature="e#752#791#0" expanded="true" />
-            <marker date="1493487240000" expanded="true" signature="2625:8561" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15102" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15249" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15696" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="2625:8561" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="15049:15051" ph="..." />
           </folding>
         </state>
       </provider>
@@ -886,34 +869,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/chatbot/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3090">
-          <caret line="208" column="53" selection-start-line="208" selection-start-column="39" selection-end-line="208" selection-end-column="53" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="310" column="81" selection-start-line="310" selection-start-column="81" selection-end-line="310" selection-end-column="81" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="373">
           <caret line="28" column="0" selection-start-line="28" selection-start-column="0" selection-end-line="28" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chatbot/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="479">
+          <caret line="208" column="53" selection-start-line="208" selection-start-column="39" selection-end-line="208" selection-end-column="53" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/chatbot/textdata.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="291">
-          <caret line="186" column="56" selection-start-line="186" selection-start-column="56" selection-end-line="186" selection-end-column="56" />
+        <state relative-caret-position="188">
+          <caret line="364" column="20" selection-start-line="364" selection-start-column="12" selection-end-line="364" selection-end-column="20" />
           <folding>
             <element signature="e#740#758#0" expanded="true" />
           </folding>
@@ -922,15 +896,21 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/chatbot/chatbot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6060">
-          <caret line="419" column="48" selection-start-line="419" selection-start-column="48" selection-end-line="419" selection-end-column="48" />
+        <state relative-caret-position="158">
+          <caret line="262" column="32" selection-start-line="262" selection-start-column="32" selection-end-line="262" selection-end-column="32" />
           <folding>
             <element signature="e#752#791#0" expanded="true" />
-            <marker date="1493487240000" expanded="true" signature="2625:8561" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15102" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15249" ph="..." />
-            <marker date="1493487240000" expanded="true" signature="15100:15696" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="2625:8561" ph="..." />
+            <marker date="1493494795000" expanded="true" signature="15049:15051" ph="..." />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/chatbot/model_vnrae.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="328">
+          <caret line="372" column="6" selection-start-line="372" selection-start-column="6" selection-end-line="372" selection-end-column="6" />
+          <folding />
         </state>
       </provider>
     </entry>

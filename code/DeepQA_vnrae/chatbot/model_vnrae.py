@@ -142,7 +142,6 @@ class Model:
         self.decoder_weights = tf.cast(tf.sequence_mask(
             self.decoder_targets_length), tf.float32)
 
-
     def _define_layers(self):
         self.inner_lstm = partial(self._dynamic_bilstm, 'inner', self.encoder_inner_cell)
         self.outer_lstm = partial(self._dynamic_bilstm, 'outer', self.encoder_outer_cell)
@@ -358,10 +357,10 @@ class Model:
     def _define_loss(self, sampled_softmax):
 
         self.loss_reconstruct = seq2seq.sequence_loss(
-            logits=self.decoder_outputs_train,
+            logits=self.decoder_logits_train,
             targets=self.decoder_targets,
             weights=self.decoder_weights,
-            softmax_loss_function=sampled_softmax,
+            # softmax_loss_function=sampled_softmax,
             average_across_timesteps=True,
             average_across_batch=True)
 

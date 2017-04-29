@@ -257,7 +257,6 @@ class Chatbot:
                 tic = datetime.datetime.now()
 
                 annealing_term = min([np.exp(c*(e+1))-1, 1])
-                loss, kl, loss_construct = 0, 0, 0
                 for nextBatch in tqdm(batches, desc="Training"):
                     # Training pass
                     if len(nextBatch.encoder_inputs) != self.args.batch_size:
