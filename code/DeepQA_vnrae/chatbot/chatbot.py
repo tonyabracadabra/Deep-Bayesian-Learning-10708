@@ -172,9 +172,9 @@ class Chatbot:
 
         # Initialize embeddings with pre-trained word2vec vectors
 
-        lookup_matrix = np.ones((1000,30)).astype(np.float32)
+        # lookup_matrix = np.ones((1000,30)).astype(np.float32)
 
-        # lookup_matrix = self.loadEmbedding(self.sess).astype(np.float32)
+        lookup_matrix = self.loadEmbedding(self.sess).astype(np.float32)
 
         # Prepare the model
         with tf.device(self.getDevice()):
