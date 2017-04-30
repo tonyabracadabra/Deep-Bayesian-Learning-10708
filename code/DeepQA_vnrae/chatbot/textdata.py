@@ -222,7 +222,6 @@ class TextData:
         '''
         encoder_inputsT = []  # Corrected orientation
         encoderSeqsT = []  # Corrected orientation
-
         for i in range(self.args.maxLengthEnco):
             encoderSeqT = []
             for j in range(batch_size):
