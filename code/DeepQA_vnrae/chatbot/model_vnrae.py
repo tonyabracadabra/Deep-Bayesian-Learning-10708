@@ -359,10 +359,10 @@ class Model:
     def _define_loss(self, sampled_softmax):
 
         self.loss_reconstruct = seq2seq.sequence_loss(
-            logits=self.decoder_logits_train,
+            logits=self.decoder_outputs_train,
             targets=self.decoder_targets,
             weights=self.decoder_weights,
-            # softmax_loss_function=sampled_softmax,
+            softmax_loss_function=sampled_softmax,
             average_across_timesteps=True,
             average_across_batch=True)
 
