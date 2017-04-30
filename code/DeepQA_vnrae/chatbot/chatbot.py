@@ -243,7 +243,7 @@ class Chatbot:
 
         print('Start training (press Ctrl+C to save and exit)...')
 
-        c = np.log(2)/(self.args.numEpochs*100)
+        c = np.log(2)/(self.args.numEpochs*666)
         try:  # If the user exit while training, we still try to save the model
             for e in range(self.args.numEpochs):
 
