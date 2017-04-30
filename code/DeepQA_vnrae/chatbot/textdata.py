@@ -694,7 +694,7 @@ class TextData:
 
             wordIds = []
             for token in tokens:
-                wordIds.append(self.getWordId(token, create=False))
+                wordIds.append(self.getWordId(token, create=True))
 
             contextBatch.append(wordIds)
 
@@ -721,7 +721,7 @@ class TextData:
         # Second step: Convert the token in word ids
         wordIds = []
         for token in tokens:
-            wordIds.append(self.getWordId(token, create=False))  # Create the vocabulary and the training sentences
+            wordIds.append(self.getWordId(token, create=True))  # Create the vocabulary and the training sentences
 
         # Third step: creating the batch (add padding, reverse)
         batch = self._createBatch([[wordIds, []]])  # Mono batch, no target output
