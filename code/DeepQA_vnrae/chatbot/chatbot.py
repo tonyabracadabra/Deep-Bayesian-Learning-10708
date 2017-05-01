@@ -130,6 +130,7 @@ class Chatbot:
         nnArgs.add_argument('--h_units_sentences', type=int, default=256, help='number of hidden units in outer encoder')
         nnArgs.add_argument('--h_units_decoder', type=int, default=512, help='number of hidden units in decoder')
         nnArgs.add_argument('--latent_size', type=int, default=64, help='Latent variable size in the variational model')
+        nnArgs.add_argument('--annealing_type', type=str, default='small', help='Latent variable size in the variational model')
 
         # Training options
         trainingArgs = parser.add_argument_group('Training options')
@@ -243,7 +244,9 @@ class Chatbot:
 
         print('Start training (press Ctrl+C to save and exit)...')
 
-        c = np.log(2)/(self.args.numEpochs*666)
+        c = np.log(2)/(self.args.numEpochs*500)
+        constant_small = c
+        constant_large = 0.1
         try:  # If the user exit while training, we still try to save the model
             for e in range(self.args.numEpochs):
 
@@ -257,7 +260,16 @@ class Chatbot:
 
                 tic = datetime.datetime.now()
 
-                annealing_term = min([np.exp(c*(e+1))-1, 1])
+                # annealing change
+                if self.args.annealing_type == 'small':
+                    annealing_term = constant_small
+                elif self.args.annealing_type == 'increase':
+                    annealing_term = min([np.exp(c*(e+1))-1, 1])
+                elif self.args.annealing_type == 'large'::
+                    annealing_term = constant_large
+                else:
+                    raise ValueError('wrong annealing type!')
+
                 for nextBatch in tqdm(batches, desc="Training"):
                     # Training pass
                     if len(nextBatch.encoder_inputs) != self.args.batch_size:
