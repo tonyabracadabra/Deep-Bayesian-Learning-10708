@@ -388,7 +388,6 @@ class TextData:
                 sentences = reversed(sentences)
 
             for sentence in sentences:
-
                 # If the total length is not too big, we still can add one more sentence
                 if len(merged) + len(sentence) <= self.args.maxLength:
                     if fromEnd:  # Append the sentence
@@ -437,6 +436,8 @@ class TextData:
         }
         new_mapping = {}  # Map the full words ids to the new one (TODO: Should be a list)
         newId = 0
+
+        '''
         for wordId, count in [(i, self.idCount[i]) for i in range(len(self.idCount))]:  # Iterate in order
             if (count <= self.args.filterVocab and
                 wordId not in specialTokens):  # Cadidate to filtering (Warning: don't filter special token)
@@ -452,8 +453,10 @@ class TextData:
                 # if newId < 30 or word is 'then' or word is 'how' or word is 'Okay':
                 #     print('id {0}: {1}'.format(newId, word))
                 # newId += 1
+        '''
 
         # Last step: replace old ids by new ones and filters empty sentences
+        '''
         def replace_words(words):
             valid = False  # Filter empty sequences
             for i, w in enumerate(words):
@@ -461,23 +464,24 @@ class TextData:
                 if words[i] != self.unknownToken:  # Also filter if only contains unknown tokens
                     valid = True
             return valid
-
+        '''
         self.trainingSamples.clear()
 
         for inputContext, targetWords in tqdm(newSamples, desc='Replace ids:', leave=False):
-            valid = True
+            #valid = True
             # ******************************************************************************************
             # WARNING: If ONE of the conetxt sentences is filtered, the entire conversation is invalid!!
             # ******************************************************************************************
 
             # traverse the whole input context
-            for i in range(len(inputContext)):
-                inputWords = inputContext[i]
-                valid &= replace_words(inputWords)
+            #for i in range(len(inputContext)):
+                #inputWords = inputContext[i]
+                #valid &= replace_words(inputWords)
 
-            valid &= replace_words(targetWords)
+            #valid &= replace_words(targetWords)
 
-            if valid:
+            #if True: #valid:
+            if len(inputContext) > 0 and len(targetWords) > 0:
                 #self.trainingSamples.append([inputWords, targetWords])  # TODO: Could replace list by tuple
 
                 self.trainingSamples.append([inputContext, targetWords])  # TODO: Could replace list by tuple
