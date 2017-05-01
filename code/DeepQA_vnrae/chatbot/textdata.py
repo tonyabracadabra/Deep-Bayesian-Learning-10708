@@ -515,7 +515,7 @@ class TextData:
             conversation (Obj): a conversation object containing the lines to extract
         """
 
-        maxContextSize = 5
+        maxContextSize = 3
 
         words = list(map(lambda x: self.extractText(x['text']), conversation['lines']))
 
