@@ -265,7 +265,7 @@ class Chatbot:
                     annealing_term = constant_small
                 elif self.args.annealing_type == 'increase':
                     annealing_term = min([np.exp(c*(e+1))-1, 1])
-                elif self.args.annealing_type == 'large'::
+                elif self.args.annealing_type == 'large':
                     annealing_term = constant_large
                 else:
                     raise ValueError('wrong annealing type!')
