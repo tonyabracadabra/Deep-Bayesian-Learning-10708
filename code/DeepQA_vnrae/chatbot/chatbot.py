@@ -193,7 +193,7 @@ class Chatbot:
 
         # Running session
         gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.33)
-        self.sess = tf.Session(config=tf.ConfigProto(gpu_options,
+        self.sess = tf.Session(config=tf.ConfigProto(gpu_options=gpu_options,
             allow_soft_placement=True,  # Allows backup device for non GPU-available operations (when forcing GPU)
             log_device_placement=False)  # Too verbose ?
         )  # TODO: Replace all sess by self.sess (not necessary a good idea) ?
