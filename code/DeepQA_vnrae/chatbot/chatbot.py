@@ -130,7 +130,7 @@ class Chatbot:
         nnArgs.add_argument('--h_units_sentences', type=int, default=256, help='number of hidden units in outer encoder')
         nnArgs.add_argument('--h_units_decoder', type=int, default=512, help='number of hidden units in decoder')
         nnArgs.add_argument('--latent_size', type=int, default=64, help='Latent variable size in the variational model')
-        nnArgs.add_argument('--annealing_type', type=str, default='small', help='Latent variable size in the variational model')
+        nnArgs.add_argument('--annealing_type', type=str, default='increase', help='Latent variable size in the variational model')
 
         # Training options
         trainingArgs = parser.add_argument_group('Training options')
@@ -192,7 +192,8 @@ class Chatbot:
         # Also fix seed for random.shuffle (does it works globally for all files ?)
 
         # Running session
-        self.sess = tf.Session(config=tf.ConfigProto(
+        gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.33)
+        self.sess = tf.Session(config=tf.ConfigProto(gpu_options,
             allow_soft_placement=True,  # Allows backup device for non GPU-available operations (when forcing GPU)
             log_device_placement=False)  # Too verbose ?
         )  # TODO: Replace all sess by self.sess (not necessary a good idea) ?

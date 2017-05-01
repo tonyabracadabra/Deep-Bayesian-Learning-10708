@@ -21,12 +21,10 @@ import numpy as np
 import nltk  # For tokenize
 from tqdm import tqdm  # Progress bar
 import pickle  # Saving the data
-import math  # For float comparison
 import os  # Checking file existance
 import random
 import string
 from collections import OrderedDict
-from collections import deque
 from chatbot.corpus.cornelldata import CornellData
 from chatbot.corpus.opensubsdata import OpensubsData
 from chatbot.corpus.scotusdata import ScotusData
