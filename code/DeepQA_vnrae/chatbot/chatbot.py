@@ -176,6 +176,7 @@ class Chatbot:
         # lookup_matrix = np.ones((1000,30)).astype(np.float32)
 
         lookup_matrix = self.loadEmbedding(self.sess).astype(np.float32)
+        lookup_matrix = np.load('embedding.npy')
 
         # Prepare the model
         with tf.device(self.getDevice()):
@@ -493,7 +494,7 @@ class Chatbot:
             initW = np.dot(U[:, :self.args.embeddingSize], S[:self.args.embeddingSize, :self.args.embeddingSize])
 
         # print(initW.shape)
-
+        np.save('embedding.npy', initW)
 
         # Initialize input and output embeddings
         #sess.run(em_in.assign(initW))

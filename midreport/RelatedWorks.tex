@@ -1,0 +1,39 @@
+\subsection{Neural Conversational Model}
+
+Sequence To Sequence model is first introduced in \cite{seq2seq}, and since then, has become the standard model for dialogue systems \cite{ncm} and machine translation. It consists of two RNNs (Recurrent Neural Network): An Encoder and a Decoder. The encoder takes a words sequence as input and processes one word at each time step. 
+
+The objective is to convert symbol sequence into a fixed size feature vector that encodes the important information in the sequence while losing the redundant or unnecessary information.
+
+\subsection{Auto-Encoding Variational Bayes}
+
+Variational autoencoder (VAE) \cite{vae} has successfully injected the probabilistic flavor in the basic autoencoder by reparameterization and reconstruction of the outputs as probabilistic random variables within a model and approximate objective function that can conduct end to end training.
+
+Given an observed variable $x$, VAE introduces a continuous latent variable z, and assumes that $x$ is generated from $z$
+
+$$p(x,z) = p(x|z)p(z)$$
+
+The prior over the latent random variables, $p(z)$, is always chosen to be a simple Gaussian distribution and the conditional $p(x|z)$ is an arbitrary observation model whose parameters are computed by a parametric function of $z$. 
+
+In VAE, $p(x|z)$ plays a role as parameterized function approximator (neural network). The generative model $p(x|z)$ and inference model $q(z|x)$ are trained jointly by maximizing the variational lower bound with respect to their parameters, where the integral with respect to $q(z|x)$ is approximated stochastically. The gradient of this estimate can have a low variance estimate, by reparameterizing $z = \mu+\sigma\odot\epsilon$
+
+We can formulate the above problem as minimizing the KL divergence of these two distributions, however, it is generally hard to actually compute it. Alternatively, VAE chooses to optimize some thing that is equivalent to the KL up to an added constant,
+
+$$\text{ELBO}_i (\lambda) = E_{q\lambda (z|x_i)}[\log p(x_i|z)]-KL(q\lambda (z|x_i)||p(z))$$ 
+
+called Evidence Lower BOund (ELBO).
+
+With the perspective from bayesian statistics, the encoder becomes a variational inference network, mapping observed inputs to its approximate posterior distributions over the latent space, while the decoder works as a generative network that maps arbitrary latent coordinates back to distributions over the original space.
+
+
+\subsection{Variational Recurrent Neural Network}
+Earlier works in \cite{vrnn} introduced high-level random latent variables to recurrent neural network (RNN), empowering the model to be able to capture even higher variabilities sequential dataset such as natural speech. Differed from variational auto-encoders (VAE) used for the cases of a non-sequential dataset, where latent random variables were designed to capture the variations in the observed variables. In VRNN, the recurrent network has a VAE for each time step, and these VAEs are conditioned on hidden state variable, such that
+
+$$\bf x_t \bf | z_t \sim \mathcal{N}(\bf \mu _{x,t}, diag(\sigma _{x,t}^2)$$
+where,
+$$[\bf \mu _{x,t}, \sigma _{x,t}^2] = \varphi^{dec}_{\tau}(\varphi^{\bf z}_{\tau}(\bf z_t),\bf h_{t-1})$$
+
+extract sequential features, and hidden states of RNN can be updated using recurrence equation
+
+\begin{align*}
+\bf h_t = f_\theta(\varphi^{\bf x}_\tau (\bf x _t), \varphi^{\bf z}_\tau (\bf z_t), \bf h_{t-1})
+\end{align*}
